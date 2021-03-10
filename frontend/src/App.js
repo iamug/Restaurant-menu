@@ -11,40 +11,16 @@ import Popper from "popper.js";
 import "rsuite/dist/styles/rsuite-default.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Loader } from "rsuite";
+import { Spinner } from "@chakra-ui/react";
 
 import DataContext, { DataProvider } from "./context/datacontext";
 import { GetUserData, PrivateRoute } from "./controllers/auth";
 import LoginComponent from "./components/login/login";
 import VerifyAdminComponent from "./components/login/verifyadmin";
-import ProfileComponent from "./components/profile/profile";
 import RecoverPasswordComponent from "./components/resetpassword/recoverpassword";
 import ResetPasswordComponent from "./components/resetpassword/resetpassword";
-import LeftSideMenuComponent from "./components/leftsidemenu";
-import TopbarMenuComponent from "./components/topbarmenu";
-import Error404Component from "./components/404";
-import NotPermittedComponent from "./components/notpermitted";
-import DashboardComponent from "./components/dashboard/dashboard";
-import UserListComponent from "./components/users/userlist";
-import DriverListComponent from "./components/drivers/driverslist";
-import PlanListComponent from "./components/plans/planlist";
-import VehicleListComponent from "./components/vehicles/vehiclelist";
-import AdminListComponent from "./components/admins/adminlist";
-import PartnerListComponent from "./components/partners/partnerlist";
-import FAQListComponent from "./components/faqs/faqlist";
-import TicketListComponent from "./components/tickets/ticketlist";
-import TestCenterListComponent from "./components/drivetest/testcenterlist";
-import InspCenterListComponent from "./components/inspection/inspectioncenterlist";
-import VehicleInspectionList from "./components/inspection/vehicleinspectionlist";
-import DriveTestListComponent from "./components/drivetest/drivetestlist";
-import CreateBookingComponent from "./components/bookings/createbooking";
-import EditBookingComponent from "./components/bookings/editbooking";
-import BookingListComponent from "./components/bookings/bookinglist";
-import TransactionListComponent from "./components/transactions/transactionlist";
-import RequestRepairComponent from "./components/requestrepair/requestrepair";
-import SOSComponent from "./components/sos/sos";
-import ItineraryComponent from "./components/itinerary/itinerarylist";
-import RolesComponent from "./components/roles/rolesandpermissions";
-import LogComponent from "./components/activitylog/activityloglist";
+import LeftSideMenuComponent from "./components/LeftSideMenu";
+import TopbarMenuComponent from "./components/TopBarMenu";
 
 function App() {
   let [userdata, setUserData] = useState(false);
@@ -121,7 +97,7 @@ function App() {
                 <LeftSideMenuComponent />
               </div>
               <div className="content-page">
-                <Switch>
+                {/* <Switch>
                   <Route
                     path="/dashboard"
                     exact
@@ -136,7 +112,7 @@ function App() {
                     )}
                   />
                   <Route path="/profile" exact component={ProfileComponent} />
-                  {/* <Route path="/users" exact component={UserListComponent} /> */}
+                  {/* <Route path="/users" exact component={UserListComponent} /> 
                   <PrivateRoute
                     path="/users"
                     module="Users"
@@ -295,7 +271,7 @@ function App() {
 
                   <Route path="/404" component={Error404Component} />
                   <Route component={Error404Component} />
-                </Switch>
+                </Switch> */}
               </div>
             </React.Fragment>
           ) : (
@@ -308,7 +284,8 @@ function App() {
     <>
       <div className=" my-5 py-5 text-center  h-100">
         <div className=" my-5 py-5 text-center  h-100">
-          <Loader size="lg" content="Loading..." vertical="true" />
+          <Spinner size="xl" />
+          {/* <Loader size="lg" content="Loading..." vertical="true" /> */}
           {/* <div className="text-center py-5">
             <div
               class="spinner-border avatar-lg text-primary m-2"
