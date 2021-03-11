@@ -11,16 +11,11 @@ const {
   ProdTransporter,
 } = require("../../utils/emailController");
 const auth = require("../../middleware/auth");
-const {
-  activityLogger: Logger,
-} = require("../../utils/activityLoggerController");
-const Module = "Users";
 
 // render
 //var html = pug.render('string of pug', merge(options, locals));
 
 const User = require("../../models/Users");
-const DriveTest = require("../../models/DriveTest");
 
 // @route   GET api/retrievals/me
 // @desc    Get current users vehicle retrieval
@@ -71,13 +66,6 @@ router.delete("/:id", auth, async (req, res) => {
         .status(404)
         .json({ success: false, msg: "Record does not exist" });
     }
-    Logger(
-      req,
-      Module,
-      req.method,
-      req.params.id,
-      `Admin deleted a record with id ${req.params.id}`
-    );
     res.status(200).send({ success: true });
   } catch (err) {
     console.error(err.message);
@@ -163,13 +151,7 @@ router.put("/:id", auth, async (req, res) => {
       { $set: updateFields },
       { new: true }
     );
-    Logger(
-      req,
-      Module,
-      req.method,
-      req.params.id,
-      `Admin updated a record with id ${user.id}`
-    );
+    
     return res.json({ success: true });
   } catch (err) {
     console.log(error);

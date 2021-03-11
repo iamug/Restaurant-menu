@@ -10,7 +10,6 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const rfs = require("rotating-file-stream");
-const { readLogs } = require("./utils/activityLoggerController");
 // const monthNames = [
 //   "January",
 //   "February",
@@ -46,10 +45,6 @@ const successLogStream = rfs.createStream("success.log", {
   path: path.join(__dirname, "logs"),
 });
 
-const jsonServer = require("json-server");
-const server = jsonServer.create();
-const router = jsonServer.router("logs/logs.json");
-const middlewares = jsonServer.defaults();
 
 const s3 = new AWS.S3({
   accessKeyId: config.get("accessKeyId"),
@@ -57,7 +52,7 @@ const s3 = new AWS.S3({
   region: "eu-west-2",
 });
 
-server.use(middlewares);
+
 const app = express();
 
 //connect Database
@@ -142,36 +137,16 @@ app.use("/upload", auth, async (req, res) => {
 });
 
 app.get("/", (req, res) => res.send("API Running"));
-server.get("/", (req, res) => res.send("API Running"));
 
 //Define Routes
 app.use("/api/users", require("./routes/api/users"));
-app.use("/api/drivers", require("./routes/api/drivers"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/profile", require("./routes/api/profile"));
-app.use("/api/dashboard", require("./routes/api/dashboard"));
-app.use("/api/posts", require("./routes/api/posts"));
-app.use("/api/vehicles", require("./routes/api/vehicles"));
-app.use("/api/plans", require("./routes/api/plan"));
-app.use("/api/earnings", require("./routes/api/earnings"));
-app.use("/api/retrievals", require("./routes/api/retrievals"));
-app.use("/api/partners", require("./routes/api/partners"));
-app.use("/api/faqs", require("./routes/api/faqs"));
-app.use("/api/tickets", require("./routes/api/tickets"));
-app.use("/api/bookings", require("./routes/api/booking"));
-app.use("/api/itineraries", require("./routes/api/itinerary"));
-app.use("/api/payments", require("./routes/api/payments"));
-app.use("/api/testcenters", require("./routes/api/testcenters"));
-app.use("/api/inspectioncenters", require("./routes/api/inspectioncenters"));
-app.use("/api/drivetests", require("./routes/api/drivetest"));
-app.use("/api/vehicleinspections", require("./routes/api/vehicleinspection"));
-app.use("/api/transactions", require("./routes/api/transactions"));
+//app.use("/api/dashboard", require("./routes/api/dashboard"));
+// app.use("/api/payments", require("./routes/api/payments"));
 app.use("/api/admins", require("./routes/api/admins"));
-app.use("/api/roles", require("./routes/api/roles"));
-app.use("/api/reportsos", require("./routes/api/reportsos"));
-app.use("/api/requestmechanic", require("./routes/api/requestmechanic"));
-app.get("/api/activitylogs", auth, router);
-app.get("/api/logs", auth, readLogs);
+
+
 //server.use("/api/json", router);
 //app.use("/api/referrals", require("./routes/api/referrals"));
 // app.use("/api/orders", require("./routes/api/orders"));
@@ -179,8 +154,8 @@ app.get("/api/logs", auth, readLogs);
 // app.use("/api/commissions", require("./routes/api/commissions"));
 //app.use("/api/land", require("./routes/api/land"));
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 6000;
 
-server.listen(3002, () => console.log("JSON Server is running on port 3002"));
+
 
 app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));

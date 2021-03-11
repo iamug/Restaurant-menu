@@ -11,7 +11,9 @@
     "client-mac": "cd client && npm run client-mac "
   },
   "nodemonConfig": {
-      "ignore": ["logs/*"]
+    "ignore": [
+      "logs/*"
+    ]
   },
   "repository": {
     "type": "git",

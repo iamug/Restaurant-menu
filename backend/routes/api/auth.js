@@ -5,9 +5,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const crypto = require("crypto");
-const {
-  activityLogger: Logger,
-} = require("../../utils/activityLoggerController");
 const { check, validationResult } = require("express-validator");
 const pug = require("pug");
 
@@ -19,30 +16,15 @@ const {
 const Module = "Auth";
 
 const Admin = require("../../models/Admins");
-const Role = require("../../models/Roles");
 // @route   Get api/auth
 // @desc    Test route
 // @access  Public
 router.get("/", auth, async (req, res) => {
   try {
     const user = await Admin.findById(req.user.id).select("-password").lean();
-    let adminRole, admin;
-    if (user && user.role) {
-      try {
-        adminRole = await Role.findById(user.role).lean();
-      } catch (error) {
-        adminRole = false;
-      }
-    }
-    user
-      ? (admin = {
-          ...user,
-          permissions: (adminRole && adminRole.permissions) || {},
-        })
-      : res
-          .status(400)
-          .json({ errors: [{ msg: "Error. Kindly try again later" }] });
-    res.json(admin);
+    
+    if(!user) return res.status(400).json({ errors: [{ msg: "Error. Kindly try again later" }] });
+    res.json(user);
   } catch (err) {
     console.log(err.message);
     res.status(500).send("Server Error");
@@ -89,13 +71,6 @@ router.post("/forgotpassword", async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
-    Logger(
-      req,
-      Module || "Auth",
-      req.method,
-      user.id,
-      `Admin with id ${user.id} and name ${user.name} and email ${user.email} requested for forgot password`
-    );
     return res
       .status(400)
       .json({ errors: [{ msg: "Error. Kindly try again later" }] });
@@ -125,13 +100,6 @@ router.put("/resetpassword/:resetToken", async (req, res, next) => {
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
   await user.save();
-  Logger(
-    req,
-    Module || "Auth",
-    req.method,
-    user.id,
-    `Admin with id ${user.id} and name ${user.name} and email ${user.email} reset password`
-  );
   return res.status(200).json({ status: true });
 });
 
@@ -262,13 +230,6 @@ router.post(
         (err, token) => {
           if (err) throw err;
           req.user = payload.user;
-          Logger(
-            req,
-            Module || "Auth",
-            req.method,
-            user._id,
-            `Admin with id ${user._id} and name ${user.name} and email ${user.email} logged in`
-          );
           res.json({ success: true, token, user: admin });
         }
       );
@@ -301,13 +262,7 @@ router.put("/profile/", auth, async (req, res) => {
       { $set: updateFields },
       { new: true }
     );
-    Logger(
-      req,
-      Module || "Auth",
-      req.method,
-      admin.id,
-      `Admin with id ${admin.id} and name ${admin.name} and email ${admin.email} updated profile`
-    );
+    
     let adminRole;
     try {
       adminRole = admin.role && (await Role.findById(admin.role).lean());

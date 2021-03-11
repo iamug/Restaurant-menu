@@ -57,7 +57,7 @@ router.get("/", auth, async (req, res) => {
 // @access Private
 // @Params  id -- id of plan
 router.delete("/:id", auth, async (req, res) => {
-  if (!req.params.id || new ObjectId(req.params.id) == req.params.id {
+  if (!req.params.id || new ObjectId(req.params.id) == req.params.id ) {
     return res.status(400).json({ success: false, msg: "invalid Request" });
   }
   try {
