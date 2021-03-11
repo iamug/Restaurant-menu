@@ -1,7 +1,5 @@
 // import API from "./api";
 
-// export const googleAPIKey = "AIzaSyD0nsVQ5gbb0NguBwh-FbMAGUMxrKiyMog";
-
 // export async function FetchAdminsData() {
 //   let token = localStorage.getItem("token");
 //   if (!token) {

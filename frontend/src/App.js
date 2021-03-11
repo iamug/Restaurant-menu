@@ -8,7 +8,7 @@ import {
   withRouter,
 } from "react-router-dom";
 import Popper from "popper.js";
-import "rsuite/dist/styles/rsuite-default.css";
+//import "rsuite/dist/styles/rsuite-default.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Loader } from "rsuite";
 import { Spinner } from "@chakra-ui/react";
@@ -16,6 +16,7 @@ import { Spinner } from "@chakra-ui/react";
 import DataContext, { DataProvider } from "./context/datacontext";
 import { GetUserData, PrivateRoute } from "./controllers/auth";
 import LoginComponent from "./components/login/login";
+import MenuComponent from "./components/menu/menucomponent";
 import VerifyAdminComponent from "./components/login/verifyadmin";
 import RecoverPasswordComponent from "./components/resetpassword/recoverpassword";
 import ResetPasswordComponent from "./components/resetpassword/resetpassword";
@@ -29,39 +30,7 @@ function App() {
     userdata,
     setUserData,
   ]);
-  useEffect(async () => {
-    let data;
-    try {
-      data = await GetUserData();
-    } catch (error) {
-      data = false;
-    }
-    console.log({ data });
-    if (data && data.email) {
-      if (
-        window.location.pathname === "/login" ||
-        window.location.pathname === "/"
-      ) {
-        window.location.href = "/dashboard";
-      }
-    }
-    if (!data) {
-      if (window.location.pathname === "/login") {
-        setLoading(true);
-        return false;
-      } else {
-        if (
-          window.location.pathname &&
-          (window.location.pathname.includes("/resetpassword") ||
-            window.location.pathname.includes("/verify"))
-        ) {
-          setLoading(true);
-          return false;
-        }
-        //window.location.href = "/login";
-      }
-    }
-    setUserData(data);
+  useEffect(() => {
     setLoading(true);
   }, []);
   return loading ? (
@@ -69,6 +38,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/login" exact component={LoginComponent} />
+          <Route path="/menu" exact component={withRouter(MenuComponent)} />
           <Route path="/" exact component={LoginComponent} />
           <Route
             path="/recoverpassword"
