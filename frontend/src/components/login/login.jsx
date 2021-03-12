@@ -123,20 +123,20 @@ const LoginComponent = (props) => {
   };
 
   useEffect(() => {
-    $("body").addClass("authentication-bg authentication-bg-pattern");
-    console.log("enter");
+    // $("body").addClass("authentication-bg authentication-bg-pattern");
+    // console.log("enter");
   }, []);
 
   return (
     <div>
-      <div className="account-pages mt-5 mb-5">
+      <div className=" account-pages mt-5 mb-5">
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-md-8 col-lg-6 col-xl-5">
-              <div className="card bg-pattern">
+            <div className="col-md-6 col-lg-5 col-xl-5">
+              <div className="card bg-pattern bg-gradient">
                 <div className="card-body p-4">
                   <div className="text-center w-75 m-auto">
-                    <div className="auth-logo">
+                    {/* <div className="auth-logo">
                       <a
                         href="index.html"
                         className="logo logo-dark text-center"
@@ -158,7 +158,7 @@ const LoginComponent = (props) => {
                           />
                         </span>
                       </a>
-                    </div>
+                    </div> */}
                     <p className="text-muted mb-4 mt-3">
                       Enter your email address and password to access admin
                       panel.

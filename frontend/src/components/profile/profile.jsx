@@ -7,7 +7,6 @@ import AWN from "awesome-notifications";
 import API from "../../controllers/api";
 import { GetUserData } from "../../controllers/auth";
 import DataContext, { DataConsumer } from "../../context/datacontext";
-import { FetchAdminsRolesData } from "../../controllers/fetchdata";
 
 const ProfileComponent = () => {
   let [formValue, setFormValue] = useState({});
@@ -19,19 +18,7 @@ const ProfileComponent = () => {
   const [showpassword2, setshowpassword2] = useState(false);
   const user = useContext(DataContext);
 
-  const handleSelectRole = async () => {
-    const rolesdata = await FetchAdminsRolesData();
-    if (rolesdata) {
-      setRoles(rolesdata);
-    }
-  };
-
-  const getRoleName = (id) => {
-    if (!id) return null;
-    if (!roles) return null;
-    let obj = roles.find((o) => o._id === id);
-    return (obj && obj.name) || null;
-  };
+  
 
   const updateprofile = async () => {
     const { name, phone, avatar } = formValue;
@@ -158,7 +145,6 @@ const ProfileComponent = () => {
         });
       });
     });
-    handleSelectRole();
     const userData = await GetUserData();
     setUserData(userData);
     setFormValue(userData);
@@ -207,6 +193,7 @@ const ProfileComponent = () => {
                         accept="image/*"
                         onChange={(e) => onChangeProfile(e)}
                         class="m-t-20 hidden"
+                        style={{ display : "none"}}
                       />
                     </p>
                   </div>{" "}
@@ -307,7 +294,7 @@ const ProfileComponent = () => {
                                 className="form-control"
                                 name="role"
                                 readOnly
-                                value={getRoleName(formValue.role)}
+                                
                                 placeholder=""
                               />
                               <span className="form-text text-muted">

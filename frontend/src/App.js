@@ -8,7 +8,7 @@ import {
   withRouter,
 } from "react-router-dom";
 import Popper from "popper.js";
-//import "rsuite/dist/styles/rsuite-default.css";
+import "rsuite/dist/styles/rsuite-default.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Loader } from "rsuite";
 import { Spinner } from "@chakra-ui/react";
@@ -17,6 +17,8 @@ import DataContext, { DataProvider } from "./context/datacontext";
 import { GetUserData, PrivateRoute } from "./controllers/auth";
 import LoginComponent from "./components/login/login";
 import MenuComponent from "./components/menu/menucomponent";
+import ProfileComponent from "./components/profile/profile";
+import Error404Component from "./components/404";
 import VerifyAdminComponent from "./components/login/verifyadmin";
 import RecoverPasswordComponent from "./components/resetpassword/recoverpassword";
 import ResetPasswordComponent from "./components/resetpassword/resetpassword";
@@ -30,7 +32,40 @@ function App() {
     userdata,
     setUserData,
   ]);
-  useEffect(() => {
+
+  useEffect(async () => {
+    let data;
+    try {
+      data = await GetUserData();
+    } catch (error) {
+      data = false;
+    }
+    console.log({ data });
+    if (data && data.email) {
+      if (
+        window.location.pathname === "/login" ||
+        window.location.pathname === "/"
+      ) {
+        window.location.href = "/dashboard";
+      }
+    }
+    if (!data) {
+      if (window.location.pathname === "/login") {
+        setLoading(true);
+        return false;
+      } else {
+        if (
+          window.location.pathname &&
+          (window.location.pathname.includes("/resetpassword") ||
+            window.location.pathname.includes("/verify"))
+        ) {
+          setLoading(true);
+          return false;
+        }
+        //window.location.href = "/login";
+      }
+    }
+    setUserData(data);
     setLoading(true);
   }, []);
   return loading ? (
@@ -60,6 +95,7 @@ function App() {
             exact
             component={withRouter(VerifyAdminComponent)}
           />
+           
           {loading && userdata ? (
             <React.Fragment>
               <TopbarMenuComponent />
@@ -67,181 +103,23 @@ function App() {
                 <LeftSideMenuComponent />
               </div>
               <div className="content-page">
-                {/* <Switch>
+                <Switch>
                   <Route
                     path="/dashboard"
                     exact
                     render={(props) => (
-                      <DashboardComponent
+                      <ProfileComponent
                         {...props}
-                        permissions={{
-                          ...(userdata.permissions || {}),
-                          superAdmin: userdata.superAdmin || false,
-                        }}
+                       
                       />
                     )}
                   />
                   <Route path="/profile" exact component={ProfileComponent} />
-                  {/* <Route path="/users" exact component={UserListComponent} /> 
-                  <PrivateRoute
-                    path="/users"
-                    module="Users"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={UserListComponent}
-                  />
-                  <PrivateRoute
-                    path="/drivers"
-                    module="Drivers"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={DriverListComponent}
-                  />
-                  <PrivateRoute
-                    path="/admins"
-                    module="Admins"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={AdminListComponent}
-                  />
-                  <PrivateRoute
-                    path="/partners"
-                    module="Partners"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={PartnerListComponent}
-                  />
-
-                  <PrivateRoute
-                    path="/plans"
-                    module="Plans"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={PlanListComponent}
-                  />
-                  <PrivateRoute
-                    path="/faqs"
-                    module="FAQs"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={FAQListComponent}
-                  />
-                  <PrivateRoute
-                    path="/vehicles"
-                    module="Vehicles"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={VehicleListComponent}
-                  />
-                  <PrivateRoute
-                    path="/tickets"
-                    module="Tickets"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={TicketListComponent}
-                  />
-
-                  <PrivateRoute
-                    path="/drivetest"
-                    module="Drive Test"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={DriveTestListComponent}
-                  />
-
-                  <PrivateRoute
-                    path="/testcenters"
-                    module="Drive Test Centers"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={TestCenterListComponent}
-                  />
-
-                  <PrivateRoute
-                    path="/inspcenters"
-                    module="Vehicle Inspection Centers"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                    component={InspCenterListComponent}
-                  />
-
-                  <PrivateRoute
-                    path="/vehicleinsp"
-                    component={VehicleInspectionList}
-                    module="Vehicle Inspection"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/editbooking"
-                    component={EditBookingComponent}
-                    module="Bookings"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/bookings"
-                    component={BookingListComponent}
-                    module="Bookings"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/itineraries"
-                    component={ItineraryComponent}
-                    module="Itineraries"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/transactions"
-                    component={TransactionListComponent}
-                    module="Transactions"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/requestrepair"
-                    component={RequestRepairComponent}
-                    module="Request Repair"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/sos"
-                    component={SOSComponent}
-                    module="Report SOS"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/roles"
-                    exact
-                    component={RolesComponent}
-                    module="Roles and Permissions"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
-
-                  <PrivateRoute
-                    path="/logs"
-                    exact
-                    component={LogComponent}
-                    module="Activity Logs"
-                    permissions={userdata.permissions || {}}
-                    superAdmin={userdata.superAdmin || false}
-                  />
+                
 
                   <Route path="/404" component={Error404Component} />
                   <Route component={Error404Component} />
-                </Switch> */}
+                </Switch>
               </div>
             </React.Fragment>
           ) : (
