@@ -7,7 +7,7 @@ import { Button, ButtonGroup } from "@chakra-ui/react";
 const MenuCard = ({property}) => {
   return (
     <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-      <Image boxSize="sm"
+      <Image style={{ height : "200px" }}
     objectFit="cover" src={property.imageUrl} alt={property.imageAlt} />
 
       <Box p="6">
