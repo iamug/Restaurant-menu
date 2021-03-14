@@ -45,13 +45,11 @@ const successLogStream = rfs.createStream("success.log", {
   path: path.join(__dirname, "logs"),
 });
 
-
 const s3 = new AWS.S3({
   accessKeyId: config.get("accessKeyId"),
   secretAccessKey: config.get("secretAccessKey"),
   region: "eu-west-2",
 });
-
 
 const app = express();
 
@@ -145,7 +143,7 @@ app.use("/api/profile", require("./routes/api/profile"));
 //app.use("/api/dashboard", require("./routes/api/dashboard"));
 // app.use("/api/payments", require("./routes/api/payments"));
 app.use("/api/admins", require("./routes/api/admins"));
-
+app.use("/api/products", require("./routes/api/products"));
 
 //server.use("/api/json", router);
 //app.use("/api/referrals", require("./routes/api/referrals"));
@@ -155,7 +153,5 @@ app.use("/api/admins", require("./routes/api/admins"));
 //app.use("/api/land", require("./routes/api/land"));
 
 const PORT = process.env.PORT || 6000;
-
-
 
 app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));

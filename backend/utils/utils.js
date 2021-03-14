@@ -1,3 +1,5 @@
+const ObjectId = require("mongoose").Types.ObjectId;
+
 const generateId = (start) => {
   const d = new Date();
   return (
@@ -11,4 +13,8 @@ const generateId = (start) => {
   );
 };
 
-module.exports = { generateId };
+const validMongooseId = (id) => {
+  return new ObjectId(id) == id;
+};
+
+module.exports = { generateId, validMongooseId };

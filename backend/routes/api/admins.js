@@ -6,12 +6,10 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
 const { devTransporter } = require("../../utils/emailController");
-const { generateId } = require("../../utils/utils");
+const { generateId, validMongooseId } = require("../../utils/utils");
 const pug = require("pug");
 
 const Admin = require("../../models/Admins");
-const ObjectId = require('mongoose').Types.ObjectId;
-
 
 // @route   GET api/retrievals/me
 // @desc    Get current users vehicle retrieval
@@ -57,7 +55,7 @@ router.get("/", auth, async (req, res) => {
 // @access Private
 // @Params  id -- id of plan
 router.delete("/:id", auth, async (req, res) => {
-  if (!req.params.id || new ObjectId(req.params.id) == req.params.id ) {
+  if (!req.params.id || !validMongooseId(req.params.id)) {
     return res.status(400).json({ success: false, msg: "invalid Request" });
   }
   try {
@@ -127,8 +125,8 @@ router.post("/", auth, async (req, res) => {
 // @desc   Retrieval route
 // @access Private
 router.put("/:id", auth, async (req, res) => {
-  if (!req.params.id) {
-    return res.status(400).json({ success: false, msg: "Invalid request" });
+  if (!req.params.id || !validMongooseId(req.params.id)) {
+    return res.status(400).json({ success: false, msg: "invalid Request" });
   }
   let adminData = await Admin.findOne({ adminId: req.params.id });
   if (!adminData)

@@ -147,96 +147,19 @@ const LeftSideMenuComponent = (props) => {
               <Multi props={{...props, ...item, index}} key={index} />
               : <Single props={{ ...props, ...item, index }} key={index} />
             } )} */}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Users &&
-                userdata.permissions.Users.read)) && (
-              <li>
-                <a
-                  href="/users"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/users");
-                  }}
-                >
-                  <i className="mdi mdi-account-multiple-outline" />
-                  <span> Users </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Drivers &&
-                userdata.permissions.Drivers.read)) && (
-              <li>
-                <a
-                  href="/drivers"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/drivers");
-                  }}
-                >
-                  <i className="mdi mdi-steering" />
-                  <span> Drivers </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Partners &&
-                userdata.permissions.Partners.read)) && (
-              <li>
-                <a
-                  href="/partners"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/partners");
-                  }}
-                >
-                  <i className="mdi mdi-handshake" />
-                  <span> Partners </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Plans &&
-                userdata.permissions.Plans.read)) && (
-              <li>
-                <a
-                  href="/plans"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/plans");
-                  }}
-                >
-                  <i className="fas fa-tag" />
-                  <span> Plans </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Vehicles &&
-                userdata.permissions.Vehicles.read)) && (
-              <li>
-                <a
-                  href="/vehicles"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/vehicles");
-                  }}
-                >
-                  <i className="fas fa-car" />
-                  <span> Vehicles </span>
-                </a>
-              </li>
-            )}
+
+            <li>
+              <a
+                href="/admins"
+                onClick={(e) => {
+                  e.preventDefault();
+                  props.history.push("/admins");
+                }}
+              >
+                <i className="mdi mdi-account-multiple-outline" />
+                <span> Admins </span>
+              </a>
+            </li>
 
             {/* {((userdata && userdata.superAdmin) ||
               (userdata &&
@@ -257,205 +180,40 @@ const LeftSideMenuComponent = (props) => {
               </li>
             )} */}
 
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Bookings"] &&
-                userdata.permissions["Bookings"].read) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Itineraries"] &&
-                userdata.permissions["Itineraries"].read)) && (
-              <li>
-                <a href="#sidebarMultilevelBooking" data-toggle="collapse">
-                  <i className=" fas fa-receipt" />
-                  <span> Bookings </span> <span className="menu-arrow" />
-                </a>
-                <div className="collapse" id="sidebarMultilevelBooking">
-                  <ul className="nav-second-level">
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Bookings"] &&
-                        userdata.permissions["Bookings"].read)) && (
-                      <li>
-                        <a
-                          href="/bookings"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/bookings");
-                          }}
-                        >
-                          Bookings
-                        </a>
-                      </li>
-                    )}
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Itineraries"] &&
-                        userdata.permissions["Itineraries"].read)) && (
-                      <li>
-                        <a
-                          href="/itineraries"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/itineraries");
-                          }}
-                        >
-                          Itineraries
-                        </a>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </li>
-            )}
+            <li>
+              <a href="#sidebarMultilevelBooking" data-toggle="collapse">
+                <i className=" fas fa-receipt" />
+                <span> Bookings </span> <span className="menu-arrow" />
+              </a>
+              <div className="collapse" id="sidebarMultilevelBooking">
+                <ul className="nav-second-level">
+                  <li>
+                    <a
+                      href="/bookings"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        props.history.push("/bookings");
+                      }}
+                    >
+                      Bookings
+                    </a>
+                  </li>
 
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Tickets &&
-                userdata.permissions.Tickets.read)) && (
-              <li>
-                <a
-                  href="/tickets"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/tickets");
-                  }}
-                >
-                  <i className="mdi mdi-lifebuoy" />
-                  <span> Tickets </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.FAQs &&
-                userdata.permissions.FAQs.read)) && (
-              <li>
-                <a
-                  href="/faqs"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/faqs");
-                  }}
-                >
-                  <i className=" fas fa-question-circle" />
-                  <span> FAQs </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Request Repair"] &&
-                userdata.permissions["Request Repair"].read)) && (
-              <li>
-                <a
-                  href="/requestrepair"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/requestrepair");
-                  }}
-                >
-                  <i className=" fas fa-wrench" />
-                  <span> Request Repair </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Report SOS"] &&
-                userdata.permissions["Report SOS"].read)) && (
-              <li>
-                <a
-                  href="/sos"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/sos");
-                  }}
-                >
-                  <i className=" fas fa-exclamation-triangle" />
-                  <span> Report SOS </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Transactions"] &&
-                userdata.permissions["Transactions"].read)) && (
-              <li>
-                <a
-                  href="/transactions"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/transactions");
-                  }}
-                >
-                  <i className=" fas fa-money-bill-alt" />
-                  <span> Transactions </span>
-                </a>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Drive Test"] &&
-                userdata.permissions["Drive Test"].read) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Drive Test Centers"] &&
-                userdata.permissions["Drive Test Centers"].read)) && (
-              <li>
-                <a href="#sidebarMultilevel3" data-toggle="collapse">
-                  <i className=" fas fa-car" />
-                  <span> Drive Test </span> <span className="menu-arrow" />
-                </a>
-                <div className="collapse" id="sidebarMultilevel3">
-                  <ul className="nav-second-level">
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Drive Test"] &&
-                        userdata.permissions["Drive Test"].read)) && (
-                      <li>
-                        <a
-                          href="/drivetest"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/drivetest");
-                          }}
-                        >
-                          Drive Test List
-                        </a>
-                      </li>
-                    )}
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Drive Test Centers"] &&
-                        userdata.permissions["Drive Test Centers"].read)) && (
-                      <li>
-                        <a
-                          href="/testcenters"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/testcenters");
-                          }}
-                        >
-                          Drive Test Centers
-                        </a>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </li>
-            )}
+                  <li>
+                    <a
+                      href="/itineraries"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        props.history.push("/itineraries");
+                      }}
+                    >
+                      Itineraries
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
             {/* <li>
               <a
                 href="/roles"
@@ -468,62 +226,7 @@ const LeftSideMenuComponent = (props) => {
                 <span> Roles and Permissions </span>
               </a>
             </li> */}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Vehicle Inspection"] &&
-                userdata.permissions["Vehicle Inspection"].read) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Vehicle Inspection Centers"] &&
-                userdata.permissions["Vehicle Inspection Centers"].read)) && (
-              <li>
-                <a href="#sidebarMultilevel4" data-toggle="collapse">
-                  <i className=" fas fa-car" />
-                  <span> Vehicle Inspection </span>{" "}
-                  <span className="menu-arrow" />
-                </a>
-                <div className="collapse" id="sidebarMultilevel4">
-                  <ul className="nav-second-level">
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Vehicle Inspection"] &&
-                        userdata.permissions["Vehicle Inspection"].read)) && (
-                      <li>
-                        <a
-                          href="/vehicleinsp"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/vehicleinsp");
-                          }}
-                        >
-                          Inspection List
-                        </a>
-                      </li>
-                    )}
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Vehicle Inspection Centers"] &&
-                        userdata.permissions["Vehicle Inspection Centers"]
-                          .read)) && (
-                      <li>
-                        <a
-                          href="/inspcenters"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/inspcenters");
-                          }}
-                        >
-                          Inspection Centers
-                        </a>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </li>
-            )}
+
             {/* <li>
               <a href="#sidebarMultilevel4" data-toggle="collapse">
                 <i className=" fas fa-car" />
@@ -557,7 +260,7 @@ const LeftSideMenuComponent = (props) => {
                 </ul>
               </div>
             </li> */}
-            {((userdata && userdata.superAdmin) ||
+            {/* {((userdata && userdata.superAdmin) ||
               (userdata &&
                 userdata.permissions &&
                 userdata.permissions["Admins"] &&
@@ -630,7 +333,7 @@ const LeftSideMenuComponent = (props) => {
                   <span> Activity Logs </span>
                 </a>
               </li>
-            )}
+            )} */}
             {/* <li>
               <a href="#sidebarMultilevelAdmin" data-toggle="collapse">
                 <i className=" fas fa-user-shield" />

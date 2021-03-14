@@ -5,7 +5,7 @@ import { Form, FormGroup, ControlLabel } from "rsuite";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../controllers/api";
-import { GetUserData } from "../../controllers/auth";
+import { GetUserData, Reload } from "../../controllers/auth";
 import DataContext, { DataConsumer } from "../../context/datacontext";
 
 const ProfileComponent = () => {
@@ -17,8 +17,7 @@ const ProfileComponent = () => {
   const [showpassword, setshowpassword] = useState(false);
   const [showpassword2, setshowpassword2] = useState(false);
   const user = useContext(DataContext);
-
-  
+  //const { user, setUser } = useContext(DataContext);
 
   const updateprofile = async () => {
     const { name, phone, avatar } = formValue;
@@ -54,6 +53,7 @@ const ProfileComponent = () => {
         });
         user.setUserData(res.data.admin);
         setRefreshData(!refreshData);
+        Reload(user.setUserData, false);
       } else {
         new AWN().alert("Failed, Kindly try again", {
           durations: { alert: 3000 },
@@ -193,7 +193,7 @@ const ProfileComponent = () => {
                         accept="image/*"
                         onChange={(e) => onChangeProfile(e)}
                         class="m-t-20 hidden"
-                        style={{ display : "none"}}
+                        style={{ display: "none" }}
                       />
                     </p>
                   </div>{" "}
@@ -294,7 +294,6 @@ const ProfileComponent = () => {
                                 className="form-control"
                                 name="role"
                                 readOnly
-                                
                                 placeholder=""
                               />
                               <span className="form-text text-muted">

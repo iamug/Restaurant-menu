@@ -4,11 +4,13 @@ import NotPermittedComponent from "../components/notpermitted";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import AWN from "awesome-notifications";
 
-export const Reload = async (setUser) => {
-  new AWN().info("Please wait....", {
-    durations: { info: 0 },
-    icons: { info: "sync fa-spin" },
-  });
+export const Reload = async (setUser, toast = true) => {
+  if (toast) {
+    new AWN().info("Please wait....", {
+      durations: { info: 0 },
+      icons: { info: "sync fa-spin" },
+    });
+  }
   let data;
   try {
     data = await GetUserData();
@@ -17,6 +19,7 @@ export const Reload = async (setUser) => {
   }
   if (data && data.email) {
     setUser(data);
+    if (!toast) return;
     new AWN().closeToasts();
     new AWN().success("Reload Successful", { durations: { success: 2000 } });
   } else {

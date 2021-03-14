@@ -5,21 +5,13 @@ import { Form, FormGroup, FormControl, HelpBlock, Loader } from "rsuite";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../controllers/api";
+import { formatAmount } from "../../controllers/utils";
 
-const AdminListComponent = (props) => {
-  let initialFormState = {
-    name: null,
-    email: null,
-    phone: null,
-    isActive: null,
-    isVerified: null,
-    password: null,
-    password2: null,
-    avatar: null,
-  };
+const ProductListComponent = (props) => {
+  let initialFormState = {};
   let [showDrawer, toggleShowDrawer] = useState(false);
   let [formValue, setFormValue] = useState(initialFormState);
-  let [adminData, setAdminData] = useState([]);
+  let [productData, setProductData] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
   let [dataUpdate, setDataUpdate] = useState(false);
   const [showpassword, setshowpassword] = useState(false);
@@ -161,7 +153,7 @@ const AdminListComponent = (props) => {
     }
   };
 
-  const fetchadmins = async () => {
+  const fetchproducts = async () => {
     try {
       let token = localStorage.getItem("token");
       const config = {
@@ -170,10 +162,8 @@ const AdminListComponent = (props) => {
           "x-auth-token": token,
         },
       };
-      const res = await API.get("/api/admins", config);
-      if (!res) {
-        return false;
-      }
+      const res = await API.get("/api/products", config);
+      if (!res) return false;
       return res.data;
     } catch (err) {
       console.log(err);
@@ -191,14 +181,14 @@ const AdminListComponent = (props) => {
         });
       });
     });
-    const admin = await fetchadmins();
-    if (!admin) {
+    const products = await fetchproducts();
+    if (!products) {
       new AWN().alert("Network Error. Kindly check your internet connection", {
         durations: { alert: 0 },
       });
     }
-    setAdminData(admin.admins);
-    console.log(admin.admins);
+    setProductData(products.products);
+    console.log(products);
   }, [refreshData]);
 
   return (
@@ -211,7 +201,7 @@ const AdminListComponent = (props) => {
             <div className="row">
               <div className="col-12">
                 <div className="page-title-box">
-                  <h4 className="page-title">Admins</h4>
+                  <h4 className="page-title">Products</h4>
                 </div>
               </div>
             </div>
@@ -273,16 +263,15 @@ const AdminListComponent = (props) => {
                         <thead>
                           <tr>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
+                            <th>Category</th>
+                            <th>Price</th>
                             <th>Status</th>
                             <th style={{ width: 82 }}>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {adminData && adminData.length >= 1 ? (
-                            adminData.map((admin, index) => (
+                          {productData && productData.length >= 1 ? (
+                            productData.map((product, index) => (
                               <>
                                 <tr key={index}>
                                   <td className="table-user">
@@ -290,17 +279,15 @@ const AdminListComponent = (props) => {
                                       href="#"
                                       className="text-primary font-weight-semibold"
                                     >
-                                      {admin.name}
+                                      {product.name}
                                     </a>
                                   </td>
-                                  <td>{admin.email}</td>
-                                  <td>{admin.phone}</td>
-
-                                  <td>{admin.role || null}</td>
+                                  <td>{product.productCategory}</td>
+                                  <td>{formatAmount(product.price)}</td>
                                   <td>
-                                    {admin.isActive ? (
+                                    {product.isEnabled ? (
                                       <span className="badge badge-success">
-                                        Active
+                                        Enabled
                                       </span>
                                     ) : (
                                       <span className="badge badge-dark">
@@ -311,8 +298,8 @@ const AdminListComponent = (props) => {
                                   <td>
                                     <a
                                       onClick={() => {
-                                        console.log(admin);
-                                        setFormValue(admin);
+                                        console.log(product);
+                                        setFormValue(product);
                                         setDataUpdate(true);
                                         toggleShowDrawer(!showDrawer);
                                       }}
@@ -325,7 +312,7 @@ const AdminListComponent = (props) => {
                                     <a
                                       className="action-icon"
                                       onClick={() => {
-                                        deleteadmin(admin._id);
+                                        deleteadmin(product._id);
                                       }}
                                     >
                                       {" "}
@@ -335,12 +322,12 @@ const AdminListComponent = (props) => {
                                 </tr>
                               </>
                             ))
-                          ) : adminData && adminData.length === 0 ? (
+                          ) : productData && productData.length === 0 ? (
                             <tr>
                               <td colSpan={6} className="text-center py-5">
                                 {" "}
-                                {/* <h3> There are no admins yet.</h3> */}
-                                <Loader size="lg" content="Loading" />
+                                <h3> There are no products yet.</h3>
+                                {/* <Loader size="lg" content="Loading" /> */}
                               </td>
                             </tr>
                           ) : (
@@ -378,13 +365,13 @@ const AdminListComponent = (props) => {
           <Drawer.Title>
             {dataUpdate && (
               <span>
-                Update Admin{" "}
+                Update Product{" "}
                 <small className="font-weight-bolder text-primary ml-2">
                   {formValue.adminId}
                 </small>
               </span>
             )}
-            {!dataUpdate && <span>Add Admin</span>}
+            {!dataUpdate && <span>Add Product</span>}
           </Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
@@ -603,4 +590,4 @@ const AdminListComponent = (props) => {
   );
 };
 
-export default AdminListComponent;
+export default ProductListComponent;
