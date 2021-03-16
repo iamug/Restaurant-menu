@@ -6,23 +6,28 @@ import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
 
 const MenuCard = ({ product }) => {
+  const capitalize = (s) => {
+    if (typeof s !== "string") return "";
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  };
+
   return (
     <div class="card" style={{ width: "100%", border: "1px solid #cccccc" }}>
       <img
         class="card-img-top"
-        style={{ maxHeight: "200px" }}
+        style={{ height: "250px" }}
         loading="lazy"
         src={product.imageUrl}
         alt={product.name}
       />
       <div class="card-body">
         <Heading as="h4" size="md">
-          {product.name}
+          {capitalize(product.name)}
         </Heading>
-        <h5 class="card-title">{product.name}</h5>
-        <p class="card-text">{product.description}</p>
+
+        <p class="card-text py-2">{capitalize(product.description)}</p>
         <a href="#" class="btn btn-primary mt-2">
-          Go somewhere
+          Add to Cart
         </a>
       </div>
     </div>
