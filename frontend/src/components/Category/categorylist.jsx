@@ -1,29 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonToolbar, Drawer, ControlLabel } from "rsuite";
+import { Button, ButtonToolbar, ControlLabel } from "rsuite";
 import { Grid, Row, Col, InputGroup, Icon, Input, SelectPicker } from "rsuite";
 import { Form, FormGroup, FormControl, HelpBlock, Loader } from "rsuite";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../controllers/api";
+import { formatAmount } from "../../controllers/utils";
 
-const AdminListComponent = (props) => {
-  let initialFormState = {
-    name: null,
-    email: null,
-    phone: null,
-    isActive: null,
-    isVerified: null,
-    password: null,
-    password2: null,
-    avatar: null,
-  };
+const CategoryListComponent = (props) => {
+  let initialFormState = {};
+  const { isOpen, onOpen, onClose } = useDisclosure();
   let [showDrawer, toggleShowDrawer] = useState(false);
   let [formValue, setFormValue] = useState(initialFormState);
-  let [adminData, setAdminData] = useState([]);
+  let [productData, setProductData] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
   let [dataUpdate, setDataUpdate] = useState(false);
-  const [showpassword, setshowpassword] = useState(false);
-  const [showpassword2, setshowpassword2] = useState(false);
+  let token = localStorage.getItem("token");
+  let headers = {
+    "Content-Type": "application/json",
+    "x-auth-token": token,
+  };
 
   const deleteadmin = async (id) => {
     let notifier = new AWN();
@@ -32,14 +38,8 @@ const AdminListComponent = (props) => {
     }
     let onOk = async () => {
       try {
-        let token = localStorage.getItem("token");
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth-token": token,
-          },
-        };
-        const res = await API.delete("/api/admins/" + id, config);
+        const config = { headers };
+        const res = await API.delete("/api/category/" + id, config);
         if (!res) {
           notifier.alert("Error. Kindly check internet connection");
           return false;
@@ -60,39 +60,22 @@ const AdminListComponent = (props) => {
   };
 
   const addadmin = async () => {
-    const { name, email, phone, isActive, role } = formValue;
-    const { isVerified, password, password2 } = formValue;
-    if (!name && !email && !phone) {
+    const { name, description, isEnabled } = formValue;
+    if (!name || !description) {
       new AWN().alert("Kindly fill all fields", {
         durations: { alert: 4000 },
       });
       return false;
     }
-    if (password !== "" && password2 !== "")
-      if (password !== password2) {
-        new AWN().alert("Passwords do not match", {
-          durations: { alert: 4000 },
-        });
-        return false;
-      }
-    let body = { name, email, phone };
-    isActive && (body.isActive = isActive);
-    role && (body.role = role);
-    isVerified && (body.isVerified = isVerified);
-    password && password !== "" && (body.password = password);
+    let body = { name, description };
+    isEnabled !== undefined && (body.isEnabled = isEnabled);
     console.log(body);
     try {
-      let token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-      };
-      const res = await API.post("/api/admins", body, config);
+      const config = { headers };
+      const res = await API.post("/api/category", body, config);
       if (res.status == 201) {
         console.log("success");
-        new AWN().success("Admin added successfully ", {
+        new AWN().success("Category added successfully ", {
           durations: { success: 3000 },
         });
         setRefreshData(!refreshData);
@@ -111,39 +94,22 @@ const AdminListComponent = (props) => {
   };
 
   const updateadmins = async (id) => {
-    const { name, email, phone, isActive, role } = formValue;
-    const { isVerified, password, password2 } = formValue;
-    if (!name && !email && !phone) {
+    const { name, description, isEnabled } = formValue;
+    if (!name || !description) {
       new AWN().alert("Kindly fill all fields", {
         durations: { alert: 4000 },
       });
       return false;
     }
-    if (password !== "" && password2 !== "")
-      if (password !== password2) {
-        new AWN().alert("Passwords do not match", {
-          durations: { alert: 4000 },
-        });
-        return false;
-      }
-    let body = { name, email, phone };
-    isActive !== undefined && (body.isActive = isActive);
-    role && (body.role = role);
-    isVerified !== undefined && (body.isVerified = isVerified);
-    password && password !== "" && (body.password = password);
+    let body = { name, description };
+    isEnabled !== undefined && (body.isEnabled = isEnabled);
     console.log(body);
     try {
-      let token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-      };
-      const res = await API.put("/api/admins/" + id, body, config);
+      const config = { headers };
+      const res = await API.put("/api/category/" + id, body, config);
       if (res.status == 200) {
         console.log("success");
-        new AWN().success("Admin updated successfully ", {
+        new AWN().success("Update successful ", {
           durations: { success: 3000 },
         });
         setRefreshData(!refreshData);
@@ -161,19 +127,11 @@ const AdminListComponent = (props) => {
     }
   };
 
-  const fetchadmins = async () => {
+  const fetchproducts = async () => {
     try {
-      let token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-      };
-      const res = await API.get("/api/admins", config);
-      if (!res) {
-        return false;
-      }
+      const config = { headers };
+      const res = await API.get("/api/category", config);
+      if (!res) return false;
       return res.data;
     } catch (err) {
       console.log(err);
@@ -191,14 +149,14 @@ const AdminListComponent = (props) => {
         });
       });
     });
-    const admin = await fetchadmins();
-    if (!admin) {
+    const products = await fetchproducts();
+    if (!products) {
       new AWN().alert("Network Error. Kindly check your internet connection", {
         durations: { alert: 0 },
       });
     }
-    setAdminData(admin.admins);
-    console.log(admin.admins);
+    setProductData(products);
+    console.log(products);
   }, [refreshData]);
 
   return (
@@ -211,7 +169,7 @@ const AdminListComponent = (props) => {
             <div className="row">
               <div className="col-12">
                 <div className="page-title-box">
-                  <h4 className="page-title">Admins</h4>
+                  <h4 className="page-title">Category</h4>
                 </div>
               </div>
             </div>
@@ -260,6 +218,7 @@ const AdminListComponent = (props) => {
                               setFormValue(initialFormState);
                               setDataUpdate(false);
                               toggleShowDrawer(!showDrawer);
+                              onOpen();
                             }}
                           >
                             Add New
@@ -273,16 +232,14 @@ const AdminListComponent = (props) => {
                         <thead>
                           <tr>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
+                            <th>Category</th>
                             <th>Status</th>
                             <th style={{ width: 82 }}>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {adminData && adminData.length >= 1 ? (
-                            adminData.map((admin, index) => (
+                          {productData && productData.length >= 1 ? (
+                            productData.map((product, index) => (
                               <>
                                 <tr key={index}>
                                   <td className="table-user">
@@ -290,17 +247,17 @@ const AdminListComponent = (props) => {
                                       href="#"
                                       className="text-primary font-weight-semibold"
                                     >
-                                      {admin.name}
+                                      {product.name}
                                     </a>
                                   </td>
-                                  <td>{admin.email}</td>
-                                  <td>{admin.phone}</td>
-
-                                  <td>{admin.role || null}</td>
                                   <td>
-                                    {admin.isActive ? (
+                                    {product.description &&
+                                      product.description.substring(0, 10)}
+                                  </td>
+                                  <td>
+                                    {product.isEnabled ? (
                                       <span className="badge badge-success">
-                                        Active
+                                        Enabled
                                       </span>
                                     ) : (
                                       <span className="badge badge-dark">
@@ -311,10 +268,11 @@ const AdminListComponent = (props) => {
                                   <td>
                                     <a
                                       onClick={() => {
-                                        console.log(admin);
-                                        setFormValue(admin);
+                                        console.log(product);
+                                        setFormValue(product);
                                         setDataUpdate(true);
                                         toggleShowDrawer(!showDrawer);
+                                        onOpen();
                                       }}
                                       className="action-icon"
                                     >
@@ -325,7 +283,7 @@ const AdminListComponent = (props) => {
                                     <a
                                       className="action-icon"
                                       onClick={() => {
-                                        deleteadmin(admin._id);
+                                        deleteadmin(product._id);
                                       }}
                                     >
                                       {" "}
@@ -335,12 +293,12 @@ const AdminListComponent = (props) => {
                                 </tr>
                               </>
                             ))
-                          ) : adminData && adminData.length === 0 ? (
+                          ) : productData && productData.length === 0 ? (
                             <tr>
                               <td colSpan={6} className="text-center py-5">
                                 {" "}
-                                {/* <h3> There are no admins yet.</h3> */}
-                                <Loader size="lg" content="Loading" />
+                                <h3> There are no categories.</h3>
+                                {/* <Loader size="lg" content="Loading" /> */}
                               </td>
                             </tr>
                           ) : (
@@ -366,30 +324,24 @@ const AdminListComponent = (props) => {
         </div>{" "}
         {/* content */};
       </div>
-      <div className="row">
-        <div className="col-xs-12 col-sm-12 col-md-4">
-          <Drawer
-            backdrop={showDrawer}
-            show={showDrawer}
-            size="sm"
-            onHide={() => {
-              toggleShowDrawer(!showDrawer);
-            }}
-          >
-            <Drawer.Header>
-              <Drawer.Title>
-                {dataUpdate && (
-                  <span>
-                    Update Admin{" "}
-                    <small className="font-weight-bolder text-primary ml-2">
-                      {formValue.adminId}
-                    </small>
-                  </span>
-                )}
-                {!dataUpdate && <span>Add Admin</span>}
-              </Drawer.Title>
-            </Drawer.Header>
-            <Drawer.Body>
+
+      <Drawer onClose={onClose} isOpen={isOpen} size="md" placement="right">
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton className="mt-1" />
+            <DrawerHeader borderBottomWidth="1px">
+              {" "}
+              {dataUpdate && (
+                <span>
+                  Update Category{" "}
+                  <small className="font-weight-bolder text-primary ml-2">
+                    {formValue.adminId}
+                  </small>
+                </span>
+              )}
+              {!dataUpdate && <span>Add Category</span>}
+            </DrawerHeader>
+            <DrawerBody>
               <Form
                 fluid
                 checkTrigger="change"
@@ -406,17 +358,6 @@ const AdminListComponent = (props) => {
                 }}
               >
                 <Grid fluid>
-                  <Row gutter={10}>
-                    {formValue.avatar && (
-                      <div className="text-center px-3">
-                        <img
-                          style={{ height: "10rem", width: "10rem" }}
-                          className="img-thumbnail  rounded-circle"
-                          src={formValue.avatar && formValue.avatar}
-                        />
-                      </div>
-                    )}
-                  </Row>
                   <div className="mb-3"></div>
                   <Row gutter={10}>
                     <Col xs={12}>
@@ -432,41 +373,12 @@ const AdminListComponent = (props) => {
                     </Col>
                     <Col xs={12}>
                       <FormGroup>
-                        <ControlLabel>
-                          Email{" "}
-                          <HelpBlock tooltip style={{ marginTop: "0px" }}>
-                            Required
-                          </HelpBlock>
-                        </ControlLabel>
-                        <FormControl name="email" required />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <div className="mb-3"></div>
-                  <Row gutter={10}>
-                    <Col xs={12}>
-                      <FormGroup>
-                        <ControlLabel>
-                          Phone
-                          <HelpBlock tooltip style={{ marginTop: "0px" }}>
-                            Required
-                          </HelpBlock>
-                        </ControlLabel>
-                        <FormControl name="phone" required />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12}></Col>
-                  </Row>
-                  <div className="mb-3"></div>
-                  <Row gutter={10}>
-                    <Col xs={12}>
-                      <FormGroup>
                         <ControlLabel>Status</ControlLabel>
                         <FormControl
-                          name="isActive"
+                          name="isEnabled"
                           accepter={SelectPicker}
                           data={[
-                            { label: "Active", value: true },
+                            { label: "Enabled", value: true },
                             { label: "Disabled", value: false },
                           ]}
                           placeholder="Select Status"
@@ -474,114 +386,47 @@ const AdminListComponent = (props) => {
                         />
                       </FormGroup>
                     </Col>
-                    <Col xs={12}>
+                  </Row>
+                  <div className="mb-3"></div>
+                  <Row gutter={10}>
+                    <Col xs={24}>
                       <FormGroup>
-                        <ControlLabel>Verified</ControlLabel>
+                        <ControlLabel>
+                          Description
+                          <HelpBlock tooltip style={{ marginTop: "0px" }}>
+                            Required
+                          </HelpBlock>
+                        </ControlLabel>
                         <FormControl
-                          name="isVerified"
-                          accepter={SelectPicker}
-                          data={[
-                            { label: "Verified", value: true },
-                            { label: "Not Verified", value: false },
-                          ]}
-                          placeholder="Select Status"
-                          block
+                          rows={4}
+                          name="description"
+                          required
+                          componentClass="textarea"
                         />
                       </FormGroup>
                     </Col>
                   </Row>
                   <div className="mb-3"></div>
-                  <Row gutter={10}>
-                    <Col xs={12}>
-                      <FormGroup>
-                        <ControlLabel>Password</ControlLabel>
-                        <InputGroup inside style={{ width: "auto" }}>
-                          <Input
-                            name="password"
-                            type={showpassword ? "text" : "password"}
-                            id="password"
-                            onChange={(e) => {
-                              setFormValue({
-                                ...formValue,
-                                ["password"]: e.trim(),
-                              });
-                            }}
-                            value={formValue.password}
-                          />
-                          <InputGroup.Button
-                            onClick={() => {
-                              setshowpassword(!showpassword);
-                            }}
-                          >
-                            {" "}
-                            {showpassword ? (
-                              <Icon icon="eye" />
-                            ) : (
-                              <Icon icon="eye-slash" />
-                            )}
-                          </InputGroup.Button>
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12}>
-                      <FormGroup>
-                        <ControlLabel> Confirm Password</ControlLabel>
-                        <InputGroup inside style={{ width: "auto" }}>
-                          <Input
-                            name="password2"
-                            type={showpassword2 ? "text" : "password"}
-                            id="password2"
-                            onChange={(e) => {
-                              setFormValue({
-                                ...formValue,
-                                ["password2"]: e.trim(),
-                              });
-                            }}
-                            value={formValue.password2}
-                          />
-                          <InputGroup.Button
-                            onClick={() => {
-                              setshowpassword2(!showpassword2);
-                            }}
-                          >
-                            {" "}
-                            {showpassword2 ? (
-                              <Icon icon="eye" />
-                            ) : (
-                              <Icon icon="eye-slash" />
-                            )}
-                          </InputGroup.Button>
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                  </Row>
 
-                  <div className="mb-3"></div>
                   <div className="mb-4"></div>
                   <Row gutter={10}>
                     <Col xs={24}>
                       <FormGroup>
                         <ButtonToolbar>
                           {dataUpdate ? (
-                            <Button
-                              onClick={() => {
-                                //updateadmins(formValue.adminId);
-                              }}
-                              appearance="primary"
+                            <button
                               type="submit"
+                              className="btn btn-blue waves-effect waves-light mb-2"
                             >
                               Update
-                            </Button>
+                            </button>
                           ) : (
-                            <Button
-                              onClick={() => {
-                                //addadmin();
-                              }}
-                              appearance="primary"
+                            <button
                               type="submit"
+                              className="btn btn-blue waves-effect waves-light mb-2"
                             >
                               Add New
-                            </Button>
+                            </button>
                           )}
                         </ButtonToolbar>
                       </FormGroup>
@@ -589,22 +434,12 @@ const AdminListComponent = (props) => {
                   </Row>
                 </Grid>
               </Form>
-            </Drawer.Body>
-            <Drawer.Footer>
-              <Button
-                onClick={() => {
-                  toggleShowDrawer(!showDrawer);
-                }}
-                appearance="subtle"
-              >
-                Close
-              </Button>
-            </Drawer.Footer>
-          </Drawer>
-        </div>
-      </div>
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
     </React.Fragment>
   );
 };
 
-export default AdminListComponent;
+export default CategoryListComponent;

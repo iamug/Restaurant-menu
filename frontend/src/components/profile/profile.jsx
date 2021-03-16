@@ -5,6 +5,7 @@ import { Form, FormGroup, ControlLabel } from "rsuite";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../controllers/api";
+import { Center, Square, Circle } from "@chakra-ui/react";
 import { GetUserData, Reload } from "../../controllers/auth";
 import DataContext, { DataConsumer } from "../../context/datacontext";
 
@@ -169,17 +170,19 @@ const ProfileComponent = () => {
               <div className="row">
                 <div className="col-lg-4 col-xl-4">
                   <div className="card-box text-center">
-                    <img
-                      src={
-                        formValue && formValue.avatar
-                          ? formValue.avatar
-                          : userData && userData.avatar
-                          ? userData.avatar
-                          : "../assets/images/users/user-1.jpg"
-                      }
-                      className="rounded-circle avatar-xxl"
-                      alt="profile-image"
-                    />
+                    <Center>
+                      <img
+                        src={
+                          formValue && formValue.avatar
+                            ? formValue.avatar
+                            : userData && userData.avatar
+                            ? userData.avatar
+                            : "../assets/images/users/user-1.jpg"
+                        }
+                        className="rounded-circle d-inline-block avatar-xxl"
+                        alt="profile-image"
+                      />
+                    </Center>
                     <p>
                       <label htmlFor="avatar">
                         <span class="btn btn-dark btn-xs mt-3 ">

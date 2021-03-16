@@ -10,9 +10,31 @@ const { generateId, validMongooseId } = require("../../utils/utils");
 // @route   GET api/payment/
 // @desc    Get current users profile
 // @access  Private
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 }).lean();
+    const products = await Product.find()
+      .populate("productCategory")
+      .sort({ createdAt: -1 })
+      .lean();
+    if (!products) {
+      return res.status(400).json({ msg: "Invalid request" });
+    }
+    res.json({ success: true, products });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/payment/
+// @desc    Get current users profile
+// @access  Private
+router.get("/user", async (req, res) => {
+  try {
+    const products = await Product.find({ isEnabled: true })
+      .populate("productCategory")
+      .sort({ createdAt: -1 })
+      .lean();
     if (!products) {
       return res.status(400).json({ msg: "Invalid request" });
     }

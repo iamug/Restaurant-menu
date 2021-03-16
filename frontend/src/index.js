@@ -7,7 +7,9 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ChakraProvider portalZIndex={2}>
+      <App />
+    </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("wrapper")
 );

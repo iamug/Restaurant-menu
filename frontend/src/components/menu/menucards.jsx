@@ -3,22 +3,24 @@ import { Box } from "@chakra-ui/react";
 import { Image } from "@chakra-ui/react";
 import { Badge } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 
-const MenuCard = ({ property }) => {
+const MenuCard = ({ product }) => {
   return (
     <div class="card" style={{ width: "100%", border: "1px solid #cccccc" }}>
       <img
         class="card-img-top"
+        style={{ maxHeight: "200px" }}
         loading="lazy"
-        src="https://bit.ly/2Z4KKcF"
-        alt="Card image cap"
+        src={product.imageUrl}
+        alt={product.name}
       />
       <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.
-        </p>
+        <Heading as="h4" size="md">
+          {product.name}
+        </Heading>
+        <h5 class="card-title">{product.name}</h5>
+        <p class="card-text">{product.description}</p>
         <a href="#" class="btn btn-primary mt-2">
           Go somewhere
         </a>

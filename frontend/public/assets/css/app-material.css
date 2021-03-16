@@ -527,7 +527,7 @@ body[data-sidebar-icon="twotones"] #sidebar-menu > ul > li > a svg {
   left: 0;
   right: 0;
   height: 70px;
-  z-index: 1001;
+  z-index: 1;
   /* Search */ }
   .navbar-custom .topnav-menu > li {
     float: left; }

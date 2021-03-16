@@ -20,6 +20,7 @@ import MenuComponent from "./components/menu/menucomponent";
 import ProfileComponent from "./components/profile/profile";
 import AdminListComponent from "./components/admins/adminlist";
 import ProductListComponent from "./components/products/productlist";
+import CategoryListComponent from "./components/Category/categorylist";
 import Error404Component from "./components/404";
 import VerifyAdminComponent from "./components/login/verifyadmin";
 import RecoverPasswordComponent from "./components/resetpassword/recoverpassword";
@@ -117,6 +118,11 @@ function App() {
                     path="/products"
                     exact
                     component={ProductListComponent}
+                  />
+                  <Route
+                    path="/category"
+                    exact
+                    component={CategoryListComponent}
                   />
 
                   <Route path="/404" component={Error404Component} />

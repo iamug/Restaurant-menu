@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import $ from "jquery";
 import DataContext, { DataConsumer } from "../context/datacontext";
 import { LogoutUser, Reload } from "../controllers/auth";
+import { Avatar, AvatarBadge, AvatarGroup, WrapItem } from "@chakra-ui/react";
 //import "./login.module.css";
 
 const TopbarMenuComponent = (props) => {
@@ -115,117 +116,6 @@ const TopbarMenuComponent = (props) => {
                 </div>
               </div>
             </li>
-            {/* <li className="dropdown notification-list topbar-dropdown">
-              <a
-                className="nav-link dropdown-toggle waves-effect waves-light"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="false"
-                aria-expanded="false"
-              >
-                <i className="fe-bell noti-icon" />
-                <span className="badge badge-danger rounded-circle noti-icon-badge">
-                  9
-                </span>
-              </a>
-              <div className="dropdown-menu dropdown-menu-right dropdown-lg">
-                {// item }
-                <div className="dropdown-item noti-title">
-                  <h5 className="m-0">
-                    <span className="float-right">
-                      <a href="#" className="text-dark">
-                        <small>Clear All</small>
-                      </a>
-                    </span>
-                    Notification
-                  </h5>
-                </div>
-                <div className="noti-scroll" data-simplebar>
-                  {// item }
-                  <a href="#" className="dropdown-item notify-item active">
-                    <div className="notify-icon">
-                      <img
-                        src="../assets/images/users/user-1.jpg"
-                        className="img-fluid rounded-circle"
-                        alt="logo"
-                      />{" "}
-                    </div>
-                    <p className="notify-details">Cristina Pride</p>
-                    <p className="text-muted mb-0 user-msg">
-                      <small>
-                        Hi, How are you? What about our next meeting
-                      </small>
-                    </p>
-                  </a>
-                  {// item }
-                  <a href="#" className="dropdown-item notify-item">
-                    <div className="notify-icon bg-primary">
-                      <i className="mdi mdi-comment-account-outline" />
-                    </div>
-                    <p className="notify-details">
-                      Caleb Flakelar commented on Admin
-                      <small className="text-muted">1 min ago</small>
-                    </p>
-                  </a>
-                  {// item }
-                  <a href="#" className="dropdown-item notify-item">
-                    <div className="notify-icon">
-                      <img
-                        src="../assets/images/users/user-4.jpg"
-                        className="img-fluid rounded-circle"
-                        alt="logo"
-                      />{" "}
-                    </div>
-                    <p className="notify-details">Karen Robinson</p>
-                    <p className="text-muted mb-0 user-msg">
-                      <small>
-                        Wow ! this admin looks good and awesome design
-                      </small>
-                    </p>
-                  </a>
-                  {// item}
-                  <a href="#" className="dropdown-item notify-item">
-                    <div className="notify-icon bg-warning">
-                      <i className="mdi mdi-account-plus" />
-                    </div>
-                    <p className="notify-details">
-                      New user registered.
-                      <small className="text-muted">5 hours ago</small>
-                    </p>
-                  </a>
-                  {// item}
-                  <a href="#" className="dropdown-item notify-item">
-                    <div className="notify-icon bg-info">
-                      <i className="mdi mdi-comment-account-outline" />
-                    </div>
-                    <p className="notify-details">
-                      Caleb Flakelar commented on Admin
-                      <small className="text-muted">4 days ago</small>
-                    </p>
-                  </a>
-                  {// item}
-                  <a href="#" className="dropdown-item notify-item">
-                    <div className="notify-icon bg-secondary">
-                      <i className="mdi mdi-heart" />
-                    </div>
-                    <p className="notify-details">
-                      Carlos Crouch liked
-                      <b>Admin</b>
-                      <small className="text-muted">13 days ago</small>
-                    </p>
-                  </a>
-                </div>
-                {// All }
-                <a
-                  href="#"
-                  className="dropdown-item text-center text-primary notify-item notify-all"
-                >
-                  View all
-                  <i className="fe-arrow-right" />
-                </a>
-              </div>
-            </li> */}
 
             <li className="dropdown notification-list topbar-dropdown">
               <a
@@ -248,13 +138,13 @@ const TopbarMenuComponent = (props) => {
                 aria-haspopup="false"
                 aria-expanded="false"
               >
-                {userdata && userdata.avatar && (
-                  <img
-                    src={userdata.avatar}
-                    alt="user-image"
-                    className="rounded-circle mx-2"
-                  />
-                )}
+                <Avatar
+                  size="md"
+                  name="Kola Tioluwani"
+                  className="m-2"
+                  src={userdata.avatar}
+                />
+
                 <span className="pro-user-name ml-1">
                   {(userdata && userdata.name) || null}{" "}
                   <i className="mdi mdi-chevron-down" />
@@ -363,155 +253,6 @@ const TopbarMenuComponent = (props) => {
                 </div>
               </a>
               {/* End mobile menu toggle*/}
-            </li>
-            <li className="dropdown hidden d-none d-xl-block">
-              <a
-                className="nav-link dropdown-toggle waves-effect waves-light"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="false"
-                aria-expanded="false"
-              >
-                Create New
-                <i className="mdi mdi-chevron-down" />
-              </a>
-              <div className="dropdown-menu">
-                {/* item*/}
-                <a href="#" className="dropdown-item">
-                  <i className="fe-briefcase mr-1" />
-                  <span>New Projects</span>
-                </a>
-                {/* item*/}
-                <a href="#" className="dropdown-item">
-                  <i className="fe-user mr-1" />
-                  <span>Create Users</span>
-                </a>
-                {/* item*/}
-                <a href="#" className="dropdown-item">
-                  <i className="fe-bar-chart-line- mr-1" />
-                  <span>Revenue Report</span>
-                </a>
-                {/* item*/}
-                <a href="#" className="dropdown-item">
-                  <i className="fe-settings mr-1" />
-                  <span>Settings</span>
-                </a>
-                <div className="dropdown-divider" />
-                {/* item*/}
-                <a href="#" className="dropdown-item">
-                  <i className="fe-headphones mr-1" />
-                  <span>Help &amp; Support</span>
-                </a>
-              </div>
-            </li>
-            <li className="dropdown hidden dropdown-mega d-none d-xl-block">
-              <a
-                className="nav-link dropdown-toggle waves-effect waves-light"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="false"
-                aria-expanded="false"
-              >
-                Mega Menu
-                <i className="mdi mdi-chevron-down" />
-              </a>
-              <div className="dropdown-menu dropdown-megamenu">
-                <div className="row">
-                  <div className="col-sm-8">
-                    <div className="row">
-                      <div className="col-md-4">
-                        <h5 className="text-dark mt-0">UI Components</h5>
-                        <ul className="list-unstyled megamenu-list">
-                          <li>
-                            <a href="#">Widgets</a>
-                          </li>
-                          <li>
-                            <a href="#">Nestable List</a>
-                          </li>
-                          <li>
-                            <a href="#">Range Sliders</a>
-                          </li>
-                          <li>
-                            <a href="#">Masonry Items</a>
-                          </li>
-                          <li>
-                            <a href="#">Sweet Alerts</a>
-                          </li>
-                          <li>
-                            <a href="#">Treeview Page</a>
-                          </li>
-                          <li>
-                            <a href="#">Tour Page</a>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-md-4">
-                        <h5 className="text-dark mt-0">Applications</h5>
-                        <ul className="list-unstyled megamenu-list">
-                          <li>
-                            <a href="#">eCommerce Pages</a>
-                          </li>
-                          <li>
-                            <a href="#">CRM Pages</a>
-                          </li>
-                          <li>
-                            <a href="#">Email</a>
-                          </li>
-                          <li>
-                            <a href="#">Calendar</a>
-                          </li>
-                          <li>
-                            <a href="#">Team Contacts</a>
-                          </li>
-                          <li>
-                            <a href="#">Task Board</a>
-                          </li>
-                          <li>
-                            <a href="#">Email Templates</a>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-md-4">
-                        <h5 className="text-dark mt-0">Extra Pages</h5>
-                        <ul className="list-unstyled megamenu-list">
-                          <li>
-                            <a href="#">Left Sidebar with User</a>
-                          </li>
-                          <li>
-                            <a href="#">Menu Collapsed</a>
-                          </li>
-                          <li>
-                            <a href="#">Small Left Sidebar</a>
-                          </li>
-                          <li>
-                            <a href="#">New Header Style</a>
-                          </li>
-                          <li>
-                            <a href="#">Search Result</a>
-                          </li>
-                          <li>
-                            <a href="#">Gallery Pages</a>
-                          </li>
-                          <li>
-                            <a href="#">Maintenance &amp; Coming Soon</a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-sm-4">
-                    <div className="text-center mt-3">
-                      <h3 className="text-dark">Special Discount Sale!</h3>
-                      <h4>Save up to 70% off.</h4>
-                      <button className="btn btn-primary btn-rounded mt-3">
-                        Download Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </li>
           </ul>
           <div className="clearfix" />

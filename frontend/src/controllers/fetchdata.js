@@ -1,22 +1,22 @@
-// import API from "./api";
+import API from "./api";
 
-// export async function FetchAdminsData() {
-//   let token = localStorage.getItem("token");
-//   if (!token) {
-//     return false;
-//   }
-//   if (token) {
-//     const config = {
-//       headers: {
-//         "Content-Type": "application/json",
-//         "x-auth-token": token,
-//       },
-//     };
-//     const res = await API.get("/api/admins", config);
-//     if (!res) return false;
-//     return res.data;
-//   }
-// }
+export async function FetchCategoryData() {
+  let token = localStorage.getItem("token");
+  if (!token) {
+    return false;
+  }
+  if (token) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": token,
+      },
+    };
+    const res = await API.get("/api/category", config);
+    if (!res) return false;
+    return res.data;
+  }
+}
 
 // export async function FetchPlansData() {
 //   let token = localStorage.getItem("token");

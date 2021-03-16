@@ -10,27 +10,6 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const rfs = require("rotating-file-stream");
-// const monthNames = [
-//   "January",
-//   "February",
-//   "March",
-//   "April",
-//   "May",
-//   "June",
-//   "July",
-//   "August",
-//   "September",
-//   "October",
-//   "November",
-//   "December",
-// ];
-// let yyyy = new Date().getFullYear();
-// let dd = new Date().getDate();
-// let mm = monthNames[new Date().getMonth()];
-// let min = new Date().getMinutes();
-// let defaultDate = () => {
-//   return `${yyyy}-${mm}-${dd}-${min}`;
-// };
 
 const LogStream = fs.createWriteStream(path.join(__dirname, `logs.log`), {
   flags: "a",
@@ -88,8 +67,6 @@ app.use("/upload", auth, async (req, res) => {
   const file = req.files.file;
   console.log(file.mimetype);
   const key = `Commute-Bucket-Oct-2020/${req.user.id}/${uuidv4()}-${file.name}`;
-  //const key = `${file.name}`;
-  //let uploadURL = null;
   s3.getSignedUrl(
     "putObject",
     {
@@ -98,40 +75,9 @@ app.use("/upload", auth, async (req, res) => {
       Key: key,
     },
     async (err, url) => {
-      console.log(url);
       res.status(200).json({ key, url });
-      /*await axios.put(url, file, {
-        headers: {
-          "Content-Type": file.mimetype,
-        },
-      }); */
-      //console.log("complete");
     }
   );
-
-  //console.log("uploadURL");
-  //console.log(uploadURL);
-  /* await axios.put(uploadURL, file, {
-    headers: {
-      "Content-Type": file.type,
-    },
-  }); */
-
-  /* const id = Math.floor(Math.random() * 10001000 + 1);
-  file.name = file.name.replace(/\s/g, "");
-  file.name = id + file.name; */
-
-  /* file.mv(`${__dirname}/client/public/uploads/${file.name}`, (err) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send(err);
-    }
-    res.json({
-      fileName: file.name,
-      filePath2: `${req.protocol}://${req.headers["x-forwarded-host"]}/uploads/${file.name}`,
-      filePath: `/uploads/${file.name}`,
-    });
-  }); */
 });
 
 app.get("/", (req, res) => res.send("API Running"));
@@ -144,14 +90,9 @@ app.use("/api/profile", require("./routes/api/profile"));
 // app.use("/api/payments", require("./routes/api/payments"));
 app.use("/api/admins", require("./routes/api/admins"));
 app.use("/api/products", require("./routes/api/products"));
-
-//server.use("/api/json", router);
-//app.use("/api/referrals", require("./routes/api/referrals"));
-// app.use("/api/orders", require("./routes/api/orders"));
-// app.use("/api/payments", require("./routes/api/payments"));
-// app.use("/api/commissions", require("./routes/api/commissions"));
-//app.use("/api/land", require("./routes/api/land"));
+app.use("/api/category", require("./routes/api/category"));
 
 const PORT = process.env.PORT || 6000;
 
 app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));
+//app.listen(4000, () => console.log(`Server stated on port ${4000}`));

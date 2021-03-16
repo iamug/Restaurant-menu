@@ -51,8 +51,8 @@ router.delete("/:id", auth, async (req, res) => {
     return res.status(400).json({ success: false, msg: "invalid Request" });
   }
   try {
-    let payment = await Category.findByIdAndRemove(req.params.id);
-    if (!payment) {
+    let category = await Category.findByIdAndRemove(req.params.id);
+    if (!category) {
       return res
         .status(404)
         .json({ success: false, msg: "Record does not exist" });
@@ -68,18 +68,15 @@ router.delete("/:id", auth, async (req, res) => {
 // @desc   Add Plans route
 // @access Public
 router.post("/", auth, async (req, res) => {
-  let { name, imageUrl, description, isEnabled } = req.body;
-  let { productCategory, price } = req.body;
-  if (!name || !imageUrl || !description || !productCategory) {
+  let { name, description, isEnabled } = req.body;
+  if (!name || !description) {
     return res.status(400).json({ success: false, msg: "Invalid request" });
   }
-  let productId = generateId("PROD");
-  let insertData = { productId, name, imageUrl, description, productCategory };
+  let insertData = { name, description };
   insertData.creator = req.user.id;
   isEnabled && (insertData.isEnabled = isEnabled);
-  price && (insertData.price = price);
   try {
-    let product = await new Category(insertData).save();
+    let category = await new Category(insertData).save();
     res.status(201).send({ success: true });
   } catch (err) {
     console.error(err.message);
@@ -94,20 +91,16 @@ router.put("/:id", auth, async (req, res) => {
   if (!req.params.id || !validMongooseId(req.params.id)) {
     return res.status(400).json({ success: false, msg: "invalid Request" });
   }
-  let { name, imageUrl, description, isEnabled } = req.body;
-  let { productCategory, price } = req.body;
-  let productData = await Category.findById(req.params.id);
-  if (!productData)
+  let { name, description, isEnabled } = req.body;
+  let categoryData = await Category.findById(req.params.id);
+  if (!categoryData)
     res.status(404).send({ success: false, msg: "Record does not exist" });
   let updateFields = {};
   name && (updateFields.name = name);
-  imageUrl && (updateFields.imageUrl = imageUrl);
   description && (updateFields.description = description);
-  productCategory && (updateFields.productCategory = productCategory);
   isEnabled !== undefined && (updateFields.isEnabled = isEnabled);
-  price && (updateFields.price = price);
   try {
-    let product = await Category.findOneAndUpdate(
+    let category = await Category.findOneAndUpdate(
       { _id: req.params.id },
       { $set: updateFields },
       { new: true }
