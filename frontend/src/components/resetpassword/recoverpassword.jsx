@@ -56,8 +56,13 @@ const RecoverPasswordComponent = (props) => {
   };
 
   useEffect(() => {
-    // $("body").addClass("authentication-bg authentication-bg-pattern");
+    $("body").css({ "background-color": "#b5aeef" });
+    //$("body").addClass("authentication-bg authentication-bg-pattern");
     // console.log("enter");
+    return () => {
+      console.log("unmounted login");
+      $("body").css({ "background-color": "unset" });
+    };
   }, []);
 
   return (

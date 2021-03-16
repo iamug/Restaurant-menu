@@ -39,9 +39,16 @@ const VerifyAdminComponent = (props) => {
   };
 
   useEffect(async () => {
-    $("body").addClass("authentication-bg authentication-bg-pattern");
+    //$("body").addClass("authentication-bg authentication-bg-pattern");
+    $("body").css({ "background-color": "#b5aeef" });
+
     await verify();
     setLoading(true);
+
+    return () => {
+      console.log("unmounted login");
+      $("body").css({ "background-color": "unset" });
+    };
   }, []);
 
   return (

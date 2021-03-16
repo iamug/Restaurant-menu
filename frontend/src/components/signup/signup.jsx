@@ -7,8 +7,9 @@ const notifier = new AWN({});
 
 //import "./login.module.css";
 
-const LoginComponent = (props) => {
+const SignupComponent = (props) => {
   let [email, setEmail] = useState(null);
+  let [name, setName] = useState(null);
   let [password, setPassword] = useState(null);
   let [notVerified, setNotVerified] = useState(false);
   const { setUserData } = useContext(DataContext);
@@ -192,6 +193,18 @@ const LoginComponent = (props) => {
                     }}
                   >
                     <div className="form-group mb-3">
+                      <label htmlFor="name">Name</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="name"
+                        onChange={(e) => setName(e.target.value.trim())}
+                        value={name}
+                        required
+                        placeholder="Enter your name"
+                      />
+                    </div>
+                    <div className="form-group mb-3">
                       <label htmlFor="emailaddress">Email address</label>
                       <input
                         className="form-control"
@@ -254,38 +267,23 @@ const LoginComponent = (props) => {
                         onClick={(e) => {}}
                       >
                         {" "}
-                        Log In{" "}
+                        Signup{" "}
                       </button>
                     </div>
                   </form>
                   <div className="row mt-3">
-                    <div className="col-12  row text-center mt-3">
-                      <div className="col-6">
-                        <p className="text-dark">
-                          {" "}
-                          <a
-                            onClick={(e) => {
-                              props.history.push("/signup");
-                            }}
-                            className="text-primary ml-1 font-14"
-                          >
-                            Signup
-                          </a>
-                        </p>
-                      </div>
-                      <div className="col-6">
-                        <p className="text-dark">
-                          {" "}
-                          <a
-                            onClick={(e) => {
-                              props.history.push("/recoverpassword");
-                            }}
-                            className="text-primary ml-1 font-14"
-                          >
-                            Forgot password
-                          </a>
-                        </p>
-                      </div>
+                    <div className="col-12 text-center mt-3">
+                      <p className="text-dark">
+                        {" "}
+                        <a
+                          onClick={(e) => {
+                            props.history.push("/login");
+                          }}
+                          className="text-primary ml-1 font-14"
+                        >
+                          Login
+                        </a>
+                      </p>
                     </div>{" "}
                     {/* end col */}
                   </div>
@@ -309,4 +307,4 @@ const LoginComponent = (props) => {
   );
 };
 
-export default LoginComponent;
+export default SignupComponent;

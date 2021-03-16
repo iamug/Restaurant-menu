@@ -16,6 +16,7 @@ import { Spinner } from "@chakra-ui/react";
 import DataContext, { DataProvider } from "./context/datacontext";
 import { GetUserData, PrivateRoute } from "./controllers/auth";
 import LoginComponent from "./components/login/login";
+import SignupComponent from "./components/signup/signup";
 import MenuComponent from "./components/menu/menucomponent";
 import ProfileComponent from "./components/profile/profile";
 import AdminListComponent from "./components/admins/adminlist";
@@ -76,6 +77,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/login" exact component={LoginComponent} />
+          <Route path="/signup" exact component={SignupComponent} />
           <Route path="/menu" exact component={withRouter(MenuComponent)} />
           <Route path="/" exact component={LoginComponent} />
           <Route

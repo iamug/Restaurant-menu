@@ -183,31 +183,31 @@ const LeftSideMenuComponent = (props) => {
             <li>
               <a href="#sidebarMultilevelBooking" data-toggle="collapse">
                 <i className=" fas fa-receipt" />
-                <span> Bookings </span> <span className="menu-arrow" />
+                <span> Products </span> <span className="menu-arrow" />
               </a>
               <div className="collapse" id="sidebarMultilevelBooking">
                 <ul className="nav-second-level">
                   <li>
                     <a
-                      href="/bookings"
+                      href="/products"
                       onClick={(e) => {
                         e.preventDefault();
-                        props.history.push("/bookings");
+                        props.history.push("/products");
                       }}
                     >
-                      Bookings
+                      Products
                     </a>
                   </li>
 
                   <li>
                     <a
-                      href="/itineraries"
+                      href="/category"
                       onClick={(e) => {
                         e.preventDefault();
-                        props.history.push("/itineraries");
+                        props.history.push("/category");
                       }}
                     >
-                      Itineraries
+                      Categories
                     </a>
                   </li>
                 </ul>
