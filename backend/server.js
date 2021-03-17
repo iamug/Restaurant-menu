@@ -92,7 +92,7 @@ app.use("/api/admins", require("./routes/api/admins"));
 app.use("/api/products", require("./routes/api/products"));
 app.use("/api/category", require("./routes/api/category"));
 
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));
 //app.listen(4000, () => console.log(`Server stated on port ${4000}`));
