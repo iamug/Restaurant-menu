@@ -17,7 +17,7 @@ const Admin = require("../../models/Admins");
 router.get("/", auth, async (req, res) => {
   try {
     const admins = await Admin.find()
-      .select("-password -_id")
+      .select("-password")
       .sort({ date_created: -1 });
     if (!admins) {
       return res.status(400).json({ msg: "There is no admin" });

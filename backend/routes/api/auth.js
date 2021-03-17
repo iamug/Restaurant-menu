@@ -7,6 +7,7 @@ const config = require("config");
 const crypto = require("crypto");
 const { check, validationResult } = require("express-validator");
 const pug = require("pug");
+const { generateId, validMongooseId } = require("../../utils/utils");
 
 const {
   devTransporter,
@@ -22,8 +23,11 @@ const Admin = require("../../models/Admins");
 router.get("/", auth, async (req, res) => {
   try {
     const user = await Admin.findById(req.user.id).select("-password").lean();
-    
-    if(!user) return res.status(400).json({ errors: [{ msg: "Error. Kindly try again later" }] });
+
+    if (!user)
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Error. Kindly try again later" }] });
     res.json(user);
   } catch (err) {
     console.log(err.message);
@@ -241,6 +245,102 @@ router.post(
   }
 );
 
+// @route  POST api/users
+// @desc   Register route
+// @access Public
+router.post(
+  "/signup",
+  [
+    check("name", "Name is required").not().isEmpty(),
+    check("email", "Please include valid email address").isEmail(),
+    check(
+      "password",
+      "Please enter a password with more than 6 characters"
+    ).isLength({ min: 6 }),
+  ],
+  async (req, res) => {
+    console.log(req.body);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, email, password } = req.body;
+    let adminId = generateId("ADMIN");
+
+    //const emailBody = `<h1> Hello ${name} </h1><br><br><h4> Welcome ${email}</h4>`;
+
+    try {
+      let user = await Admin.findOne({ email });
+      if (user) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "User already exists" }] });
+      }
+      user = new Admin({
+        adminId,
+        name,
+        email,
+        password,
+      });
+
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+
+      const signupToken = user.getSignupVerificationToken();
+      await user.save();
+      //await user.save({ validateBeforeSave: false });
+      const verifyURL = `${config.get(
+        "Frontend_URL"
+      )}/signupverify${signupToken}`;
+      // renderFile
+      var html = pug.renderFile(
+        `${__dirname}/../../email/email-verification.pug`,
+        {
+          userName: name,
+          url: verifyURL,
+        }
+      );
+
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      jwt.sign(
+        payload,
+        config.get("jwtSecret"),
+        {
+          expiresIn: 360000,
+        },
+        async (err, token) => {
+          if (err) throw err;
+          // send mail with defined transport object
+          devTransporter.sendMail({
+            from: '"Commute" <noreply@sample.ng>', // sender address
+            to: email, // list of receivers
+            subject: "Verify Email", // Subject line
+            text: "Verify Email", // plain text body
+            html: html, // html body
+          });
+
+          //console.log("Message sent: %s", info.messageId);
+          // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+          res.json({ success: true });
+        }
+      );
+
+      // res.send("User registered");
+    } catch (err) {
+      console.log(err);
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
 // @route  POST api/retrievals/me
 // @desc   Retrieval route
 // @access Private
@@ -262,7 +362,7 @@ router.put("/profile/", auth, async (req, res) => {
       { $set: updateFields },
       { new: true }
     );
-    
+
     let adminRole;
     try {
       adminRole = admin.role && (await Role.findById(admin.role).lean());

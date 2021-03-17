@@ -21,6 +21,7 @@ const CategoryListComponent = (props) => {
   let initialFormState = {};
   const { isOpen, onOpen, onClose } = useDisclosure();
   let [showDrawer, toggleShowDrawer] = useState(false);
+  let [loading, setLoading] = useState(false);
   let [formValue, setFormValue] = useState(initialFormState);
   let [productData, setProductData] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
@@ -157,6 +158,7 @@ const CategoryListComponent = (props) => {
     }
     setProductData(products);
     console.log(products);
+    setLoading(true);
   }, [refreshData]);
 
   return (
@@ -238,7 +240,7 @@ const CategoryListComponent = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {productData && productData.length >= 1 ? (
+                          {loading && productData && productData.length >= 1 ? (
                             productData.map((product, index) => (
                               <>
                                 <tr key={index}>
@@ -293,7 +295,9 @@ const CategoryListComponent = (props) => {
                                 </tr>
                               </>
                             ))
-                          ) : productData && productData.length === 0 ? (
+                          ) : loading &&
+                            productData &&
+                            productData.length === 0 ? (
                             <tr>
                               <td colSpan={6} className="text-center py-5">
                                 {" "}

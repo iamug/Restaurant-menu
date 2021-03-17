@@ -19,6 +19,7 @@ import LoginComponent from "./components/login/login";
 import SignupComponent from "./components/signup/signup";
 import MenuComponent from "./components/menu/menucomponent";
 import ProfileComponent from "./components/profile/profile";
+import DashboardComponent from "./components/dashboard/dashboard";
 import AdminListComponent from "./components/admins/adminlist";
 import ProductListComponent from "./components/products/productlist";
 import CategoryListComponent from "./components/Category/categorylist";
@@ -112,7 +113,7 @@ function App() {
                   <Route
                     path="/dashboard"
                     exact
-                    render={(props) => <ProfileComponent {...props} />}
+                    render={(props) => <DashboardComponent {...props} />}
                   />
                   <Route path="/profile" exact component={ProfileComponent} />
                   <Route path="/admins" exact component={AdminListComponent} />

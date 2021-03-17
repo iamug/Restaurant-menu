@@ -24,6 +24,7 @@ const ProductListComponent = (props) => {
   let initialFormState = {};
   const { isOpen, onOpen, onClose } = useDisclosure();
   let [showDrawer, toggleShowDrawer] = useState(false);
+  let [loading, setLoading] = useState(false);
   let [formValue, setFormValue] = useState(initialFormState);
   let [productData, setProductData] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
@@ -236,6 +237,7 @@ const ProductListComponent = (props) => {
     }
     setProductData(products.products);
     console.log(products);
+    setLoading(true);
   }, [refreshData]);
 
   return (
@@ -318,7 +320,7 @@ const ProductListComponent = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {productData && productData.length >= 1 ? (
+                          {loading && productData && productData.length >= 1 ? (
                             productData.map((product, index) => (
                               <>
                                 <tr key={index}>
@@ -374,7 +376,9 @@ const ProductListComponent = (props) => {
                                 </tr>
                               </>
                             ))
-                          ) : productData && productData.length === 0 ? (
+                          ) : loading &&
+                            productData &&
+                            productData.length === 0 ? (
                             <tr>
                               <td colSpan={6} className="text-center py-5">
                                 {" "}
@@ -524,6 +528,16 @@ const ProductListComponent = (props) => {
                           data={categoryData}
                           labelKey="name"
                           valueKey="_id"
+                          defaultValue={
+                            formValue.productCategory &&
+                            formValue.productCategory._id
+                          }
+                          value={
+                            typeof formValue.productCategory == "object"
+                              ? formValue.productCategory &&
+                                formValue.productCategory._id
+                              : formValue.productCategory
+                          }
                           onOpen={handleSelectCategory}
                           onSearch={handleSelectCategory}
                           renderMenu={(menu) => {

@@ -6,8 +6,6 @@ import { Table } from "rsuite";
 import API from "../../controllers/api";
 import { Notification } from "rsuite";
 import AWN from "awesome-notifications";
-import { FetchUsersData } from "../../controllers/fetchdata";
-import { hasModulePermission } from "../../controllers/auth";
 import DataContext, { DataConsumer } from "../../context/datacontext";
 
 const DashboardComponent = (props) => {
@@ -24,88 +22,11 @@ const DashboardComponent = (props) => {
     "x-auth-token": token,
   };
 
-  const fetchrecentbookings = async () => {
-    try {
-      const config = { headers };
-      const res = await API.get("/api/dashboard/recentbookings", config);
-      if (!res) return false;
-      return res.data;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  };
-
-  const fetchrecenttickets = async () => {
-    try {
-      const config = { headers };
-      const res = await API.get("/api/dashboard/recenttickets", config);
-      if (!res) return false;
-      return res.data;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  };
-
-  const fetchrecenttrans = async () => {
-    try {
-      const config = { headers };
-      const res = await API.get("/api/dashboard/recenttrans", config);
-      if (!res) return false;
-      return res.data;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  };
-
-  const fetchtotalsummary = async () => {
-    try {
-      const config = { headers };
-      const res = await API.get("/api/dashboard/totalsummary", config);
-      if (!res) return false;
-      return res.data;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  };
-
-  const NotPermittedWidget = () => (
-    <div className="col-md-6 col-xl-3">
-      <div className="widget-rounded-circle card-box">
-        <div className="row">
-          <div className="col-12">
-            <div className="text-center">
-              <h3 className="text-muted mt-1 py-2">Not Permitted</h3>
-              <p className="text-muted text-truncate"></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   useEffect(async () => {
     console.log({ userdata });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
-    $("body").removeClass("authentication-bg authentication-bg-pattern");
+    //$("body").removeClass("authentication-bg authentication-bg-pattern");
     //console.log("enter");
-    const total = await fetchtotalsummary();
-    const bookings = await fetchrecentbookings();
-    const tickets = await fetchrecenttickets();
-    const trans = await fetchrecenttrans();
-    // console.log({ total, bookings, tickets, trans });
-    if (!total || !bookings || !tickets || !trans) {
-      new AWN().alert("Network Error. Kindly check your internet connection", {
-        durations: { alert: 0 },
-      });
-    }
-    setTotalSummary(total);
-    setRecentBookings(bookings);
-    setRecentTickets(tickets);
-    setRecentTrans(trans);
     setLoading(true);
   }, [userdata, refreshData]);
 
@@ -139,130 +60,107 @@ const DashboardComponent = (props) => {
               </div>
               {/* end page title */}
               <div className="row">
-                {hasModulePermission.read(props.permissions, "Users") ? (
-                  <div className="col-md-6 col-xl-3">
-                    <div className="widget-rounded-circle card-box">
-                      <div className="row">
-                        <div className="col-6">
-                          <div className="avatar-lg rounded-circle bg-soft-info border-info border">
-                            <i className="mdi mdi-account-multiple font-22 avatar-title text-info" />
-                          </div>
+                <div className="col-md-3 col-xl-3">
+                  <div className="widget-rounded-circle card-box">
+                    <div className="row">
+                      <div className="col-6">
+                        <div className="avatar-lg rounded-circle bg-soft-info border-info border">
+                          <i className="mdi mdi-account-multiple font-22 avatar-title text-info" />
                         </div>
-                        <div className="col-6">
-                          <div className="text-right">
-                            <h3 className="mt-1">
-                              <span data-plugin="counterup">
-                                {totalSummary && totalSummary.users}
-                              </span>
-                            </h3>
-                            <p className="text-muted mb-1 text-truncate">
-                              Total Users
-                            </p>
-                          </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="text-right">
+                          <h3 className="mt-1">
+                            <span data-plugin="counterup">0</span>
+                          </h3>
+                          <p className="text-muted mb-1 text-truncate">
+                            Total Users
+                          </p>
                         </div>
-                      </div>{" "}
-                      {/* end row*/}
+                      </div>
                     </div>{" "}
-                    {/* end widget-rounded-circle*/}
-                  </div>
-                ) : (
-                  <NotPermittedWidget />
-                )}
+                    {/* end row*/}
+                  </div>{" "}
+                  {/* end widget-rounded-circle*/}
+                </div>
                 {/* end col*/}
-                {hasModulePermission.read(props.permissions, "Drivers") ? (
-                  <div className="col-md-6 col-xl-3">
-                    <div className="widget-rounded-circle card-box">
-                      <div className="row">
-                        <div className="col-6">
-                          <div className="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                            <i className="mdi mdi-steering font-22 avatar-title text-primary" />
-                          </div>
+                <div className="col-md-3 col-xl-3">
+                  <div className="widget-rounded-circle card-box">
+                    <div className="row">
+                      <div className="col-6">
+                        <div className="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                          <i className="mdi mdi-steering font-22 avatar-title text-primary" />
                         </div>
-                        <div className="col-6">
-                          <div className="text-right">
-                            <h3 className="text-dark mt-1">
-                              <span data-plugin="counterup">
-                                {totalSummary && totalSummary.drivers}
-                              </span>
-                            </h3>
-                            <p className="text-muted mb-1 text-truncate">
-                              Total Drivers
-                            </p>
-                          </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="text-right">
+                          <h3 className="text-dark mt-1">
+                            <span data-plugin="counterup">0</span>
+                          </h3>
+                          <p className="text-muted mb-1 text-truncate">
+                            Total Admins
+                          </p>
                         </div>
-                      </div>{" "}
-                      {/* end row*/}
+                      </div>
                     </div>{" "}
-                    {/* end widget-rounded-circle*/}
-                  </div>
-                ) : (
-                  <NotPermittedWidget />
-                )}
+                    {/* end row*/}
+                  </div>{" "}
+                  {/* end widget-rounded-circle*/}
+                </div>
+
                 {/* end col*/}
-                {hasModulePermission.read(props.permissions, "Partners") ? (
-                  <div className="col-md-6 col-xl-3">
-                    <div className="widget-rounded-circle card-box">
-                      <div className="row">
-                        <div className="col-6">
-                          <div className="avatar-lg rounded-circle bg-soft-info border-info border">
-                            <i className="mdi mdi-handshake font-22 avatar-title text-info" />
-                          </div>
+                <div className="col-md-3 col-xl-3">
+                  <div className="widget-rounded-circle card-box">
+                    <div className="row">
+                      <div className="col-6">
+                        <div className="avatar-lg rounded-circle bg-soft-info border-info border">
+                          <i className="mdi mdi-handshake font-22 avatar-title text-info" />
                         </div>
-                        <div className="col-6">
-                          <div className="text-right">
-                            <h3 className="text-dark mt-1">
-                              <span data-plugin="counterup">
-                                {totalSummary && totalSummary.partners}
-                              </span>
-                            </h3>
-                            <p className="text-muted mb-1 text-truncate">
-                              Total Partners
-                            </p>
-                          </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="text-right">
+                          <h3 className="text-dark mt-1">
+                            <span data-plugin="counterup">0</span>
+                          </h3>
+                          <p className="text-muted mb-1 text-truncate">
+                            Total Orders
+                          </p>
                         </div>
-                      </div>{" "}
-                      {/* end row*/}
+                      </div>
                     </div>{" "}
-                    {/* end widget-rounded-circle*/}
-                  </div>
-                ) : (
-                  <NotPermittedWidget />
-                )}
+                    {/* end row*/}
+                  </div>{" "}
+                  {/* end widget-rounded-circle*/}
+                </div>
                 {/* end col*/}
-                {hasModulePermission.read(props.permissions, "Vehicles") ? (
-                  <div className="col-md-6 col-xl-3">
-                    <div className="widget-rounded-circle card-box">
-                      <div className="row">
-                        <div className="col-6">
-                          <div className="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                            <i className="mdi mdi-car font-22 avatar-title text-primary" />
-                          </div>
+                <div className="col-md-3 col-xl-3">
+                  <div className="widget-rounded-circle card-box">
+                    <div className="row">
+                      <div className="col-6">
+                        <div className="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                          <i className="mdi mdi-car font-22 avatar-title text-primary" />
                         </div>
-                        <div className="col-6">
-                          <div className="text-right">
-                            <h3 className="text-dark mt-1">
-                              <span data-plugin="counterup">
-                                {totalSummary && totalSummary.vehicles}
-                              </span>
-                            </h3>
-                            <p className="text-muted mb-1 text-truncate">
-                              Total Vehicles
-                            </p>
-                          </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="text-right">
+                          <h3 className="text-dark mt-1">
+                            <span data-plugin="counterup">0</span>
+                          </h3>
+                          <p className="text-muted mb-1 text-truncate">
+                            Total Payments
+                          </p>
                         </div>
-                      </div>{" "}
-                      {/* end row*/}
+                      </div>
                     </div>{" "}
-                    {/* end widget-rounded-circle*/}
-                  </div>
-                ) : (
-                  <NotPermittedWidget />
-                )}
+                    {/* end row*/}
+                  </div>{" "}
+                  {/* end widget-rounded-circle*/}
+                </div>
                 {/* end col*/}
               </div>
               {/* end row*/}
               {/* end row */}
-              <div className="row ">
+              {/* <div className="row ">
                 <div className="col-xl-6">
                   <div className="card-box h-100">
                     <div className="float-left">
@@ -363,7 +261,7 @@ const DashboardComponent = (props) => {
                     </div>
                   </div>
                 </div>{" "}
-                {/* end col */}
+                {/* end col 
                 <div className="col-xl-6">
                   <div className="card-box h-100">
                     <div className="float-left">
@@ -463,11 +361,11 @@ const DashboardComponent = (props) => {
                         </tbody>
                       </table>
                     </div>{" "}
-                    {/* end .table-responsive*/}
+                    {/* end .table-responsive 
                   </div>{" "}
-                  {/* end card-box*/}
+                  {/* end card-box 
                 </div>{" "}
-                {/* end col */}
+                {/* end col 
               </div>
               <div className="row mt-4">
                 <div className="col-xl-12">
@@ -562,11 +460,11 @@ const DashboardComponent = (props) => {
                         </tbody>
                       </table>
                     </div>{" "}
-                    {/* end .table-responsive*/}
+                    {/* end .table-responsive 
                   </div>{" "}
                 </div>{" "}
-                {/* end card-box*/}
-              </div>{" "}
+                {/* end card-box 
+              </div>{" "} */}
             </div>
             {/* end row */}
           </div>

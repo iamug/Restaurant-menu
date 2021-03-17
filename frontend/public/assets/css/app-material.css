@@ -247,7 +247,7 @@ body[data-sidebar-size="condensed"] .user-box {
 
 @media (min-width: 768px) {
   body[data-sidebar-size="condensed"]:not([data-layout="compact"]) {
-    min-height: 1750px; } }
+    min-height: auto; } }
 
 @media (max-width: 767.98px) {
   .pro-user-name {

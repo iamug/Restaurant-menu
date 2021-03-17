@@ -4,6 +4,7 @@ import { Image } from "@chakra-ui/react";
 import { Badge } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
+import { formatAmount } from "../../controllers/utils";
 
 const MenuCard = ({ product }) => {
   const capitalize = (s) => {
@@ -21,11 +22,20 @@ const MenuCard = ({ product }) => {
         alt={product.name}
       />
       <div class="card-body">
-        <Heading as="h4" size="md">
+        <Heading as="h3" size="lg" className="mb-1">
           {capitalize(product.name)}
         </Heading>
 
-        <p class="card-text py-2">{capitalize(product.description)}</p>
+        <p class="card-text my-2">{capitalize(product.description)}</p>
+        {/* <p>
+          <span className="text-muted mb-2">
+            {" "}
+            {product.productCategory &&
+              product.productCategory.name &&
+              product.productCategory.name}
+          </span>
+        </p> */}
+        <p className="font-weight-bold mb-2">{formatAmount(product.price)}</p>
         <a href="#" class="btn btn-primary mt-2">
           Add to Cart
         </a>

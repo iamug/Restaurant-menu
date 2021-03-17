@@ -8,15 +8,24 @@ const options = { apiKey: "mHVrhyvNGQTEZR8w" };
 const devTransporter3 = nodemailer.createTransport(sendinBlue(options));
 
 const devTransporter = nodemailer.createTransport({
-  host: "mail.softclo.com",
-  port: 587,
+  host: config.get("SMTP_HOST"),
+  port: config.get("SMTP_PORT"),
   auth: {
-    user: "tester@softclo.com",
-    pass: "Tester@123",
+    user: config.get("SMTP_USER"),
+    pass: config.get("SMTP_PASS"),
   },
   tls: {
     rejectUnauthorized: false,
   },
+  // host: "mail.softclo.com",
+  // port: 587,
+  // auth: {
+  //   user: "tester@softclo.com",
+  //   pass: "Tester@123",
+  // },
+  // tls: {
+  //   rejectUnauthorized: false,
+  // },
 });
 
 const devTransporter4 = nodemailer.createTransport({

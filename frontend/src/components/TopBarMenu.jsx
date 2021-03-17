@@ -200,36 +200,36 @@ const TopbarMenuComponent = (props) => {
           <div className="logo-box" style={{ backgroundColor: "#ffffff" }}>
             <a href="index.html" className="logo logo-dark text-center">
               <span className="logo-sm">
-                <img
+                {/* <img
                   src="../assets/images/logo-sm.png"
                   alt="logo"
                   height={50}
-                />
+                /> */}
                 {/* <span class="logo-lg-text-light">UBold</span> */}
               </span>
               <span className="logo-lg">
-                <img
+                {/* <img
                   src="../assets/images/logo-dark.png"
                   alt="logo"
                   height={50}
-                />
+                /> */}
                 {/* <span class="logo-lg-text-light">U</span> */}
               </span>
             </a>
             <a href="index.html" className="logo logo-light text-center">
               <span className="logo-sm">
-                <img
+                {/* <img
                   src="../assets/images/logo-sm.png"
                   alt="logo"
                   height={50}
-                />
+                /> */}
               </span>
               <span className="logo-lg">
-                <img
+                {/* <img
                   src="../assets/images/logo-light.png"
                   alt="logo"
                   height={50}
-                />
+                /> */}
               </span>
             </a>
           </div>

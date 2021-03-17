@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import $ from "jquery";
 import API from "../../controllers/api";
 import AWN from "awesome-notifications";
-import DataContext, { DataConsumer } from "../../context/datacontext";
 const notifier = new AWN({});
 
 //import "./login.module.css";
@@ -11,9 +10,10 @@ const SignupComponent = (props) => {
   let [email, setEmail] = useState(null);
   let [name, setName] = useState(null);
   let [password, setPassword] = useState(null);
-  let [notVerified, setNotVerified] = useState(false);
-  const { setUserData } = useContext(DataContext);
+  let [password2, setPassword2] = useState(null);
   const [showpassword, setshowpassword] = useState(false);
+  const [showpassword2, setshowpassword2] = useState(false);
+  const [registerSuccess, setregisterSuccess] = useState(false);
 
   const validEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
@@ -28,6 +28,13 @@ const SignupComponent = (props) => {
           "Content-Type": "application/json",
         },
       };
+      if (password !== password2) {
+        //console.log("passwords do not match");
+        new AWN().alert("Passwords do not match", {
+          durations: { alert: 4000 },
+        });
+        return false;
+      }
       if (!email || email === undefined || !validEmail(email)) {
         new AWN().alert(
           "Email Address not valid. Kindly enter a valid Email Address.",
@@ -37,36 +44,37 @@ const SignupComponent = (props) => {
         );
         return;
       }
-      const body = { email, password };
+      const body = { name, email, password };
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/login", body, config),
+        API.post("/api/auth/signup", body, config),
         (resp) => {
           res = resp;
-          if (res.data.notVerified) {
-            new AWN().alert(
-              "Email Address not verified. Kindly verify Email Address.",
+          if (res.data && res.status == 200) {
+            notifier.success(
+              "Registration Successful. Kindly check your inbox.",
               {
-                durations: { alert: 0 },
+                durations: { success: 0 },
               }
             );
-            setNotVerified(true);
-          }
-          if (res.data.token && res.status == 200) {
-            localStorage.setItem("token", res.data.token);
-            notifier.success("Login Successful", {
-              durations: { success: 3000 },
-            });
-            setUserData(res.data.user);
-            props.history.push("/dashboard");
+            setregisterSuccess("true");
           }
         },
         (error) => {
           let err = error;
-          new AWN().alert("Login Error. Please try again", {
-            durations: { alert: 4000 },
-          });
+          if (err.response.data.errors) {
+            new AWN().alert(
+              err.response.data.errors["0"].msg + " Please try again",
+              {
+                durations: { alert: 4000 },
+              }
+            );
+          } else {
+            new AWN().alert("Signup Error. Please try again", {
+              durations: { alert: 4000 },
+            });
+          }
         }
       );
     } catch (err) {
@@ -77,58 +85,12 @@ const SignupComponent = (props) => {
     }
   };
 
-  const resendToken = async () => {
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      if (!email || email === undefined || !validEmail(email)) {
-        new AWN().alert(
-          "Email Address not valid. Kindly enter a valid Email Address.",
-          {
-            durations: { alert: 3000 },
-          }
-        );
-        return;
-      }
-      const body = { email };
-      let res = {};
-      //start
-      await notifier.async(
-        API.post("/api/auth/resendverification/", body, config),
-        (resp) => {
-          res = resp;
-          if (res.data.status && res.status == 200) {
-            new AWN().success(
-              "Email Sent Successfully. Kindly check your inbox to verify you email address.",
-              {
-                durations: { alert: 0 },
-              }
-            );
-          }
-        },
-        (error) => {
-          new AWN().alert("Resend Email Verification Error. Please try again", {
-            durations: { alert: 4000 },
-          });
-        }
-      );
-    } catch (err) {
-      console.log(err);
-      new AWN().alert("Kindly check your internet connection", {
-        durations: { success: 3000 },
-      });
-    }
-  };
-
   useEffect(() => {
     $("body").css({ "background-color": "#b5aeef" });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
     // console.log("enter");
     return () => {
-      console.log("unmounted login");
+      //console.log("unmounted login");
       $("body").css({ "background-color": "unset" });
     };
   }, []);
@@ -166,22 +128,14 @@ const SignupComponent = (props) => {
                       </a>
                     </div> */}
                     <p className="text-muted mb-4 mt-3">
-                      Enter your email address and password to access admin
-                      panel.
+                      Enter your name, email address and password to signup.
                     </p>
                   </div>
-                  {notVerified && (
-                    <div className="mt-4 mb-4">
-                      <p className="text-danger h5">
-                        {" "}
-                        Email Address not verified
-                      </p>
-                      <button
-                        onClick={() => resendToken()}
-                        className="btn btn-info w-sm waves-effect waves-light"
-                      >
-                        Resend Verification Email
-                      </button>
+
+                  {registerSuccess && (
+                    <div className="alert alert-success" role="alert">
+                      <i className="mdi mdi-check-all mr-2"></i> Registration
+                      Successful. Kindly check your inbox for instructions.
                     </div>
                   )}
 
@@ -221,6 +175,7 @@ const SignupComponent = (props) => {
                       <div className="input-group input-group-merge">
                         <input
                           type={showpassword ? "text" : "password"}
+                          minLength="6"
                           name="password"
                           onChange={(e) => setPassword(e.target.value.trim())}
                           value={password}
@@ -244,7 +199,41 @@ const SignupComponent = (props) => {
                         </div>
                       </div>
                     </div>
-                    <div className="form-group mb-3">
+                    {password && (
+                      <div className="form-group mb-3">
+                        <label htmlFor="password"> Confirm Password</label>
+                        <div className="input-group input-group-merge">
+                          <input
+                            type={showpassword2 ? "text" : "password"}
+                            minLength="6"
+                            name="password2"
+                            onChange={(e) =>
+                              setPassword2(e.target.value.trim())
+                            }
+                            value={password2}
+                            required
+                            className="form-control"
+                            placeholder="Enter your password"
+                          />
+                          <div
+                            className="input-group-append"
+                            onClick={() => {
+                              setshowpassword2(!showpassword2);
+                            }}
+                          >
+                            <div className="input-group-text">
+                              {showpassword2 ? (
+                                <i className="fas fa-eye" />
+                              ) : (
+                                <i className="fas fa-eye-slash" />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* <div className="form-group mb-3">
                       <div className="custom-control custom-checkbox">
                         <input
                           type="checkbox"
@@ -259,7 +248,7 @@ const SignupComponent = (props) => {
                           Remember me
                         </label>
                       </div>
-                    </div>
+                    </div> */}
                     <div className="form-group mb-0 text-center">
                       <button
                         className="btn btn-primary btn-block"
