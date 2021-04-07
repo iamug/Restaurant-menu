@@ -14,7 +14,7 @@ const {
   ProdTransporter,
 } = require("../../utils/emailController");
 
-const Admin = require("../../models/Admins");
+const Admin = require("../../models/Users");
 // @route   Get api/auth
 // @desc    Test route
 // @access  Public

@@ -4,10 +4,10 @@ import { InputGroup, Icon, Input } from "rsuite";
 import { Form, FormGroup, ControlLabel } from "rsuite";
 import $ from "jquery";
 import AWN from "awesome-notifications";
-import API from "../../controllers/api";
+import API from "../../../controllers/api";
 import { Center, Square, Circle } from "@chakra-ui/react";
-import { GetUserData, Reload } from "../../controllers/auth";
-import DataContext, { DataConsumer } from "../../context/datacontext";
+import { GetUserData, Reload } from "../../../controllers/auth";
+import DataContext, { DataConsumer } from "../../../context/datacontext";
 
 const ProfileComponent = () => {
   let [formValue, setFormValue] = useState({});

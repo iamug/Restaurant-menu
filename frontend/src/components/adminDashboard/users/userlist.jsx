@@ -4,8 +4,7 @@ import { Grid, Row, Col, InputGroup, Icon, Input, SelectPicker } from "rsuite";
 import { Form, FormGroup, FormControl, HelpBlock, Loader } from "rsuite";
 import $ from "jquery";
 import AWN from "awesome-notifications";
-import API from "../../controllers/api";
-import { hasPermission } from "../../controllers/auth";
+import API from "../../../controllers/api";
 
 const UserListComponent = (props) => {
   let initialFormState = {
