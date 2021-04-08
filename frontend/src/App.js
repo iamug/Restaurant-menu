@@ -25,6 +25,7 @@ import RecoverPasswordComponent from "./components/adminDashboard/resetpassword/
 import ResetPasswordComponent from "./components/adminDashboard/resetpassword/resetpassword";
 
 import AdminDashboard from "./components/adminDashboard/home";
+import UserDashboard from "./components/adminDashboard/home";
 
 function App() {
   let [userdata, setUserData] = useState(false);
@@ -97,6 +98,7 @@ function App() {
             exact
             component={withRouter(VerifyAdminComponent)}
           />
+          <Route path="/admin/" component={withRouter(UserDashboard)} />
           <Redirect to="/user/login" />
 
           {loading && userdata ? <AdminDashboard /> : <Redirect to="/login" />}

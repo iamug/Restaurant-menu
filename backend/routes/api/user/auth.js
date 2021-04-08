@@ -1,27 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../../middleware/auth");
+const auth = require("../../../middleware/auth");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const crypto = require("crypto");
 const { check, validationResult } = require("express-validator");
 const pug = require("pug");
-const { generateId, validMongooseId } = require("../../utils/utils");
+const { generateId, validMongooseId } = require("../../../utils/utils");
+const { devTransporter } = require("../../../utils/emailController");
 
-const {
-  devTransporter,
-  ProdTransporter,
-} = require("../../utils/emailController");
+const Admin = require("../../../models/Users");
 
-const Admin = require("../../models/Users");
 // @route   Get api/auth
 // @desc    Test route
 // @access  Public
 router.get("/", auth, async (req, res) => {
   try {
     const user = await Admin.findById(req.user.id).select("-password").lean();
-
     if (!user)
       return res
         .status(400)
@@ -43,7 +39,6 @@ router.post("/forgotpassword", async (req, res, next) => {
     return res
       .status(404)
       .json({ errors: [{ msg: "There is no user with that email" }] });
-    //return next(new ErrorResponse("There is no user with that email", 404));
   }
   const resetToken = user.getResetPasswordToken();
 
