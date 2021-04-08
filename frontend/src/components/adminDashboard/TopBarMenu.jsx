@@ -140,7 +140,7 @@ const TopbarMenuComponent = (props) => {
               >
                 <Avatar
                   size="md"
-                  name="Kola Tioluwani"
+                  name={userdata.name}
                   className="m-2"
                   src={userdata.avatar}
                 />
@@ -157,10 +157,10 @@ const TopbarMenuComponent = (props) => {
                 </div>
                 {/* item*/}
                 <a
-                  href="/profile"
+                  href="/admin/profile"
                   onClick={(e) => {
                     e.preventDefault();
-                    props.history.push("/profile");
+                    props.history.push("/admin/profile");
                   }}
                   className="dropdown-item notify-item"
                 >
@@ -183,7 +183,7 @@ const TopbarMenuComponent = (props) => {
                 <div className="dropdown-divider" />
                 {/* item*/}
                 <a
-                  href="/login"
+                  href="/admin/login"
                   onClick={(e) => {
                     e.preventDefault();
                     LogoutUser();

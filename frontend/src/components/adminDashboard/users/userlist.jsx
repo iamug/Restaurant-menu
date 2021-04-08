@@ -38,7 +38,7 @@ const UserListComponent = (props) => {
             "x-auth-token": token,
           },
         };
-        const res = await API.delete("/api/users/" + id, config);
+        const res = await API.delete("/api/admin/users/" + id, config);
         if (!res) {
           notifier.alert("Error. Kindly check internet connection");
           return false;
@@ -76,7 +76,7 @@ const UserListComponent = (props) => {
           "x-auth-token": token,
         },
       };
-      const res = await API.put("/api/users/" + id, body, config);
+      const res = await API.put("/api/admin/users/" + id, body, config);
       if (res.status == 200) {
         new AWN().success("User updated successfully ", {
           durations: { success: 3000 },
@@ -104,7 +104,7 @@ const UserListComponent = (props) => {
           "x-auth-token": token,
         },
       };
-      const res = await API.get("/api/users", config);
+      const res = await API.get("/api/admin/users", config);
       if (!res) {
         return false;
       }

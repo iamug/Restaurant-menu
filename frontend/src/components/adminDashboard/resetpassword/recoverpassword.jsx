@@ -20,7 +20,7 @@ const RecoverPasswordComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/forgotpassword", body, config),
+        API.post("/api/admin/auth/forgotpassword", body, config),
         (resp) => {
           res = resp;
           if (res.data.msg_sent && res.status == 200) {
@@ -56,7 +56,7 @@ const RecoverPasswordComponent = (props) => {
   };
 
   useEffect(() => {
-    $("body").css({ "background-color": "#b5aeef" });
+    $("body").css({ "background-color": "#5e5e5e" });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
     // console.log("enter");
     return () => {
@@ -140,7 +140,7 @@ const RecoverPasswordComponent = (props) => {
                         Back to{" "}
                         <a
                           onClick={(e) => {
-                            props.history.push("/login");
+                            props.history.push("/admin/login");
                           }}
                           className="text-primary ml-1 font-14"
                         >

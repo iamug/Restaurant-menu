@@ -55,7 +55,7 @@ const ProductListComponent = (props) => {
     let onOk = async () => {
       try {
         const config = { headers };
-        const res = await API.delete("/api/products/" + id, config);
+        const res = await API.delete("/api/admin/products/" + id, config);
         if (!res) {
           notifier.alert("Error. Kindly check internet connection");
           return false;
@@ -90,7 +90,7 @@ const ProductListComponent = (props) => {
     console.log(body);
     try {
       const config = { headers };
-      const res = await API.post("/api/products", body, config);
+      const res = await API.post("/api/admin/products", body, config);
       if (res.status == 201) {
         console.log("success");
         new AWN().success("Record added successfully ", {
@@ -126,7 +126,7 @@ const ProductListComponent = (props) => {
     console.log(body);
     try {
       const config = { headers };
-      const res = await API.put("/api/products/" + id, body, config);
+      const res = await API.put("/api/admin/products/" + id, body, config);
       if (res.status == 200) {
         console.log("success");
         new AWN().success("Record updated successfully ", {
@@ -151,7 +151,7 @@ const ProductListComponent = (props) => {
     try {
       let token = localStorage.getItem("token");
       const config = { headers };
-      const res = await API.get("/api/products", config);
+      const res = await API.get("/api/admin/products", config);
       if (!res) return false;
       return res.data;
     } catch (err) {

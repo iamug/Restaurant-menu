@@ -27,6 +27,29 @@ export const Reload = async (setUser, toast = true) => {
   }
 };
 
+export const AdminReload = async (setUser, toast = true) => {
+  if (toast) {
+    new AWN().info("Please wait....", {
+      durations: { info: 0 },
+      icons: { info: "sync fa-spin" },
+    });
+  }
+  let data;
+  try {
+    data = await GetAdminData();
+  } catch (error) {
+    data = false;
+  }
+  if (data && data.email) {
+    setUser(data);
+    if (!toast) return;
+    new AWN().closeToasts();
+    new AWN().success("Reload Successful", { durations: { success: 2000 } });
+  } else {
+    return <Redirect to="/login" />;
+  }
+};
+
 export async function GetUserData() {
   try {
     let token = localStorage.getItem("token");

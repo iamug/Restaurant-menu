@@ -33,7 +33,7 @@ const ResetPasswordComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.put("/api/auth/resetpassword/" + resetToken, body, config),
+        API.put("/api/admin/auth/resetpassword/" + resetToken, body, config),
         (resp) => {
           res = resp;
 
@@ -52,7 +52,7 @@ const ResetPasswordComponent = (props) => {
 
             setTimeout(() => {
               //window.location.href = "/login";
-              props.history.push("/login");
+              props.history.push("/admin/login");
             }, 6000);
             //this.props.history.push("/dashboard");
           }
@@ -86,7 +86,7 @@ const ResetPasswordComponent = (props) => {
   };
 
   useEffect(() => {
-    $("body").css({ "background-color": "#b5aeef" });
+    $("body").css({ "background-color": "#5e5e5e" });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
     // console.log("enter");
     return () => {
@@ -214,7 +214,7 @@ const ResetPasswordComponent = (props) => {
                         Back to{" "}
                         <a
                           onClick={(e) => {
-                            props.history.push("/login");
+                            props.history.push("/admin/login");
                           }}
                           className="text-primary ml-1 font-14"
                         >

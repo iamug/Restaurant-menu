@@ -30,7 +30,7 @@ const VerifyAdminComponent = (props) => {
       }
       setVerified(true);
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = "/user/login";
       }, 4000);
     } catch (err) {
       console.log(err);
@@ -113,7 +113,7 @@ const VerifyAdminComponent = (props) => {
                     )}
                     <p className="mt-4">
                       {loading ? (
-                        <a href="/login" className=" btn btn-primary">
+                        <a href="/user/login" className=" btn btn-primary">
                           <b>Go to Login</b>
                         </a>
                       ) : (

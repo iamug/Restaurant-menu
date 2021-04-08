@@ -39,7 +39,7 @@ const AdminListComponent = (props) => {
             "x-auth-token": token,
           },
         };
-        const res = await API.delete("/api/admins/" + id, config);
+        const res = await API.delete("/api/admin/admins/" + id, config);
         if (!res) {
           notifier.alert("Error. Kindly check internet connection");
           return false;
@@ -89,7 +89,7 @@ const AdminListComponent = (props) => {
           "x-auth-token": token,
         },
       };
-      const res = await API.post("/api/admins", body, config);
+      const res = await API.post("/api/admin/admins", body, config);
       if (res.status == 201) {
         console.log("success");
         new AWN().success("Admin added successfully ", {
@@ -140,7 +140,7 @@ const AdminListComponent = (props) => {
           "x-auth-token": token,
         },
       };
-      const res = await API.put("/api/admins/" + id, body, config);
+      const res = await API.put("/api/admin/admins/" + id, body, config);
       if (res.status == 200) {
         console.log("success");
         new AWN().success("Admin updated successfully ", {
@@ -170,7 +170,7 @@ const AdminListComponent = (props) => {
           "x-auth-token": token,
         },
       };
-      const res = await API.get("/api/admins", config);
+      const res = await API.get("/api/admin/admins", config);
       if (!res) {
         return false;
       }

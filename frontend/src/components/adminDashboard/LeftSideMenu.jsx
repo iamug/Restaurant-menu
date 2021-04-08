@@ -119,10 +119,10 @@ const LeftSideMenuComponent = (props) => {
             <li className="menu-title">Navigation</li>
             <li>
               <a
-                href="/dashboards"
+                href="/admin/dashboard"
                 onClick={(e) => {
                   e.preventDefault();
-                  props.history.push("/dashboard");
+                  props.history.push("/admin/dashboard");
                 }}
               >
                 <i className="mdi mdi-view-dashboard-outline" />
@@ -149,10 +149,10 @@ const LeftSideMenuComponent = (props) => {
 
             <li>
               <a
-                href="/admins"
+                href="/admin/admins"
                 onClick={(e) => {
                   e.preventDefault();
-                  props.history.push("/admins");
+                  props.history.push("/admin/admins");
                 }}
               >
                 <i className="mdi mdi-account-multiple-outline" />
@@ -188,10 +188,10 @@ const LeftSideMenuComponent = (props) => {
                 <ul className="nav-second-level">
                   <li>
                     <a
-                      href="/products"
+                      href="/admin/products"
                       onClick={(e) => {
                         e.preventDefault();
-                        props.history.push("/products");
+                        props.history.push("/admin/products");
                       }}
                     >
                       Products
@@ -200,10 +200,10 @@ const LeftSideMenuComponent = (props) => {
 
                   <li>
                     <a
-                      href="/category"
+                      href="/admin/category"
                       onClick={(e) => {
                         e.preventDefault();
-                        props.history.push("/category");
+                        props.history.push("/admin/category");
                       }}
                     >
                       Categories
@@ -367,10 +367,10 @@ const LeftSideMenuComponent = (props) => {
             </li> */}
             <li>
               <a
-                href="/profile"
+                href="/admin/profile"
                 onClick={(e) => {
                   e.preventDefault();
-                  props.history.push("/profile");
+                  props.history.push("/admin/profile");
                 }}
               >
                 <i className="fas fa-user-circle" />

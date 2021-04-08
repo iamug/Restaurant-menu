@@ -40,7 +40,7 @@ const LoginComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/login", body, config),
+        API.post("/api/admin/auth/login", body, config),
         (resp) => {
           res = resp;
           if (res.data.notVerified) {
@@ -58,7 +58,7 @@ const LoginComponent = (props) => {
               durations: { success: 3000 },
             });
             setUserData(res.data.user);
-            props.history.push("/dashboard");
+            props.history.push("/admin/dashboard");
           }
         },
         (error) => {
@@ -96,7 +96,7 @@ const LoginComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/resendverification/", body, config),
+        API.post("/api/admin/auth/resendverification/", body, config),
         (resp) => {
           res = resp;
           if (res.data.status && res.status == 200) {
@@ -123,7 +123,7 @@ const LoginComponent = (props) => {
   };
 
   useEffect(() => {
-    $("body").css({ "background-color": "#b5aeef" });
+    $("body").css({ "background-color": "#5e5e5e" });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
     // console.log("enter");
     return () => {
@@ -265,7 +265,7 @@ const LoginComponent = (props) => {
                           {" "}
                           <a
                             onClick={(e) => {
-                              props.history.push("/signup");
+                              props.history.push("/admin/signup");
                             }}
                             className="text-primary ml-1 font-14"
                           >
@@ -278,7 +278,7 @@ const LoginComponent = (props) => {
                           {" "}
                           <a
                             onClick={(e) => {
-                              props.history.push("/recoverpassword");
+                              props.history.push("/admin/recoverpassword");
                             }}
                             className="text-primary ml-1 font-14"
                           >

@@ -48,7 +48,7 @@ const SignupComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/signup", body, config),
+        API.post("/api/admin/auth/signup", body, config),
         (resp) => {
           res = resp;
           if (res.data && res.status == 200) {
@@ -86,7 +86,7 @@ const SignupComponent = (props) => {
   };
 
   useEffect(() => {
-    $("body").css({ "background-color": "#b5aeef" });
+    $("body").css({ "background-color": "#5e5e5e" });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
     // console.log("enter");
     return () => {

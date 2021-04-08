@@ -6,7 +6,7 @@ import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../../controllers/api";
 import { Center, Square, Circle } from "@chakra-ui/react";
-import { GetUserData, Reload } from "../../../controllers/auth";
+import { GetAdminData, AdminReload } from "../../../controllers/auth";
 import DataContext, { DataConsumer } from "../../../context/datacontext";
 
 const ProfileComponent = () => {
@@ -47,14 +47,14 @@ const ProfileComponent = () => {
           "x-auth-token": token,
         },
       };
-      const res = await API.put("/api/auth/profile", body, config);
+      const res = await API.put("/api/admin/auth/profile", body, config);
       if (res.status == 200) {
         new AWN().success("Profile updated successfully ", {
           durations: { success: 3000 },
         });
         user.setUserData(res.data.admin);
         setRefreshData(!refreshData);
-        Reload(user.setUserData, false);
+        AdminReload(user.setUserData, false);
       } else {
         new AWN().alert("Failed, Kindly try again", {
           durations: { alert: 3000 },
@@ -146,7 +146,7 @@ const ProfileComponent = () => {
         });
       });
     });
-    const userData = await GetUserData();
+    const userData = await GetAdminData();
     setUserData(userData);
     setFormValue(userData);
   }, [refreshData]);
@@ -154,7 +154,7 @@ const ProfileComponent = () => {
   return (
     <React.Fragment>
       <div>
-        {userData.email ? (
+        {userData && userData.email ? (
           <div className="content">
             {/* Start Content*/}
             <div className="container-fluid">

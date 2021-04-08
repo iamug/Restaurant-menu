@@ -21,7 +21,7 @@ const VerifyAdminComponent = (props) => {
       };
       const body = {};
       const res = await API.put(
-        "/api/auth/signupverify/" + signupToken,
+        "/api/admin/auth/signupverify/" + signupToken,
         body,
         config
       );
@@ -31,7 +31,7 @@ const VerifyAdminComponent = (props) => {
       }
       setVerified(true);
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = "/admin/login";
       }, 4000);
     } catch (err) {
       console.log(err);
@@ -40,7 +40,7 @@ const VerifyAdminComponent = (props) => {
 
   useEffect(async () => {
     //$("body").addClass("authentication-bg authentication-bg-pattern");
-    $("body").css({ "background-color": "#b5aeef" });
+    $("body").css({ "background-color": "#5e5e5e" });
 
     await verify();
     setLoading(true);
@@ -114,7 +114,7 @@ const VerifyAdminComponent = (props) => {
                     )}
                     <p className="mt-4">
                       {loading ? (
-                        <a href="/login" className=" btn btn-primary">
+                        <a href="/admin/login" className=" btn btn-primary">
                           <b>Go to Login</b>
                         </a>
                       ) : (
