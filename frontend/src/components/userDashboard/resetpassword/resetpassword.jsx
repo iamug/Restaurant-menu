@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import $ from "jquery";
-import API from "../../controllers/api";
+import API from "../../../controllers/api";
 import AWN from "awesome-notifications";
 const globalOptions = {};
 const notifier = new AWN(globalOptions);

@@ -121,7 +121,7 @@ router.post("/resendverification/", async (req, res, next) => {
     const verifyURL = `${config.get("Frontend_URL")}/verify${signupToken}`;
     // renderFile
     var html = pug.renderFile(
-      `${__dirname}/../../email/email-verification.pug`,
+      `${__dirname}/../../../email/email-verification.pug`,
       {
         userName: name,
         url: verifyURL,
@@ -259,7 +259,7 @@ router.post(
     }
 
     const { name, email, password } = req.body;
-    let adminId = generateId("ADMIN");
+    let userId = generateId("ADMIN");
 
     //const emailBody = `<h1> Hello ${name} </h1><br><br><h4> Welcome ${email}</h4>`;
 
@@ -271,7 +271,7 @@ router.post(
           .json({ errors: [{ msg: "User already exists" }] });
       }
       user = new Admin({
-        adminId,
+        userId,
         name,
         email,
         password,
@@ -288,7 +288,7 @@ router.post(
       )}/signupverify${signupToken}`;
       // renderFile
       var html = pug.renderFile(
-        `${__dirname}/../../email/email-verification.pug`,
+        `${__dirname}/../../../email/email-verification.pug`,
         {
           userName: name,
           url: verifyURL,

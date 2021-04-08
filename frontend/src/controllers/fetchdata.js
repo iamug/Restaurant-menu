@@ -12,7 +12,7 @@ export async function FetchCategoryData() {
         "x-auth-token": token,
       },
     };
-    const res = await API.get("/api/category", config);
+    const res = await API.get("/api/user/category", config);
     if (!res) return false;
     return res.data;
   }

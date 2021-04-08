@@ -1,20 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../../middleware/auth");
+const auth = require("../../../middleware/auth");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const crypto = require("crypto");
 const { check, validationResult } = require("express-validator");
 const pug = require("pug");
-const { generateId, validMongooseId } = require("../../utils/utils");
+const { generateId, validMongooseId } = require("../../../utils/utils");
 
-const {
-  devTransporter,
-  ProdTransporter,
-} = require("../../utils/emailController");
+const { devTransporter } = require("../../../utils/emailController");
 
-const Admin = require("../../models/Admins");
+const Admin = require("../../../models/Admins");
 // @route   Get api/auth
 // @desc    Test route
 // @access  Public

@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const config = require("config");
 const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
-const Product = require("../../models/Products");
-const { generateId, validMongooseId } = require("../../utils/utils");
+const auth = require("../../../middleware/auth");
+const Product = require("../../../models/Products");
+const { generateId, validMongooseId } = require("../../../utils/utils");
 //const { query } = require("express");
 
 // @route   GET api/payment/
 // @desc    Get current users profile
 // @access  Private
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
-    const products = await Product.find()
+    const products = await Product.find({ creator: req.user.id })
       .populate("productCategory")
       .sort({ createdAt: -1 })
       .lean();
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 // @route   GET api/payment/
 // @desc    Get current users profile
 // @access  Private
-router.get("/user", async (req, res) => {
+router.get("/guest", async (req, res) => {
   try {
     const products = await Product.find({ isEnabled: true })
       .populate("productCategory")
@@ -75,7 +75,10 @@ router.delete("/:id", auth, async (req, res) => {
     return res.status(400).json({ success: false, msg: "invalid Request" });
   }
   try {
-    let payment = await Product.findByIdAndRemove(req.params.id);
+    let payment = await Product.findOneAndRemove({
+      _id: req.params.id,
+      creator: req.user.id,
+    });
     if (!payment) {
       return res
         .status(404)
@@ -132,7 +135,7 @@ router.put("/:id", auth, async (req, res) => {
   price && (updateFields.price = price);
   try {
     let product = await Product.findOneAndUpdate(
-      { _id: req.params.id },
+      { _id: req.params.id, creator: req.user.id },
       { $set: updateFields },
       { new: true }
     );

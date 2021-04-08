@@ -89,7 +89,7 @@ app.use("/api/user/category", require("./routes/api/user/category"));
 //Define Admin Routes
 app.use("/api/admin/users", require("./routes/api/admin/users"));
 app.use("/api/admin/auth", require("./routes/api/admin/auth"));
-app.use("/api/admin/profile", require("./routes/api/admin/profile"));
+//app.use("/api/admin/profile", require("./routes/api/admin/profile"));
 app.use("/api/admin/admins", require("./routes/api/admin/admins"));
 app.use("/api/admin/products", require("./routes/api/admin/products"));
 app.use("/api/admin/category", require("./routes/api/admin/category"));

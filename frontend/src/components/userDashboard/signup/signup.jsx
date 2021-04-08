@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import $ from "jquery";
-import API from "../../controllers/api";
+import API from "../../../controllers/api";
 import AWN from "awesome-notifications";
 const notifier = new AWN({});
 
@@ -48,7 +48,7 @@ const SignupComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/signup", body, config),
+        API.post("/api/user/auth/signup", body, config),
         (resp) => {
           res = resp;
           if (res.data && res.status == 200) {

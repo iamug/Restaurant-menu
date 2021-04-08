@@ -10,7 +10,9 @@ const { generateId, validMongooseId } = require("../../../utils/utils");
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const category = await Category.find().sort({ createdAt: -1 }).lean();
+    const category = await Category.find({ isEnabled: true })
+      .sort({ createdAt: -1 })
+      .lean();
     if (!category) {
       return res.status(400).json({ msg: "Invalid request" });
     }

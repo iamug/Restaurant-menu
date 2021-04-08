@@ -9,13 +9,13 @@ const pug = require("pug");
 const {
   devTransporter,
   ProdTransporter,
-} = require("../../utils/emailController");
-const auth = require("../../middleware/auth");
+} = require("../../../utils/emailController");
+const auth = require("../../../middleware/auth");
 
 // render
 //var html = pug.render('string of pug', merge(options, locals));
 
-const User = require("../../models/Users");
+const User = require("../../../models/Users");
 
 // @route   GET api/retrievals/me
 // @desc    Get current users vehicle retrieval
@@ -151,7 +151,7 @@ router.put("/:id", auth, async (req, res) => {
       { $set: updateFields },
       { new: true }
     );
-    
+
     return res.json({ success: true });
   } catch (err) {
     console.log(error);

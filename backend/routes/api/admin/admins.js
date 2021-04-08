@@ -4,12 +4,12 @@ const config = require("config");
 const moment = require("moment");
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
-const { devTransporter } = require("../../utils/emailController");
-const { generateId, validMongooseId } = require("../../utils/utils");
+const auth = require("../../../middleware/auth");
+const { devTransporter } = require("../../../utils/emailController");
+const { generateId, validMongooseId } = require("../../../utils/utils");
 const pug = require("pug");
 
-const Admin = require("../../models/Admins");
+const Admin = require("../../../models/Admins");
 
 // @route   GET api/retrievals/me
 // @desc    Get current users vehicle retrieval

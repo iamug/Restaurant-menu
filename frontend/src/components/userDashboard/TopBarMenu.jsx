@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import { withRouter } from "react-router-dom";
 import $ from "jquery";
-import DataContext, { DataConsumer } from "../context/datacontext";
-import { LogoutUser, Reload } from "../controllers/auth";
+import DataContext, { DataConsumer } from "../../context/datacontext";
+import { LogoutUser, Reload } from "../../controllers/auth";
 import { Avatar, AvatarBadge, AvatarGroup, WrapItem } from "@chakra-ui/react";
 //import "./login.module.css";
 
@@ -157,10 +157,10 @@ const TopbarMenuComponent = (props) => {
                 </div>
                 {/* item*/}
                 <a
-                  href="/profile"
+                  href="/user/profile"
                   onClick={(e) => {
                     e.preventDefault();
-                    props.history.push("/profile");
+                    props.history.push("/user/profile");
                   }}
                   className="dropdown-item notify-item"
                 >

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import $ from "jquery";
-import API from "../../controllers/api";
+import API from "../../../controllers/api";
 import AWN from "awesome-notifications";
-import DataContext, { DataConsumer } from "../../context/datacontext";
+import DataContext, { DataConsumer } from "../../../context/datacontext";
 const notifier = new AWN({});
 
 //import "./login.module.css";
@@ -40,7 +40,7 @@ const LoginComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/login", body, config),
+        API.post("/api/user/auth/login", body, config),
         (resp) => {
           res = resp;
           if (res.data.notVerified) {
@@ -58,7 +58,7 @@ const LoginComponent = (props) => {
               durations: { success: 3000 },
             });
             setUserData(res.data.user);
-            props.history.push("/dashboard");
+            props.history.push("/user/dashboard");
           }
         },
         (error) => {
@@ -96,7 +96,7 @@ const LoginComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/resendverification/", body, config),
+        API.post("/api/user/auth/resendverification/", body, config),
         (resp) => {
           res = resp;
           if (res.data.status && res.status == 200) {
@@ -265,7 +265,7 @@ const LoginComponent = (props) => {
                           {" "}
                           <a
                             onClick={(e) => {
-                              props.history.push("/signup");
+                              props.history.push("/user/signup");
                             }}
                             className="text-primary ml-1 font-14"
                           >
@@ -278,7 +278,7 @@ const LoginComponent = (props) => {
                           {" "}
                           <a
                             onClick={(e) => {
-                              props.history.push("/recoverpassword");
+                              props.history.push("/user/recoverpassword");
                             }}
                             className="text-primary ml-1 font-14"
                           >

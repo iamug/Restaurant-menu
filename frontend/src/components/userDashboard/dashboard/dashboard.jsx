@@ -3,10 +3,10 @@ import $ from "jquery";
 import { Button, ButtonToolbar, Paragraph } from "rsuite";
 import { Loader } from "rsuite";
 import { Table } from "rsuite";
-import API from "../../controllers/api";
+import API from "../../../controllers/api";
 import { Notification } from "rsuite";
 import AWN from "awesome-notifications";
-import DataContext, { DataConsumer } from "../../context/datacontext";
+import DataContext, { DataConsumer } from "../../../context/datacontext";
 
 const DashboardComponent = (props) => {
   let [totalSummary, setTotalSummary] = useState(false);

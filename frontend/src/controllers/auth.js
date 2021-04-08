@@ -40,7 +40,32 @@ export async function GetUserData() {
           "x-auth-token": token,
         },
       };
-      const res = await API.get("/api/auth", config);
+      const res = await API.get("/api/user/auth", config);
+      if (res.status == 401) {
+        //window.location.href = "/login";
+        return false;
+      }
+      return res.data;
+    }
+  } catch (err) {
+    console.log("error auth", err);
+  }
+}
+
+export async function GetAdminData() {
+  try {
+    let token = localStorage.getItem("token");
+    if (!token) {
+      return false;
+    }
+    if (token) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        },
+      };
+      const res = await API.get("/api/admin/auth", config);
       if (res.status == 401) {
         //window.location.href = "/login";
         return false;

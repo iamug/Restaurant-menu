@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../../middleware/auth");
-const Category = require("../../models/Category");
-const { generateId, validMongooseId } = require("../../utils/utils");
+const auth = require("../../../middleware/auth");
+const Category = require("../../../models/Category");
+const { generateId, validMongooseId } = require("../../../utils/utils");
 //const { query } = require("express");
 
 // @route   GET api/payment/

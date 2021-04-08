@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import $ from "jquery";
-import API from "../../controllers/api";
+import API from "../../../controllers/api";
 import AWN from "awesome-notifications";
-import DataContext, { DataConsumer } from "../../context/datacontext";
 const notifier = new AWN({});
 
 //import "./login.module.css";
@@ -21,7 +20,7 @@ const VerifyAdminComponent = (props) => {
       };
       const body = {};
       const res = await API.put(
-        "/api/auth/signupverify/" + signupToken,
+        "/api/user/auth/signupverify/" + signupToken,
         body,
         config
       );

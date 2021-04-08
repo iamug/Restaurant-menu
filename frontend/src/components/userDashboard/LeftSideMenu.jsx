@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Modules } from "../controllers/fetchdata";
 import { withRouter } from "react-router-dom";
-import { LogoutUser } from "../controllers/auth";
-
-import DataContext, { DataConsumer } from "../context/datacontext";
+import { LogoutUser } from "../../controllers/auth";
+import DataContext, { DataConsumer } from "../../context/datacontext";
 import $ from "jquery";
 //import "./login.module.css";
 
@@ -57,7 +55,7 @@ const LeftSideMenuComponent = (props) => {
   const { userdata } = useContext(DataContext);
   useEffect(() => {
     // $("body").addClass("authentication-bg authentication-bg-pattern");
-    console.log("enter");
+    //console.log("enter");
     // if (window.matchMedia("(max-width: 768px)").matches) {
     //   $("body").addClass("sidebar-enable");
     // }
@@ -123,7 +121,7 @@ const LeftSideMenuComponent = (props) => {
                 href="/dashboards"
                 onClick={(e) => {
                   e.preventDefault();
-                  props.history.push("/dashboard");
+                  props.history.push("/user/dashboard");
                 }}
               >
                 <i className="mdi mdi-view-dashboard-outline" />
@@ -150,228 +148,23 @@ const LeftSideMenuComponent = (props) => {
 
             <li>
               <a
-                href="/admins"
+                href="/user/products"
                 onClick={(e) => {
                   e.preventDefault();
-                  props.history.push("/admins");
+                  props.history.push("/user/products");
                 }}
               >
-                <i className="mdi mdi-account-multiple-outline" />
-                <span> Admins </span>
+                <i className="fas fa-receipt" />
+                <span> Products </span>
               </a>
             </li>
 
-            {/* {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions.Bookings &&
-                userdata.permissions.Bookings.read)) && (
-              <li>
-                <a
-                  href="/bookings"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/bookings");
-                  }}
-                >
-                  <i className=" fas fa-receipt" />
-                  <span> Bookings </span>
-                </a>
-              </li>
-            )} */}
-
-            <li>
-              <a href="#sidebarMultilevelBooking" data-toggle="collapse">
-                <i className=" fas fa-receipt" />
-                <span> Products </span> <span className="menu-arrow" />
-              </a>
-              <div className="collapse" id="sidebarMultilevelBooking">
-                <ul className="nav-second-level">
-                  <li>
-                    <a
-                      href="/products"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        props.history.push("/products");
-                      }}
-                    >
-                      Products
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="/category"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        props.history.push("/category");
-                      }}
-                    >
-                      Categories
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            {/* <li>
-              <a
-                href="/roles"
-                onClick={(e) => {
-                  e.preventDefault();
-                  props.history.push("/roles");
-                }}
-              >
-                <i className=" fas fa-lock" />
-                <span> Roles and Permissions </span>
-              </a>
-            </li> */}
-
-            {/* <li>
-              <a href="#sidebarMultilevel4" data-toggle="collapse">
-                <i className=" fas fa-car" />
-                <span> Vehicle Inspection </span>{" "}
-                <span className="menu-arrow" />
-              </a>
-              <div className="collapse" id="sidebarMultilevel4">
-                <ul className="nav-second-level">
-                  <li>
-                    <a
-                      href="/vehicleinsp"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        props.history.push("/vehicleinsp");
-                      }}
-                    >
-                      Inspection List
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/inspcenters"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        props.history.push("/inspcenters");
-                      }}
-                    >
-                      Inspection Centers
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li> */}
-            {/* {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Admins"] &&
-                userdata.permissions["Admins"].read) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Roles and Permissions"] &&
-                userdata.permissions["Roles and Permissions"].read)) && (
-              <li>
-                <a href="#sidebarMultilevelAdmin" data-toggle="collapse">
-                  <i className=" fas fa-user-shield" />
-                  <span> Admin Management </span>{" "}
-                  <span className="menu-arrow" />
-                </a>
-                <div className="collapse" id="sidebarMultilevelAdmin">
-                  <ul className="nav-second-level">
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Admins"] &&
-                        userdata.permissions["Admins"].read)) && (
-                      <li>
-                        <a
-                          href="/admins"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/admins");
-                          }}
-                        >
-                          <span> Admins </span>
-                        </a>
-                      </li>
-                    )}
-                    {((userdata && userdata.superAdmin) ||
-                      (userdata &&
-                        userdata.permissions &&
-                        userdata.permissions["Roles and Permissions"] &&
-                        userdata.permissions["Roles and Permissions"]
-                          .read)) && (
-                      <li>
-                        <a
-                          href="/roles"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/roles");
-                          }}
-                        >
-                          Roles and Permissions
-                        </a>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </li>
-            )}
-            {((userdata && userdata.superAdmin) ||
-              (userdata &&
-                userdata.permissions &&
-                userdata.permissions["Activity Logs"] &&
-                userdata.permissions["Activity Logs"].read)) && (
-              <li>
-                <a
-                  href="/logs"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    props.history.push("/logs");
-                  }}
-                >
-                  <i className=" fas fa-history" />
-                  <span> Activity Logs </span>
-                </a>
-              </li>
-            )} */}
-            {/* <li>
-              <a href="#sidebarMultilevelAdmin" data-toggle="collapse">
-                <i className=" fas fa-user-shield" />
-                <span> Admin Management </span> <span className="menu-arrow" />
-              </a>
-              <div className="collapse" id="sidebarMultilevelAdmin">
-                <ul className="nav-second-level">
-                  <li>
-                    <a
-                      href="/admins"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        props.history.push("/admins");
-                      }}
-                    >
-                      <span> Admins </span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/roles"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        props.history.push("/roles");
-                      }}
-                    >
-                      Roles and Permissions
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li> */}
             <li>
               <a
-                href="/profile"
+                href="/user/profile"
                 onClick={(e) => {
                   e.preventDefault();
-                  props.history.push("/profile");
+                  props.history.push("/user/profile");
                 }}
               >
                 <i className="fas fa-user-circle" />
@@ -380,7 +173,7 @@ const LeftSideMenuComponent = (props) => {
             </li>
             <li>
               <a
-                href="/login"
+                href="/user/login"
                 onClick={(e) => {
                   e.preventDefault();
                   LogoutUser();

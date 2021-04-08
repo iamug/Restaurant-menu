@@ -6,27 +6,28 @@ import {
   Redirect,
   withRouter,
 } from "react-router-dom";
-import Popper from "popper.js";
-import "rsuite/dist/styles/rsuite-default.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Loader } from "rsuite";
 import { Spinner } from "@chakra-ui/react";
 
 import DataContext, { DataProvider } from "../../context/datacontext";
 import { GetUserData, PrivateRoute } from "../../controllers/auth";
-import LoginComponent from "../../components/adminDashboard/login/login";
-import SignupComponent from "../../components/adminDashboard/signup/signup";
-import MenuComponent from "../../components/menu/menucomponent";
+import LoginComponent from "./login/login";
+import SignupComponent from "./signup/signup";
 
-import Error404Component from "../../components/404";
-import VerifyAdminComponent from "../../components/adminDashboard/login/verifyadmin";
-import RecoverPasswordComponent from "../../components/adminDashboard/resetpassword/recoverpassword";
-import ResetPasswordComponent from "../../components/adminDashboard/resetpassword/resetpassword";
+// import Error404Component from "../../components/404";
+import VerifyAdminComponent from "./login/verifyadmin";
+import RecoverPasswordComponent from "./resetpassword/recoverpassword";
+import ResetPasswordComponent from "./resetpassword/resetpassword";
+import ProfileComponent from "./profile/profile";
+import DashboardComponent from "./dashboard/dashboard";
+import ProductListComponent from "./products/productlist";
+import Error404Component from "../404";
+import LeftSideMenuComponent from "./LeftSideMenu";
+import TopbarMenuComponent from "./TopBarMenu";
 
-import AdminDashboard from "../../components/adminDashboard/home";
-import UserDashboard from "../../components/adminDashboard/home";
+//import UserDashboard from "../../components/adminDashboard/home";
 
-function App() {
+function UserDashboard() {
   let [userdata, setUserData] = useState(false);
   let [loading, setLoading] = useState(false);
   let providerValue = useMemo(() => ({ userdata, setUserData }), [
@@ -43,15 +44,12 @@ function App() {
     }
     console.log({ data });
     if (data && data.email) {
-      if (
-        window.location.pathname === "/login" ||
-        window.location.pathname === "/"
-      ) {
-        window.location.href = "/dashboard";
+      if (window.location.pathname === "/user/login") {
+        window.location.href = "/user/dashboard";
       }
     }
     if (!data) {
-      if (window.location.pathname === "/login") {
+      if (window.location.pathname === "/user/login") {
         setLoading(true);
         return false;
       } else {
@@ -69,6 +67,7 @@ function App() {
     setUserData(data);
     setLoading(true);
   }, []);
+
   return loading ? (
     <DataContext.Provider value={providerValue}>
       <Router>
@@ -116,21 +115,13 @@ function App() {
                     exact
                     component={ProfileComponent}
                   />
-                  <Route
-                    path="/user/admins"
-                    exact
-                    component={AdminListComponent}
-                  />
+
                   <Route
                     path="/user/products"
                     exact
                     component={ProductListComponent}
                   />
-                  <Route
-                    path="/user/category"
-                    exact
-                    component={CategoryListComponent}
-                  />
+
                   <Route path="/404" component={Error404Component} />
                   <Route component={Error404Component} />
                 </Switch>
@@ -161,41 +152,41 @@ function App() {
   );
 }
 
-export default App;
+// export default App;
 
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import ProfileComponent from "./profile/profile";
-import DashboardComponent from "./dashboard/dashboard";
-import AdminListComponent from "./admins/adminlist";
-import ProductListComponent from "./products/productlist";
-import CategoryListComponent from "./Category/categorylist";
-import Error404Component from "../404";
-import LeftSideMenuComponent from "./LeftSideMenu";
-import TopbarMenuComponent from "./TopBarMenu";
+// import React from "react";
+// import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+// import ProfileComponent from "./profile/profile";
+// import DashboardComponent from "./dashboard/dashboard";
+// import AdminListComponent from "./admins/adminlist";
+// import ProductListComponent from "./products/productlist";
+// import CategoryListComponent from "./Category/categorylist";
+// import Error404Component from "../404";
+// import LeftSideMenuComponent from "./LeftSideMenu";
+// import TopbarMenuComponent from "./TopBarMenu";
 
-const UserDashboard = () => (
-  <React.Fragment>
-    <TopbarMenuComponent />
-    <div className="left-side-menu" id="left-side-menu">
-      <LeftSideMenuComponent />
-    </div>
-    <div className="content-page">
-      <Switch>
-        <Route
-          path="/dashboard"
-          exact
-          render={(props) => <DashboardComponent {...props} />}
-        />
-        <Route path="/profile" exact component={ProfileComponent} />
-        <Route path="/admins" exact component={AdminListComponent} />
-        <Route path="/products" exact component={ProductListComponent} />
-        <Route path="/category" exact component={CategoryListComponent} />
-        <Route path="/404" component={Error404Component} />
-        <Route component={Error404Component} />
-      </Switch>
-    </div>
-  </React.Fragment>
-);
+// const UserDashboard = () => (
+//   <React.Fragment>
+//     <TopbarMenuComponent />
+//     <div className="left-side-menu" id="left-side-menu">
+//       <LeftSideMenuComponent />
+//     </div>
+//     <div className="content-page">
+//       <Switch>
+//         <Route
+//           path="/dashboard"
+//           exact
+//           render={(props) => <DashboardComponent {...props} />}
+//         />
+//         <Route path="/profile" exact component={ProfileComponent} />
+//         <Route path="/admins" exact component={AdminListComponent} />
+//         <Route path="/products" exact component={ProductListComponent} />
+//         <Route path="/category" exact component={CategoryListComponent} />
+//         <Route path="/404" component={Error404Component} />
+//         <Route component={Error404Component} />
+//       </Switch>
+//     </div>
+//   </React.Fragment>
+// );
 
 export default UserDashboard;
