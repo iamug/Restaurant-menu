@@ -27,6 +27,29 @@ export const Reload = async (setUser, toast = true) => {
   }
 };
 
+export const AdminReload = async (setUser, toast = true) => {
+  if (toast) {
+    new AWN().info("Please wait....", {
+      durations: { info: 0 },
+      icons: { info: "sync fa-spin" },
+    });
+  }
+  let data;
+  try {
+    data = await GetAdminData();
+  } catch (error) {
+    data = false;
+  }
+  if (data && data.email) {
+    setUser(data);
+    if (!toast) return;
+    new AWN().closeToasts();
+    new AWN().success("Reload Successful", { durations: { success: 2000 } });
+  } else {
+    return <Redirect to="/login" />;
+  }
+};
+
 export async function GetUserData() {
   try {
     let token = localStorage.getItem("token");
@@ -40,7 +63,32 @@ export async function GetUserData() {
           "x-auth-token": token,
         },
       };
-      const res = await API.get("/api/auth", config);
+      const res = await API.get("/api/user/auth", config);
+      if (res.status == 401) {
+        //window.location.href = "/login";
+        return false;
+      }
+      return res.data;
+    }
+  } catch (err) {
+    console.log("error auth", err);
+  }
+}
+
+export async function GetAdminData() {
+  try {
+    let token = localStorage.getItem("token");
+    if (!token) {
+      return false;
+    }
+    if (token) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        },
+      };
+      const res = await API.get("/api/admin/auth", config);
       if (res.status == 401) {
         //window.location.href = "/login";
         return false;

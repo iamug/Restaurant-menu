@@ -15,20 +15,18 @@ import { Spinner } from "@chakra-ui/react";
 
 import DataContext, { DataProvider } from "./context/datacontext";
 import { GetUserData, PrivateRoute } from "./controllers/auth";
-import LoginComponent from "./components/login/login";
-import SignupComponent from "./components/signup/signup";
+import LoginComponent from "./components/adminDashboard/login/login";
+import SignupComponent from "./components/adminDashboard/signup/signup";
 import MenuComponent from "./components/menu/menucomponent";
-import ProfileComponent from "./components/profile/profile";
-import DashboardComponent from "./components/dashboard/dashboard";
-import AdminListComponent from "./components/admins/adminlist";
-import ProductListComponent from "./components/products/productlist";
-import CategoryListComponent from "./components/Category/categorylist";
+import UserComponent from "./components/menu/userscomponent";
+
 import Error404Component from "./components/404";
-import VerifyAdminComponent from "./components/login/verifyadmin";
-import RecoverPasswordComponent from "./components/resetpassword/recoverpassword";
-import ResetPasswordComponent from "./components/resetpassword/resetpassword";
-import LeftSideMenuComponent from "./components/LeftSideMenu";
-import TopbarMenuComponent from "./components/TopBarMenu";
+import VerifyAdminComponent from "./components/adminDashboard/login/verifyadmin";
+import RecoverPasswordComponent from "./components/adminDashboard/resetpassword/recoverpassword";
+import ResetPasswordComponent from "./components/adminDashboard/resetpassword/resetpassword";
+
+import AdminDashboard from "./components/adminDashboard/home";
+import UserDashboard from "./components/userDashboard/home";
 
 function App() {
   let [userdata, setUserData] = useState(false);
@@ -39,122 +37,57 @@ function App() {
   ]);
 
   useEffect(async () => {
-    let data;
-    try {
-      data = await GetUserData();
-    } catch (error) {
-      data = false;
-    }
-    console.log({ data });
-    if (data && data.email) {
-      if (
-        window.location.pathname === "/login" ||
-        window.location.pathname === "/"
-      ) {
-        window.location.href = "/dashboard";
-      }
-    }
-    if (!data) {
-      if (window.location.pathname === "/login") {
-        setLoading(true);
-        return false;
-      } else {
-        if (
-          window.location.pathname &&
-          (window.location.pathname.includes("/resetpassword") ||
-            window.location.pathname.includes("/verify"))
-        ) {
-          setLoading(true);
-          return false;
-        }
-        //window.location.href = "/login";
-      }
-    }
-    setUserData(data);
-    setLoading(true);
+    // let data;
+    // try {
+    //   data = await GetUserData();
+    // } catch (error) {
+    //   data = false;
+    // }
+    // console.log({ data });
+    // if (data && data.email) {
+    //   if (
+    //     window.location.pathname === "/login" ||
+    //     window.location.pathname === "/"
+    //   ) {
+    //     window.location.href = "/dashboard";
+    //   }
+    // }
+    // if (!data) {
+    //   if (window.location.pathname === "/login") {
+    //     setLoading(true);
+    //     return false;
+    //   } else {
+    //     if (
+    //       window.location.pathname &&
+    //       (window.location.pathname.includes("/resetpassword") ||
+    //         window.location.pathname.includes("/verify"))
+    //     ) {
+    //       setLoading(true);
+    //       return false;
+    //     }
+    //     //window.location.href = "/login";
+    //   }
+    // }
+    // setUserData(data);
+    // setLoading(true);
   }, []);
-  return loading ? (
+  return (
     <DataContext.Provider value={providerValue}>
       <Router>
         <Switch>
-          <Route path="/login" exact component={LoginComponent} />
+          {/* <Route path="/user/login" exact component={LoginComponent} />
           <Route path="/signup" exact component={SignupComponent} />
           <Route path="/menu" exact component={withRouter(MenuComponent)} />
-          <Route path="/" exact component={LoginComponent} />
-          <Route
-            path="/recoverpassword"
-            exact
-            component={RecoverPasswordComponent}
-          />
-          <Route
-            path="/resetpassword"
-            exact
-            component={withRouter(ResetPasswordComponent)}
-          />
-          <Route
-            path="/resetpassword:resetToken"
-            exact
-            component={withRouter(ResetPasswordComponent)}
-          />
-          <Route
-            path="/verify:signupToken"
-            exact
-            component={withRouter(VerifyAdminComponent)}
-          />
+          <Route path="/" exact component={LoginComponent} /> */}
 
-          {loading && userdata ? (
-            <React.Fragment>
-              <TopbarMenuComponent />
-              <div className="left-side-menu" id="left-side-menu">
-                <LeftSideMenuComponent />
-              </div>
-              <div className="content-page">
-                <Switch>
-                  <Route
-                    path="/dashboard"
-                    exact
-                    render={(props) => <DashboardComponent {...props} />}
-                  />
-                  <Route path="/profile" exact component={ProfileComponent} />
-                  <Route path="/admins" exact component={AdminListComponent} />
-                  <Route
-                    path="/products"
-                    exact
-                    component={ProductListComponent}
-                  />
-                  <Route
-                    path="/category"
-                    exact
-                    component={CategoryListComponent}
-                  />
-
-                  <Route path="/404" component={Error404Component} />
-                  <Route component={Error404Component} />
-                </Switch>
-              </div>
-            </React.Fragment>
-          ) : (
-            <Redirect to="/login" />
-          )}
+          <Route path="/user/" component={withRouter(UserDashboard)} />
+          <Route path="/admin/" component={withRouter(AdminDashboard)} />
+          <Route path="/menu" exact component={withRouter(UserComponent)} />
+          <Route path="/menu/:id" exact component={withRouter(MenuComponent)} />
+          <Redirect to="/user/login" />
         </Switch>
       </Router>
     </DataContext.Provider>
-  ) : (
-    <>
-      <div className=" my-5 py-5 text-center  h-100">
-        <div className=" my-5 py-5 text-center  h-100">
-          <Spinner size="xl" />
-          {/* <Loader size="lg" content="Loading..." vertical="true" /> */}
-          {/* <div className="text-center py-5">
-            <div
-              class="spinner-border avatar-lg text-primary m-2"
-              role="status"
-            ></div>
-            <h4> Loading...</h4>
-          </div> */}
-        </div>
-      </div>
-    </>
   );
 }
 

@@ -65,7 +65,6 @@ app.use("/upload", auth, async (req, res) => {
     return res.status(400).json({ msg: "No file uploaded" });
   }
   const file = req.files.file;
-  console.log(file.mimetype);
   const key = `Commute-Bucket-Oct-2020/${req.user.id}/${uuidv4()}-${file.name}`;
   s3.getSignedUrl(
     "putObject",
@@ -82,15 +81,22 @@ app.use("/upload", auth, async (req, res) => {
 
 app.get("/", (req, res) => res.send("API Running"));
 
-//Define Routes
-app.use("/api/users", require("./routes/api/users"));
-app.use("/api/auth", require("./routes/api/auth"));
-app.use("/api/profile", require("./routes/api/profile"));
-//app.use("/api/dashboard", require("./routes/api/dashboard"));
-// app.use("/api/payments", require("./routes/api/payments"));
-app.use("/api/admins", require("./routes/api/admins"));
-app.use("/api/products", require("./routes/api/products"));
-app.use("/api/category", require("./routes/api/category"));
+//Define User Routes
+app.use("/api/user/auth", require("./routes/api/user/auth"));
+app.use("/api/user/products", require("./routes/api/user/products"));
+app.use("/api/user/category", require("./routes/api/user/category"));
+
+//Define Admin Routes
+app.use("/api/admin/users", require("./routes/api/admin/users"));
+app.use("/api/admin/auth", require("./routes/api/admin/auth"));
+//app.use("/api/admin/profile", require("./routes/api/admin/profile"));
+app.use("/api/admin/admins", require("./routes/api/admin/admins"));
+app.use("/api/admin/products", require("./routes/api/admin/products"));
+app.use("/api/admin/category", require("./routes/api/admin/category"));
+
+//Define Guest Routes
+app.use("/api/guest/products", require("./routes/api/guest/products"));
+app.use("/api/guest/users", require("./routes/api/guest/users"));
 
 const PORT = process.env.PORT || 8000;
 
