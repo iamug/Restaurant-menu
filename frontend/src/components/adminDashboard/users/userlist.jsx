@@ -59,14 +59,22 @@ const UserListComponent = (props) => {
   };
 
   const updateuser = async (id) => {
-    const { verified, firstName, lastName, email, phone, category } = formValue;
+    const {
+      verified,
+      firstName,
+      lastName,
+      email,
+      phone,
+      slug,
+      category,
+    } = formValue;
     if (!firstName && !lastName && !email && !phone && !category) {
       new AWN().alert("Kindly fill all fields", {
         durations: { alert: 4000 },
       });
       return false;
     }
-    let body = { firstName, lastName, email, phone, category };
+    let body = { firstName, lastName, email, phone, category, slug };
     verified !== undefined && (body.verified = verified);
     try {
       let token = localStorage.getItem("token");
@@ -191,9 +199,9 @@ const UserListComponent = (props) => {
                       <table className="table table-centered table-nowrap table-hover mb-0">
                         <thead>
                           <tr>
+                            <th>Name</th>
                             <th>Email</th>
-                            <th>Firstname</th>
-                            <th>Lastname</th>
+                            <th>slug</th>
                             <th>Phone</th>
                             <th>Status</th>
                             <th style={{ width: 82 }}>Action</th>
@@ -209,14 +217,14 @@ const UserListComponent = (props) => {
                                       href="#"
                                       className="text-primary font-weight-semibold"
                                     >
-                                      {user.email}
+                                      {user.name}
                                     </a>
                                   </td>
-                                  <td>{user.firstName.substring(0, 35)}</td>
-                                  <td>{user.lastName.substring(0, 35)}</td>
+                                  <td>{user.email}</td>
+                                  <td>{user.slug}</td>
                                   <td>{user.phone}</td>
                                   <td>
-                                    {user.verified ? (
+                                    {user.isVerified ? (
                                       <span className="badge badge-success">
                                         Verified
                                       </span>
@@ -239,19 +247,16 @@ const UserListComponent = (props) => {
                                       {" "}
                                       <i className="mdi mdi-square-edit-outline" />
                                     </a>
-                                    {hasPermission.delete(
-                                      props.permissions
-                                    ) && (
-                                      <a
-                                        className="action-icon"
-                                        onClick={() => {
-                                          deleteuser(user._id);
-                                        }}
-                                      >
-                                        {" "}
-                                        <i className="mdi mdi-delete" />
-                                      </a>
-                                    )}
+
+                                    <a
+                                      className="action-icon"
+                                      onClick={() => {
+                                        deleteuser(user._id);
+                                      }}
+                                    >
+                                      {" "}
+                                      <i className="mdi mdi-delete" />
+                                    </a>
                                   </td>
                                 </tr>
                               </>
@@ -294,7 +299,17 @@ const UserListComponent = (props) => {
         }}
       >
         <Drawer.Header>
-          <Drawer.Title>{dataUpdate ? "Update User" : "Add User"}</Drawer.Title>
+          <Drawer.Title>
+            {dataUpdate && (
+              <span>
+                Update User{" "}
+                <small className="font-weight-bolder text-primary ml-2">
+                  {formValue.adminId}
+                </small>
+              </span>
+            )}
+            {!dataUpdate && <span>Add User</span>}
+          </Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
           <Form
@@ -327,23 +342,39 @@ const UserListComponent = (props) => {
                 <Col xs={12}>
                   <FormGroup>
                     <ControlLabel>
-                      Firstname
+                      Name
                       <HelpBlock tooltip style={{ marginTop: "0px" }}>
                         Required
                       </HelpBlock>
                     </ControlLabel>
-                    <FormControl name="firstName" required />
+                    <FormControl name="name" required />
                   </FormGroup>
                 </Col>
                 <Col xs={12}>
                   <FormGroup>
                     <ControlLabel>
-                      Lastname{" "}
+                      Slug
                       <HelpBlock tooltip style={{ marginTop: "0px" }}>
                         Required
                       </HelpBlock>
                     </ControlLabel>
-                    <FormControl name="lastName" required />
+                    <FormControl name="slug" required />
+                    {formValue.slug && (
+                      <span className="form-text text-muted">
+                        <small className="">
+                          <a
+                            href={
+                              window.location.origin + "/menu/" + formValue.slug
+                            }
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            {" "}
+                            {window.location.origin + "/menu/" + formValue.slug}
+                          </a>
+                        </small>
+                      </span>
+                    )}
                   </FormGroup>
                 </Col>
               </Row>
@@ -378,7 +409,7 @@ const UserListComponent = (props) => {
                 <Col xs={12}>
                   <FormGroup>
                     <FormControl
-                      name="verified"
+                      name="isVerified"
                       accepter={SelectPicker}
                       data={[
                         { label: "Verified", value: true },
@@ -392,56 +423,45 @@ const UserListComponent = (props) => {
                 <Col xs={12}>
                   <FormGroup>
                     <FormControl
-                      name="category"
-                      required
+                      name="isActive"
                       accepter={SelectPicker}
                       data={[
-                        { label: "Individual", value: "Individual" },
-                        { label: "Corporate", value: "Corporate" },
+                        { label: "Active", value: true },
+                        { label: "Disabled", value: false },
                       ]}
-                      placeholder="Select Category"
+                      placeholder="Select Status"
                       block
                     />
                   </FormGroup>
                 </Col>
               </Row>
-              <div className="mb-3"></div>
-              <Row gutter={10}>
-                <Col xs={12}>
-                  <FormGroup>
-                    <ControlLabel>User Drive Test Cert Id</ControlLabel>
-                    <FormControl name="userDriveTestId" disabled />
-                  </FormGroup>
-                </Col>
-              </Row>
+
               <div className="mb-4"></div>
               <Row gutter={10}>
                 <Col xs={24}>
                   <FormGroup>
                     <ButtonToolbar>
-                      {dataUpdate
-                        ? hasPermission.update(props.permissions) && (
-                            <Button
-                              onClick={() => {
-                                //updateuser(formValue.userId);
-                              }}
-                              appearance="primary"
-                              type="submit"
-                            >
-                              Update
-                            </Button>
-                          )
-                        : hasPermission.create(props.permissions) && (
-                            <Button
-                              onClick={() => {
-                                //adduser();
-                              }}
-                              appearance="primary"
-                              type="submit"
-                            >
-                              Add New
-                            </Button>
-                          )}
+                      {dataUpdate ? (
+                        <Button
+                          onClick={() => {
+                            //updateuser(formValue.userId);
+                          }}
+                          appearance="primary"
+                          type="submit"
+                        >
+                          Update
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => {
+                            //adduser();
+                          }}
+                          appearance="primary"
+                          type="submit"
+                        >
+                          Add New
+                        </Button>
+                      )}
                     </ButtonToolbar>
                   </FormGroup>
                 </Col>

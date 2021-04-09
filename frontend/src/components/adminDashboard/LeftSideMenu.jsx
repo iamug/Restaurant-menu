@@ -213,6 +213,19 @@ const LeftSideMenuComponent = (props) => {
               </div>
             </li>
 
+            <li>
+              <a
+                href="/admin/users"
+                onClick={(e) => {
+                  e.preventDefault();
+                  props.history.push("/admin/users");
+                }}
+              >
+                <i className="mdi mdi-account-multiple-outline" />
+                <span> Users </span>
+              </a>
+            </li>
+
             {/* <li>
               <a
                 href="/roles"

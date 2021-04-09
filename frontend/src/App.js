@@ -18,6 +18,7 @@ import { GetUserData, PrivateRoute } from "./controllers/auth";
 import LoginComponent from "./components/adminDashboard/login/login";
 import SignupComponent from "./components/adminDashboard/signup/signup";
 import MenuComponent from "./components/menu/menucomponent";
+import UserComponent from "./components/menu/userscomponent";
 
 import Error404Component from "./components/404";
 import VerifyAdminComponent from "./components/adminDashboard/login/verifyadmin";
@@ -81,6 +82,8 @@ function App() {
 
           <Route path="/user/" component={withRouter(UserDashboard)} />
           <Route path="/admin/" component={withRouter(AdminDashboard)} />
+          <Route path="/menu" exact component={withRouter(UserComponent)} />
+          <Route path="/menu/:id" exact component={withRouter(MenuComponent)} />
           <Redirect to="/user/login" />
         </Switch>
       </Router>

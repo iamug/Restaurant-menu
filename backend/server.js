@@ -94,6 +94,10 @@ app.use("/api/admin/admins", require("./routes/api/admin/admins"));
 app.use("/api/admin/products", require("./routes/api/admin/products"));
 app.use("/api/admin/category", require("./routes/api/admin/category"));
 
+//Define Guest Routes
+app.use("/api/guest/products", require("./routes/api/guest/products"));
+app.use("/api/guest/users", require("./routes/api/guest/users"));
+
 const PORT = process.env.PORT || 6000;
 
 app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));

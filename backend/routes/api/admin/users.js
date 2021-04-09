@@ -136,22 +136,19 @@ router.put("/:id", auth, async (req, res) => {
   if (!userData)
     res.status(404).send({ success: false, msg: "Record does not exist" });
   let updateFields = {};
-  const { firstName, lastName, email, phone } = req.body;
-  const { verified, userDriveTestId, category } = req.body;
-  firstName && (updateFields.firstName = firstName);
-  lastName && (updateFields.lastName = lastName);
+  const { name, slug, email, phone, isActive, isVerified } = req.body;
+  name && (updateFields.name = name);
+  slug && (updateFields.slug = slug);
   email && (updateFields.email = email);
   phone && (updateFields.phone = phone);
-  category && (updateFields.category = category);
-  //userDriveTestId && (updateFields.userDriveTestId = userDriveTestId);
-  verified !== undefined && (updateFields.verified = verified);
+  isActive !== undefined && (updateFields.isActive = isActive);
+  isVerified !== undefined && (updateFields.isVerified = isVerified);
   try {
     let user = await User.findOneAndUpdate(
       { _id: req.params.id },
       { $set: updateFields },
       { new: true }
     );
-
     return res.json({ success: true });
   } catch (err) {
     console.log(error);

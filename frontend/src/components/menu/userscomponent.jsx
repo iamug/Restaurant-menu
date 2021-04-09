@@ -1,29 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@chakra-ui/react";
-import { Image } from "@chakra-ui/react";
 import { SimpleGrid } from "@chakra-ui/react";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../controllers/api";
-import { Loader } from "rsuite";
-import { Container } from "@chakra-ui/react";
-import { Badge } from "@chakra-ui/react";
-//import { Staricon } from "@chakra-ui/icons";
-import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Center, Square, Circle } from "@chakra-ui/react";
-import MenuCard from "./menucards";
 import { Heading } from "@chakra-ui/react";
 
-const MenuComponent = (props) => {
-  const property = {
-    imageUrl: "https://bit.ly/2Z4KKcF",
-    imageAlt: "Rear view of modern home with pool",
-    beds: 3,
-    baths: 2,
-    title: "Modern home in city center in the heart of historic Los Angeles",
-    formattedPrice: "$1,900.00",
-    reviewCount: 34,
-    rating: 4,
+const UsersComponent = (props) => {
+  const capitalize = (s) => {
+    if (typeof s !== "string") return "";
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  };
+
+  const UserCard = ({ product: { name, email, phone, slug } }) => {
+    return (
+      <div class="card" style={{ width: "100%", border: "2px solid #cccccc" }}>
+        <div class="card-body">
+          <Heading as="h3" size="lg" className="mb-23">
+            {capitalize(name)}
+          </Heading>
+          <p class="card-text my-2">{email}</p>
+          <p class="card-text my-2">{phone}</p>
+          {/* <p className="font-weight-bold mb-2">Hello</p> */}
+          <a
+            href={"/menu/" + slug}
+            className="btn btn-primary mt-2"
+            onClick={(e) => {
+              e.preventDefault();
+              props.history.push("/menu/" + slug);
+            }}
+          >
+            View Menu
+          </a>
+        </div>
+      </div>
+    );
   };
 
   let [productData, setProductData] = useState([]);
@@ -34,12 +46,10 @@ const MenuComponent = (props) => {
     "Content-Type": "application/json",
   };
 
-  const { id } = props.match.params;
-
   const fetchrecords = async () => {
     try {
       const config = { headers };
-      const res = await API.get("/api/guest/products/" + id, config);
+      const res = await API.get("/api/guest/users", config);
       if (!res) return false;
       return res.data;
     } catch (err) {
@@ -65,7 +75,7 @@ const MenuComponent = (props) => {
         durations: { alert: 0 },
       });
     }
-    setProductData(products.products);
+    setProductData(products.users);
     console.log(products);
     setLoading(true);
   }, [refreshData]);
@@ -125,7 +135,7 @@ const MenuComponent = (props) => {
                   productData &&
                   productData.length >= 1 &&
                   productData.map((product, index) => (
-                    <MenuCard product={product} />
+                    <UserCard product={product} />
                   ))}
               </SimpleGrid>
 
@@ -160,4 +170,4 @@ const MenuComponent = (props) => {
   );
 };
 
-export default MenuComponent;
+export default UsersComponent;

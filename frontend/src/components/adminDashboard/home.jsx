@@ -23,6 +23,7 @@ import DashboardComponent from "./dashboard/dashboard";
 import AdminListComponent from "./admins/adminlist";
 import ProductListComponent from "./products/productlist";
 import CategoryListComponent from "./Category/categorylist";
+import UserListComponent from "./users/userlist";
 import Error404Component from "../404";
 import LeftSideMenuComponent from "./LeftSideMenu";
 import TopbarMenuComponent from "./TopBarMenu";
@@ -44,12 +45,12 @@ function AdminDashboard() {
     }
     console.log({ data });
     if (data && data.email) {
-      if (window.location.pathname === "/user/login") {
-        window.location.href = "/dashboard";
+      if (window.location.pathname === "/admin/login") {
+        window.location.href = "/admin/dashboard";
       }
     }
     if (!data) {
-      if (window.location.pathname === "/user/login") {
+      if (window.location.pathname === "/admin/login") {
         setLoading(true);
         return false;
       } else {
@@ -120,6 +121,12 @@ function AdminDashboard() {
                     exact
                     component={AdminListComponent}
                   />
+
+                  <Route
+                    path="/admin/users"
+                    exact
+                    component={UserListComponent}
+                  />
                   <Route
                     path="/admin/products"
                     exact
@@ -136,7 +143,7 @@ function AdminDashboard() {
               </div>
             </React.Fragment>
           ) : (
-            <Redirect to="/user/login" />
+            <Redirect to="/admin/login" />
           )}
         </Switch>
       </Router>

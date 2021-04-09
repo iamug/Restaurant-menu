@@ -252,16 +252,12 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
-    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const { name, email, password } = req.body;
-    let userId = generateId("ADMIN");
-
-    //const emailBody = `<h1> Hello ${name} </h1><br><br><h4> Welcome ${email}</h4>`;
+    let userId = generateId("USER");
 
     try {
       let user = await Admin.findOne({ email });
@@ -270,16 +266,17 @@ router.post(
           .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
       }
+      let slug = name.replace(/\s/g, "").toLowerCase();
+      slug = slug + parseInt(Math.floor(Math.random() * 909 + 1));
       user = new Admin({
         userId,
         name,
         email,
         password,
+        slug,
       });
-
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
-
       const signupToken = user.getSignupVerificationToken();
       await user.save();
       //await user.save({ validateBeforeSave: false });
@@ -294,13 +291,11 @@ router.post(
           url: verifyURL,
         }
       );
-
       const payload = {
         user: {
           id: user.id,
         },
       };
-
       jwt.sign(
         payload,
         config.get("jwtSecret"),
@@ -317,15 +312,9 @@ router.post(
             text: "Verify Email", // plain text body
             html: html, // html body
           });
-
-          //console.log("Message sent: %s", info.messageId);
-          // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
           res.json({ success: true });
         }
       );
-
-      // res.send("User registered");
     } catch (err) {
       console.log(err);
       console.error(err.message);

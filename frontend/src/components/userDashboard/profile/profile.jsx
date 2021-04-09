@@ -276,7 +276,7 @@ const ProfileComponent = () => {
                             </div>
                           </div>{" "} */}
                         {/* end row */}
-                        <div className="row">
+                        <div className="row mb-3">
                           <div className="col-md-6">
                             <FormGroup>
                               <ControlLabel> Phone</ControlLabel>
@@ -290,23 +290,39 @@ const ProfileComponent = () => {
                             </FormGroup>
                           </div>
                           <div className="col-md-6">
-                            <div className="form-group">
-                              <label htmlFor="userpassword">Role</label>
-                              <input
-                                type="text"
+                            <FormGroup>
+                              <ControlLabel> Slug</ControlLabel>
+                              <Input
+                                name="slug"
                                 className="form-control"
-                                name="role"
                                 readOnly
-                                placeholder=""
+                                type="text"
+                                onChange={(v, e) => handleInputChange(v, e)}
+                                value={formValue.slug}
                               />
-                              <span className="form-text text-muted">
-                                <small className="hidden">
-                                  If you want to change role
-                                </small>
-                              </span>
-                            </div>
+                              {formValue.slug && (
+                                <span className="form-text text-default">
+                                  <small className="">
+                                    <a
+                                      href={
+                                        window.location.origin +
+                                        "/menu/" +
+                                        formValue.slug
+                                      }
+                                      rel="noopener noreferrer"
+                                      target="_blank"
+                                    >
+                                      {" "}
+                                      {window.location.origin +
+                                        "/menu/" +
+                                        formValue.slug}
+                                    </a>
+                                  </small>
+                                </span>
+                              )}
+                            </FormGroup>
+                            {/* end col */}
                           </div>{" "}
-                          {/* end col */}
                         </div>{" "}
                         {/* end row */}
                         <h5 className="mb-3 text-uppercase bg-light p-2">
