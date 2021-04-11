@@ -49,7 +49,9 @@ router.post("/forgotpassword", async (req, res, next) => {
   // const resetURL = `${req.protocol}://${
   //   req.headers["x-forwarded-host"] || req.socket.remoteAddress
   // }/resetpassword${resetToken}`;
-  const resetURL = `${config.get("Frontend_URL")}/resetpassword${resetToken}`;
+  const resetURL = `${config.get(
+    "Frontend_URL"
+  )}/admin/resetpassword${resetToken}`;
   var html = pug.renderFile(`${__dirname}/../../email/reset-password.pug`, {
     userName: name,
     url: resetURL,
@@ -120,7 +122,9 @@ router.post("/resendverification/", async (req, res, next) => {
     // const verifyURL = `${req.protocol}://${
     //   req.headers["x-forwarded-host"] || req.socket.remoteAddress
     // }/verify${signupToken}`;
-    const verifyURL = `${config.get("Frontend_URL")}/verify${signupToken}`;
+    const verifyURL = `${config.get(
+      "Frontend_URL"
+    )}/admin/verify${signupToken}`;
     // renderFile
     var html = pug.renderFile(
       `${__dirname}/../../email/email-verification.pug`,
@@ -287,7 +291,7 @@ router.post(
       //await user.save({ validateBeforeSave: false });
       const verifyURL = `${config.get(
         "Frontend_URL"
-      )}/signupverify${signupToken}`;
+      )}/admin/signupverify${signupToken}`;
       // renderFile
       var html = pug.renderFile(
         `${__dirname}/../../email/email-verification.pug`,
