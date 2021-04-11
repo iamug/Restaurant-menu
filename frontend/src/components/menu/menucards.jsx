@@ -16,7 +16,7 @@ const MenuCard = ({ product }) => {
     <div class="card" style={{ width: "100%", border: "1px solid #cccccc" }}>
       <img
         class="card-img-top"
-        style={{ height: "250px" }}
+        style={{ height: "200px" }}
         loading="lazy"
         src={product.imageUrl}
         alt={product.name}
