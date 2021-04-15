@@ -12,7 +12,9 @@ const { generateId, validMongooseId } = require("../../../utils/utils");
 // @access  Private
 router.get("/:user", async (req, res) => {
   try {
-    const userdata = await User.findOne({ slug: req.params.user }).lean();
+    const userdata = await User.findOne({ slug: req.params.user })
+      .select("name slug email phone _id")
+      .lean();
     if (!userdata)
       return res.status(404).json({ msg: "Record does not exist" });
     const products = await Product.find({ creator: userdata._id })
@@ -22,7 +24,7 @@ router.get("/:user", async (req, res) => {
     if (!products) {
       return res.status(400).json({ msg: "Invalid request" });
     }
-    res.json({ success: true, products });
+    res.json({ success: true, user: userdata, products });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

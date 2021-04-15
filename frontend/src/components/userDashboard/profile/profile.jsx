@@ -22,7 +22,7 @@ const ProfileComponent = () => {
 
   const updateprofile = async () => {
     const { name, phone, avatar } = formValue;
-    if (!name && !phone && !avatar) {
+    if (!name || !phone || !avatar) {
       new AWN().alert("Kindly fill all fields", {
         durations: { alert: 4000 },
       });
@@ -47,7 +47,7 @@ const ProfileComponent = () => {
           "x-auth-token": token,
         },
       };
-      const res = await API.put("/api/auth/profile", body, config);
+      const res = await API.put("/api/user/auth/profile", body, config);
       if (res.status == 200) {
         new AWN().success("Profile updated successfully ", {
           durations: { success: 3000 },
@@ -65,6 +65,50 @@ const ProfileComponent = () => {
       new AWN().alert("Failed, Kindly try again", {
         durations: { alert: 3000 },
       });
+    }
+  };
+
+  const updateslug = async () => {
+    const { slug } = formValue;
+    if (!slug) {
+      new AWN().alert("Kindly enter slug", {
+        durations: { alert: 4000 },
+      });
+      return false;
+    }
+    let body = { slug };
+    try {
+      let token = localStorage.getItem("token");
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        },
+      };
+      const res = await API.put("/api/user/auth/profile/slug", body, config);
+      if (res.status == 200) {
+        new AWN().success("Profile updated successfully ", {
+          durations: { success: 3000 },
+        });
+        user.setUserData(res.data.admin);
+        setRefreshData(!refreshData);
+        Reload(user.setUserData, false);
+      } else {
+        new AWN().alert("Failed, Kindly try again", {
+          durations: { alert: 3000 },
+        });
+      }
+    } catch (err) {
+      //console.log({ err });
+      if (err.response && err.response.data && err.response.data.msg) {
+        new AWN().alert(err.response.data.msg, {
+          durations: { alert: 3000 },
+        });
+      } else {
+        new AWN().alert("Failed, Kindly try again", {
+          durations: { alert: 3000 },
+        });
+      }
     }
   };
 
@@ -289,13 +333,28 @@ const ProfileComponent = () => {
                               />
                             </FormGroup>
                           </div>
+                          <div className="col-md-6"></div>{" "}
+                        </div>{" "}
+                        {/* end row */}
+                        <div className="text-left mb-3">
+                          <button
+                            type="submit"
+                            className="btn btn-primary waves-effect waves-light mt-1"
+                          >
+                            <i className="mdi mdi-content-save hidden" /> Update
+                            Profile
+                          </button>
+                        </div>
+                        <h5 className="mb-3 text-uppercase bg-light p-2">
+                          <i className="fas fa-globe mr-1" /> Change Public URL
+                        </h5>
+                        <div className="row mb-3">
                           <div className="col-md-6">
                             <FormGroup>
                               <ControlLabel> Slug</ControlLabel>
                               <Input
                                 name="slug"
                                 className="form-control"
-                                readOnly
                                 type="text"
                                 onChange={(v, e) => handleInputChange(v, e)}
                                 value={formValue.slug}
@@ -321,10 +380,20 @@ const ProfileComponent = () => {
                                 </span>
                               )}
                             </FormGroup>
-                            {/* end col */}
-                          </div>{" "}
+                            {/* end col */}{" "}
+                          </div>
                         </div>{" "}
                         {/* end row */}
+                        <div className="text-left mb-3">
+                          <button
+                            onClick={() => updateslug()}
+                            type="button"
+                            className="btn btn-primary waves-effect waves-light mt-1"
+                          >
+                            <i className="mdi mdi-content-save hidden" /> Update
+                            Slug
+                          </button>
+                        </div>
                         <h5 className="mb-3 text-uppercase bg-light p-2">
                           <i className="mdi mdi-shield-key mr-1" /> Change
                           Password
@@ -388,7 +457,8 @@ const ProfileComponent = () => {
                             type="submit"
                             className="btn btn-primary waves-effect waves-light mt-4"
                           >
-                            <i className="mdi mdi-content-save" /> Save
+                            <i className="mdi mdi-content-save hidden" /> Update
+                            Password
                           </button>
                         </div>
                       </Form>

@@ -363,4 +363,36 @@ router.put("/profile/", auth, async (req, res) => {
   }
 });
 
+// @route  POST api/retrievals/me
+// @desc   Retrieval route
+// @access Private
+router.put("/profile/slug", auth, async (req, res) => {
+  const { slug } = req.body;
+  let adminData = await Admin.findById(req.user.id);
+  if (!adminData)
+    return res
+      .status(404)
+      .send({ success: false, msg: "Record does not exist" });
+  if (!slug || slug == undefined)
+    return res.status(400).send({ success: false, msg: "Invalid request" });
+  try {
+    let user = await Admin.findOne({ slug });
+    if (user) {
+      return res
+        .status(400)
+        .send({ success: false, msg: "Slug already exists" });
+    }
+    let updateFields = { slug };
+    let admin = await Admin.findOneAndUpdate(
+      { _id: req.user.id },
+      { $set: updateFields },
+      { new: true }
+    );
+    return res.json({ success: true, admin });
+  } catch (err) {
+    console.log(error);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;

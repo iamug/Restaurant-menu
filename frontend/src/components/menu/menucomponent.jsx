@@ -15,20 +15,10 @@ import MenuCard from "./menucards";
 import { Heading } from "@chakra-ui/react";
 
 const MenuComponent = (props) => {
-  const property = {
-    imageUrl: "https://bit.ly/2Z4KKcF",
-    imageAlt: "Rear view of modern home with pool",
-    beds: 3,
-    baths: 2,
-    title: "Modern home in city center in the heart of historic Los Angeles",
-    formattedPrice: "$1,900.00",
-    reviewCount: 34,
-    rating: 4,
-  };
-
   let [productData, setProductData] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
   let [loading, setLoading] = useState(false);
+  let [valid, setValid] = useState(true);
 
   let headers = {
     "Content-Type": "application/json",
@@ -48,6 +38,24 @@ const MenuComponent = (props) => {
     }
   };
 
+  const DoesNotExist = () => (
+    <div className="text-center py-3">
+      <Heading as="h6" size="sm">
+        This user does not exist.
+      </Heading>
+      <h3> </h3>
+      <a
+        href="#"
+        onClick={() => {
+          props.history.push("/menu");
+        }}
+        class="btn btn-primary mt-2"
+      >
+        Go back to users
+      </a>
+    </div>
+  );
+
   useEffect(async () => {
     $(document).ready(function () {
       $("#myInput").on("input", function () {
@@ -61,10 +69,13 @@ const MenuComponent = (props) => {
 
     const products = await fetchrecords();
     if (!products) {
-      new AWN().alert("Network Error. Kindly check your internet connection", {
-        durations: { alert: 0 },
-      });
+      //props.history.push("/menu");
+      //   new AWN().alert("Network Error. Kindly check your internet connection", {
+      //     durations: { alert: 0 },
+      //   });
+      setValid(false);
     }
+
     setProductData(products.products);
     console.log(products);
     setLoading(true);
@@ -120,14 +131,18 @@ const MenuComponent = (props) => {
 
           <Center>
             <Box w="100%">
-              <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={10} id="grid">
-                {loading &&
-                  productData &&
-                  productData.length >= 1 &&
-                  productData.map((product, index) => (
-                    <MenuCard product={product} />
-                  ))}
-              </SimpleGrid>
+              {loading && productData && (
+                <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={10} id="grid">
+                  {loading &&
+                    productData &&
+                    productData.length >= 1 &&
+                    productData.map((product, index) => (
+                      <MenuCard product={product} />
+                    ))}
+                </SimpleGrid>
+              )}
+
+              {loading && !valid && <DoesNotExist />}
 
               {loading && productData && productData.length === 0 && (
                 <div className="text-center py-3">
