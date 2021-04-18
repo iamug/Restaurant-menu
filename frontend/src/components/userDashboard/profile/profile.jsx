@@ -37,6 +37,7 @@ const ProfileComponent = () => {
       }
     }
     let body = { name, phone, avatar };
+    formValue.bannerImg && (body.bannerImg = formValue.bannerImg);
     formValue.password && (body.password = formValue.password);
     console.log(body);
     try {
@@ -167,6 +168,69 @@ const ProfileComponent = () => {
           new AWN().success("Picture upload successful", {
             durations: { success: 4000 },
           });
+          updateprofile();
+        }
+      }
+    } catch (err) {
+      if (err) {
+        if (err.response.status === 500) {
+          console.log("There was a problem with the server");
+        } else {
+          console.log(err);
+        }
+      }
+    }
+  };
+
+  const onChangeBannerImg = async (e) => {
+    e.preventDefault();
+    console.log(e.target.files[0]);
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", e.target.files[0]);
+    let token = localStorage.getItem("token");
+    new AWN().info("Please wait while picture uploads", {
+      durations: { info: 0 },
+    });
+    try {
+      const res = await API.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-auth-token": token,
+        },
+      });
+      console.log(res);
+      if (res.status !== 200) {
+        new AWN().alert("Picture Upload Failed, Kindly try again", {
+          durations: { alert: 3000 },
+        });
+        return false;
+      }
+      if (res.status == 200) {
+        let pic = await axios.put(res.data.url, file, {
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+        if (pic.status !== 200) {
+          new AWN().alert("Picture Upload Failed, Kindly try again", {
+            durations: { alert: 3000 },
+          });
+          return false;
+        }
+        if (pic.status == 200) {
+          let filePath =
+            "https://commute-partner-s3-bucket.s3.eu-west-2.amazonaws.com/" +
+            res.data.key;
+          setFormValue({
+            ...formValue,
+            ["bannerImg"]: filePath,
+          });
+          new AWN().closeToasts();
+          new AWN().success("Picture upload successful", {
+            durations: { success: 4000 },
+          });
+          // updateprofile();
         }
       }
     } catch (err) {
@@ -239,6 +303,47 @@ const ProfileComponent = () => {
                         id="avatar"
                         accept="image/*"
                         onChange={(e) => onChangeProfile(e)}
+                        class="m-t-20 hidden"
+                        style={{ display: "none" }}
+                      />
+                    </p>
+                  </div>{" "}
+                  {/* end card-box */}
+                  <div className="card-box text-center">
+                    <Center>
+                      {(formValue.bannerImg ||
+                        (userData && userData.bannerImg)) && (
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={formValue.bannerImg || userData.bannerImg}
+                        >
+                          <img
+                            src={
+                              formValue && formValue.bannerImg
+                                ? formValue.bannerImg
+                                : userData &&
+                                  userData.bannerImg &&
+                                  userData.bannerImg
+                            }
+                            className="img-fluid d-inline-block"
+                            alt="banner-image"
+                          />
+                        </a>
+                      )}
+                    </Center>
+                    <p>
+                      <label htmlFor="bannerImg">
+                        <span class="btn btn-dark btn-xs mt-3 ">
+                          Change Banner Image
+                        </span>
+                      </label>
+                      <input
+                        type="file"
+                        name="bannerImg"
+                        id="bannerImg"
+                        accept="image/*"
+                        onChange={(e) => onChangeBannerImg(e)}
                         class="m-t-20 hidden"
                         style={{ display: "none" }}
                       />

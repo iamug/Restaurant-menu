@@ -34,7 +34,7 @@ const ProductSchema = new mongoose.Schema(
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "admins",
+      ref: "users",
       required: true,
     },
     date_created: {

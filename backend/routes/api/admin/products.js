@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
   try {
     const products = await Product.find()
       .populate("productCategory")
+      .populate("creator")
       .sort({ createdAt: -1 })
       .lean();
     if (!products) {

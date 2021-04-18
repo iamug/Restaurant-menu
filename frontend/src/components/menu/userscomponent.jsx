@@ -78,6 +78,7 @@ const UsersComponent = (props) => {
     setProductData(products.users);
     console.log(products);
     setLoading(true);
+    $("body").css({ background: "#ffffff" });
   }, [refreshData]);
 
   return (
@@ -86,7 +87,7 @@ const UsersComponent = (props) => {
       <div className="px-2">
         <div className="text-center">
           <Heading as="h3" size="xl">
-            Our Menu
+            Our Users
           </Heading>
         </div>
 

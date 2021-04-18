@@ -14,15 +14,21 @@ const MenuCard = ({ product }) => {
 
   return (
     <div class="card" style={{ width: "100%", border: "1px solid #cccccc" }}>
-      <img
-        class="card-img-top"
-        style={{ height: "200px" }}
-        loading="lazy"
+      <Image
+        height={{ base: "260px", sm: "260px", md: "200px", lg: "170px" }}
+        objectFit="cover"
         src={product.imageUrl}
         alt={product.name}
       />
+      {/* <img
+        class="card-img-top"
+        height={{ md: 40 }}
+        loading="lazy"
+        src={product.imageUrl}
+        alt={product.name}
+      /> */}
       <div class="card-body">
-        <Heading as="h3" size="lg" className="mb-1">
+        <Heading as="h3" size="md" className="mb-1">
           {capitalize(product.name)}
         </Heading>
 

@@ -33,6 +33,9 @@ const UserSchema = new mongoose.Schema(
       default:
         "https://commute-partner-s3-bucket.s3.eu-west-2.amazonaws.com/avatar.png",
     },
+    bannerImg: {
+      type: String,
+    },
     isActive: {
       type: Boolean,
       default: false,
