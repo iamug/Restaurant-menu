@@ -335,6 +335,7 @@ router.put("/profile/", auth, async (req, res) => {
   req.body.avatar && (updateFields.avatar = req.body.avatar);
   req.body.name && (updateFields.name = req.body.name);
   req.body.phone && (updateFields.phone = req.body.phone);
+  req.body.bannerImg && (updateFields.bannerImg = req.body.bannerImg);
   if (req.body.password) {
     const salt = await bcrypt.genSalt(10);
     updateFields.password = await bcrypt.hash(req.body.password, salt);

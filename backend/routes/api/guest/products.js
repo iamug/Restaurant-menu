@@ -13,7 +13,7 @@ const { generateId, validMongooseId } = require("../../../utils/utils");
 router.get("/:user", async (req, res) => {
   try {
     const userdata = await User.findOne({ slug: req.params.user })
-      .select("name slug email phone _id")
+      .select("name slug email phone bannerImg _id")
       .lean();
     if (!userdata)
       return res.status(404).json({ msg: "Record does not exist" });

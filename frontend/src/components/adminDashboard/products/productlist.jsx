@@ -17,7 +17,7 @@ import { Image } from "@chakra-ui/react";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../../controllers/api";
-import { formatAmount } from "../../../controllers/utils";
+import { formatAmount, capitalize } from "../../../controllers/utils";
 import { FetchCategoryData } from "../../../controllers/fetchdata";
 
 const ProductListComponent = (props) => {
@@ -314,6 +314,7 @@ const ProductListComponent = (props) => {
                           <tr>
                             <th>Name</th>
                             <th>Category</th>
+                            <th>Owner</th>
                             <th>Price</th>
                             <th>Status</th>
                             <th style={{ width: 82 }}>Action</th>
@@ -335,6 +336,11 @@ const ProductListComponent = (props) => {
                                   <td>
                                     {product.productCategory &&
                                       product.productCategory.name}
+                                  </td>
+                                  <td>
+                                    {product.creator &&
+                                      product.creator.name &&
+                                      capitalize(product.creator.name)}
                                   </td>
                                   <td>{formatAmount(product.price)}</td>
                                   <td>
@@ -614,6 +620,28 @@ const ProductListComponent = (props) => {
                     </Col>
                   </Row>
                   <div className="mb-3"></div>
+                  {formValue && formValue.creator && formValue.creator.name && (
+                    <Row gutter={10}>
+                      <Col xs={12}>
+                        <FormGroup>
+                          <ControlLabel>Owner Name</ControlLabel>
+                          <FormControl
+                            value={formValue.creator.name}
+                            readOnly
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col xs={12}>
+                        <FormGroup>
+                          <ControlLabel>Owner Slug</ControlLabel>
+                          <FormControl
+                            value={formValue.creator.slug}
+                            readOnly
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  )}
 
                   <div className="mb-4"></div>
                   <Row gutter={10}>
