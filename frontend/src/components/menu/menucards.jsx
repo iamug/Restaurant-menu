@@ -4,16 +4,15 @@ import { Image } from "@chakra-ui/react";
 import { Badge } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
-import { formatAmount } from "../../controllers/utils";
+import { formatAmount, capitalize } from "../../controllers/utils";
 
-const MenuCard = ({ product }) => {
-  const capitalize = (s) => {
-    if (typeof s !== "string") return "";
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  };
-
+const MenuCard = ({ product, index, handleAddToCart }) => {
   return (
-    <div class="card" style={{ width: "100%", border: "1px solid #cccccc" }}>
+    <div
+      class="card"
+      style={{ width: "100%", border: "1px solid #cccccc" }}
+      key={index}
+    >
       <Image
         height={{ base: "260px", sm: "260px", md: "200px", lg: "170px" }}
         objectFit="cover"
@@ -33,18 +32,21 @@ const MenuCard = ({ product }) => {
         </Heading>
 
         <p class="card-text my-2">{capitalize(product.description)}</p>
-        {/* <p>
+        <p>
           <span className="text-muted mb-2">
             {" "}
             {product.productCategory &&
               product.productCategory.name &&
               product.productCategory.name}
           </span>
-        </p> */}
-        <p className="font-weight-bold mb-2">{formatAmount(product.price)}</p>
-        <a href="#" class="btn btn-primary mt-2">
-          Add to Cart
-        </a>
+        </p>
+        {/* <p className="font-weight-bold mb-2">{formatAmount(product.price)}</p> */}
+        <button
+          onClick={() => handleAddToCart(product)}
+          class="btn btn-primary mt-2"
+        >
+          Add to Order
+        </button>
       </div>
     </div>
 
