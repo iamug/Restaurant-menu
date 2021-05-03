@@ -21,6 +21,7 @@ import ResetPasswordComponent from "./resetpassword/resetpassword";
 import ProfileComponent from "./profile/profile";
 import DashboardComponent from "./dashboard/dashboard";
 import ProductListComponent from "./products/productlist";
+import OrderListComponent from "./orders/orderlist";
 import Error404Component from "../404";
 import LeftSideMenuComponent from "./LeftSideMenu";
 import TopbarMenuComponent from "./TopBarMenu";
@@ -120,6 +121,12 @@ function UserDashboard() {
                     path="/user/products"
                     exact
                     component={ProductListComponent}
+                  />
+
+                  <Route
+                    path="/user/orders"
+                    exact
+                    component={OrderListComponent}
                   />
 
                   <Route path="/404" component={Error404Component} />

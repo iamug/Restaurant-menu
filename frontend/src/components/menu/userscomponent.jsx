@@ -92,23 +92,8 @@ const UsersComponent = (props) => {
         </div>
 
         <div className="mt-5">
-          <div className="row mb-4">
-            <div className="col-sm-4"></div>
-            <div className="col-sm-4">
-              <div className="text-sm-right">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoading(false);
-                    setRefreshData(!refreshData);
-                  }}
-                  className="btn btn-success waves-effect waves-light mb-2 mr-1"
-                >
-                  <i className="mdi mdi-refresh" />
-                </button>
-              </div>
-            </div>
-            <div className="col-sm-4">
+          <div className="row mb-4 justify-content-end">
+            <div className="col-sm-5 col-9">
               <form
                 className="form-inline"
                 onSubmit={(e) => e.preventDefault()}
@@ -125,6 +110,22 @@ const UsersComponent = (props) => {
                   />
                 </div>
               </form>
+            </div>
+            <div className="col-sm-2 col-3">
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoading(false);
+                    setRefreshData(!refreshData);
+                  }}
+                  className="btn w-100 btn-success waves-effect waves-light mb-2 mr-1"
+                >
+                  <span className="d-none d-md-inline-block">Refresh</span>
+
+                  <i className="mdi mdi-refresh px-2" />
+                </button>
+              </div>
             </div>
             {/* end col*/}
           </div>
