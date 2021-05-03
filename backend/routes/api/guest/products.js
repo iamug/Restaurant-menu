@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const config = require("config");
-const { check, validationResult } = require("express-validator");
 const User = require("../../../models/Users");
 const Product = require("../../../models/Products");
 const { generateId, validMongooseId } = require("../../../utils/utils");
@@ -19,7 +17,7 @@ router.get("/:user", async (req, res) => {
       return res.status(404).json({ msg: "Record does not exist" });
     const products = await Product.find({ creator: userdata._id })
       .populate("productCategory")
-      .sort({ createdAt: -1 })
+      .sort({ name: 1 })
       .lean();
     if (!products) {
       return res.status(400).json({ msg: "Invalid request" });

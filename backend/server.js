@@ -85,18 +85,21 @@ app.get("/", (req, res) => res.send("API Running"));
 app.use("/api/user/auth", require("./routes/api/user/auth"));
 app.use("/api/user/products", require("./routes/api/user/products"));
 app.use("/api/user/category", require("./routes/api/user/category"));
+app.use("/api/user/orders", require("./routes/api/user/orders"));
 
 //Define Admin Routes
 app.use("/api/admin/users", require("./routes/api/admin/users"));
 app.use("/api/admin/auth", require("./routes/api/admin/auth"));
-//app.use("/api/admin/profile", require("./routes/api/admin/profile"));
 app.use("/api/admin/admins", require("./routes/api/admin/admins"));
 app.use("/api/admin/products", require("./routes/api/admin/products"));
 app.use("/api/admin/category", require("./routes/api/admin/category"));
+app.use("/api/admin/orders", require("./routes/api/admin/orders"));
 
 //Define Guest Routes
 app.use("/api/guest/products", require("./routes/api/guest/products"));
 app.use("/api/guest/users", require("./routes/api/guest/users"));
+app.use("/api/guest/categories", require("./routes/api/guest/categories"));
+app.use("/api/guest/orders", require("./routes/api/guest/orders"));
 
 const PORT = process.env.PORT || 6000;
 

@@ -1,51 +1,38 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { Box } from "@chakra-ui/react";
-import { Image } from "@chakra-ui/react";
 import { SimpleGrid } from "@chakra-ui/react";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../controllers/api";
 import { useToast } from "@chakra-ui/react";
-import { Loader } from "rsuite";
 import { Affix } from "rsuite";
-import { Container } from "@chakra-ui/react";
-import { Badge } from "@chakra-ui/react";
 import { Helmet } from "react-helmet";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import {
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-} from "@chakra-ui/react";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-} from "@chakra-ui/react";
+import { Drawer, DrawerBody, DrawerHeader } from "@chakra-ui/react";
+import { DrawerCloseButton } from "@chakra-ui/react";
+import { DrawerOverlay, DrawerContent } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
-//import { Staricon } from "@chakra-ui/icons";
-import { Button, ButtonGroup } from "@chakra-ui/react";
-import { Center, Square, Circle } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 import MenuCard from "./menucards";
 import { Heading } from "@chakra-ui/react";
 import { capitalize } from "../../controllers/utils";
 
 const MenuComponent = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const param = useParams();
   const toast = useToast();
   let [showDrawer, toggleShowDrawer] = useState(false);
   let [userData, setUserData] = useState([]);
+  let [products, setProducts] = useState([]);
   let [productData, setProductData] = useState([]);
+  let [categories, setCategories] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
   let [loading, setLoading] = useState(false);
   let [valid, setValid] = useState(true);
   let [cartItems, setCartItems] = useState([]);
+
+  console.log({ param });
 
   let headers = {
     "Content-Type": "application/json",
@@ -60,8 +47,47 @@ const MenuComponent = (props) => {
       if (!res) return false;
       return res.data;
     } catch (err) {
-      console.log(err);
       return false;
+    }
+  };
+
+  const fetchcategories = async () => {
+    try {
+      const config = { headers };
+      const res = await API.get("/api/guest/categories/", config);
+      if (!res) return false;
+      return res.data;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const filterProductsByCategory = (cat) => {
+    setProductData(
+      products.filter(
+        (e) => e.productCategory.name.toLowerCase() == cat.toLowerCase()
+      )
+    );
+  };
+
+  const toggleCatNav = (e) => {
+    var nav = document.querySelectorAll(" #catNav li a");
+    for (var i = 0; i < nav.length; ++i) {
+      nav[i].classList.remove("active");
+    }
+    e.target.classList.add("active");
+  };
+
+  const handleRemoveFromCart = (item) => {
+    const isItemInCart = cartItems.find((value) => value._id === item._id);
+    if (isItemInCart) {
+      setCartItems(cartItems.filter((el) => el._id !== item._id));
+      toast({
+        title: "Removed successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -81,7 +107,7 @@ const MenuComponent = (props) => {
     }
     if (isCatInCart) {
       toast({
-        title: `You can only select one ${item.productCategory.name}`,
+        title: `You can only select one from ${item.productCategory.name}`,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -95,6 +121,37 @@ const MenuComponent = (props) => {
       duration: 5000,
       isClosable: true,
     });
+  };
+
+  const handlePlaceOrder = async () => {
+    if (param && param.tablename === undefined) {
+      toast({
+        title: "Order failed, Kindly try scan QR code again",
+        status: "error",
+      });
+      return;
+    }
+    let tableName = param && param.tablename;
+    let { _id: user, slug } = userData;
+    let products = cartItems.map((item) => item["_id"]);
+    let body = { tableName, user, products, slug };
+    console.log({ body });
+    try {
+      const config = { headers };
+      const res = await API.post("/api/guest/orders", body, config);
+      if (res.status == 201) {
+        toast({
+          title: "Order successful.",
+          status: "success",
+        });
+        setCartItems([]);
+      }
+    } catch (err) {
+      toast({
+        title: "Order failed, Kindly try again",
+        status: "error",
+      });
+    }
   };
 
   const DoesNotExist = () => (
@@ -117,18 +174,19 @@ const MenuComponent = (props) => {
 
   useEffect(async () => {
     const data = await fetchrecords();
+    const categories = await fetchcategories();
+    if (categories) setCategories(categories.categories);
     if (!data) setValid(false);
     data.user && setUserData(data.user);
     setProductData(data.products);
+    setProducts(data.products);
     setLoading(true);
     if (data.user && data.user.bannerImg) {
       document.getElementById("header").style.background =
         "#ffffff url(' " + data.user.bannerImg + " ') no-repeat fixed center";
       document.getElementById("header").style.backgroundSize = "cover";
     }
-    console.log({ data });
     $(document).ready(function () {
-      console.log("innnnnnn");
       $("#myInput").on("input", function () {
         var value = $(this).val().toLowerCase();
         console.log(value);
@@ -142,12 +200,7 @@ const MenuComponent = (props) => {
     };
   }, [refreshData]);
 
-  useEffect(() => {
-    console.log("changed", { cartItems });
-  }, [cartItems]);
-
   return (
-    // <Button colorScheme="blue">Button</Button>
     <React.Fragment>
       {loading ? (
         <>
@@ -187,66 +240,90 @@ const MenuComponent = (props) => {
           </Heading> */}
               </div>
 
-              <div className="container mt-5">
-                <div className="row mb-2">
-                  <div className="col-sm-4 col-7 col-md-6">
-                    <form
-                      className="form-inline"
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <div className="form-group mb-2 col-sm-12 px-0">
-                        <label htmlFor="" className="sr-only">
-                          Search
-                        </label>
-                        <input
-                          type="search"
-                          className="form-control col-sm-12"
-                          id="myInput"
-                          placeholder="Search..."
-                        />
-                      </div>
-                    </form>
-                  </div>
-                  <div className="col-sm-4 col-5 col-md-3 order-12 offset-md-3">
-                    <div className="text-right">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLoading(false);
-                          setRefreshData(!refreshData);
-                        }}
-                        className="btn btn-success waves-effect waves-light mb-2 mr-1"
+              <div className="container mt-4">
+                <Affix top={0} style={{ zIndex: 1 }}>
+                  <div className="row  py-2 bg-white">
+                    <div className="col-sm-4 col-7 col-md-6">
+                      <form
+                        className="form-inline"
+                        onSubmit={(e) => e.preventDefault()}
                       >
-                        <i className="mdi mdi-refresh" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          toggleShowDrawer(!showDrawer);
-                          onOpen();
-                        }}
-                        className="btn btn-primary waves-effect waves-light mb-2"
-                      >
-                        <i className="mdi mdi-cart" />
-                        <small className=" badge badge-dark rounded-pill">
-                          {cartItems.length}
-                        </small>
-                      </button>
+                        <div className="form-group mb-2 col-sm-12 px-0">
+                          <label htmlFor="" className="sr-only">
+                            Search
+                          </label>
+                          <input
+                            type="search"
+                            className="form-control col-sm-12"
+                            id="myInput"
+                            placeholder="Search..."
+                          />
+                        </div>
+                      </form>
                     </div>
+                    <div className="col-sm-4 col-5 col-md-3 order-12 offset-md-3">
+                      <div className="text-right">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLoading(false);
+                            setRefreshData(!refreshData);
+                          }}
+                          className="btn btn-success waves-effect waves-light mb-2 mr-1"
+                        >
+                          <i className="mdi mdi-refresh" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            toggleShowDrawer(!showDrawer);
+                            onOpen();
+                          }}
+                          className="btn btn-primary waves-effect waves-light mb-2"
+                        >
+                          <i className="mdi mdi-cart" />
+                          <small className=" badge badge-dark rounded-pill">
+                            {cartItems.length}
+                          </small>
+                        </button>
+                      </div>
+                    </div>
+                    {/* end col*/}
                   </div>
-                  {/* end col*/}
-                </div>
+                </Affix>
 
                 <Center>
                   <Box w="100%">
-                    <div className="my-4">
-                      <Tabs variant="soft-rounded" colorScheme="purple">
-                        <TabList>
-                          <Tab>One</Tab>
-                          <Tab>Two</Tab>
-                          <Tab>Three</Tab>
-                        </TabList>
-                      </Tabs>
+                    <div className="my-3">
+                      <ul className="nav nav-pills" id="catNav">
+                        <li className="nav-item">
+                          <a
+                            className="nav-link active rounded-pill m-1 btn btn-sm border"
+                            onClick={(e) => {
+                              toggleCatNav(e);
+                              setProductData(products);
+                            }}
+                          >
+                            All
+                          </a>
+                        </li>
+                        {categories &&
+                          categories.length &&
+                          categories.map((item, index) => (
+                            <li className="nav-item" key={index}>
+                              <a
+                                key={index}
+                                onClick={(e) => {
+                                  toggleCatNav(e);
+                                  filterProductsByCategory(item.name);
+                                }}
+                                className="nav-link btn btn-sm border rounded-pill m-1"
+                              >
+                                {item.name}
+                              </a>
+                            </li>
+                          ))}
+                      </ul>
                     </div>
 
                     {loading && productData && (
@@ -254,6 +331,8 @@ const MenuComponent = (props) => {
                         columns={[1, 2, 3, 3, 4]}
                         spacing={10}
                         id="grid"
+                        className="pt-2"
+                        style={{ borderTop: "0px solid #cccccc" }}
                       >
                         {loading &&
                           productData &&
@@ -307,25 +386,25 @@ const MenuComponent = (props) => {
                 </DrawerHeader>
                 <DrawerBody>
                   <div className="col-12">
-                    {/* <h4 className="d-flex justify-content-between align-items-center mb-3">
-                  <span className="text-primary">Your cart</span>
-                  <span className="badge bg-primary rounded-pill">3</span>
-                </h4> */}
                     {cartItems && cartItems.length > 0 && (
                       <>
-                        <ul className="list-group mb-3">
+                        <ul className="mb-3" style={{ listStyleType: "none" }}>
                           {cartItems.map((item, index) => (
                             <li className="py-2" key={index}>
                               <div>
                                 <div className="shadow-sm row g-0 border rounded overflow-hidden flex-md-row">
-                                  <div className="col-sm-5 col-5 col-md-5 pl-0 ">
+                                  <div className="col-sm-5 col-5 col-md-5 p-0 ">
                                     <img
                                       src={item.imageUrl}
                                       className="img-fluid"
-                                      style={{ height: "130px" }}
+                                      style={{
+                                        height: "120px",
+                                        objectFit: "cover",
+                                        width: "100%",
+                                      }}
                                     />
                                   </div>
-                                  <div className="col-sm-7 col-xs-7 col-7 col-md-7 p-2 pr-0">
+                                  <div className="col-sm-6 col-xs-6 col-6 col-md-6 p-2 pr-0">
                                     <h3 className="font-weight-bolder font-16">
                                       {capitalize(item.name)}
                                     </h3>
@@ -335,15 +414,44 @@ const MenuComponent = (props) => {
                                         item.productCategory.name}
                                     </h6>
                                   </div>
+                                  <div className="col-1 p-o">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveFromCart(item)}
+                                      className="btn btn-danger btn-sm waves-effect waves-light mt-2 ml-n4"
+                                    >
+                                      <i className="mdi mdi-close" />
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </li>
                           ))}
                         </ul>
-                        <div>
-                          <a href="#" class="btn btn-primary mt-2">
+                        <div className="row border shadow py-2 my-3">
+                          <div className="col-4 d-flex align-items-center">
+                            <span className="font-weight-bolder">
+                              Table Name
+                            </span>
+                          </div>
+                          <div className="col-8">
+                            <input
+                              type="text"
+                              className="form-control col-sm-12"
+                              placeholder=""
+                              value={(param && param.tablename) || null}
+                              readOnly={true}
+                              disabled={true}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <button
+                            onClick={() => handlePlaceOrder()}
+                            className="btn btn-primary mt-2 px-3"
+                          >
                             Place Order
-                          </a>
+                          </button>
                         </div>
                       </>
                     )}
