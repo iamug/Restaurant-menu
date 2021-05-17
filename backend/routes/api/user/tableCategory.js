@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const config = require("config");
-const { check, validationResult } = require("express-validator");
 const auth = require("../../../middleware/auth");
-const Product = require("../../../models/Products");
+const TableCategory = require("../../../models/TableCategory");
 const { generateId, validMongooseId } = require("../../../utils/utils");
 //const { query } = require("express");
 
@@ -12,33 +10,10 @@ const { generateId, validMongooseId } = require("../../../utils/utils");
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const products = await Product.find({ creator: req.user.id })
-      .populate("productCategory")
-      .sort({ createdAt: -1 })
-      .lean();
-    if (!products) {
-      return res.status(400).json({ msg: "Invalid request" });
-    }
-    res.json({ success: true, products });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route   GET api/payment/
-// @desc    Get current users profile
-// @access  Private
-router.get("/guest", async (req, res) => {
-  try {
-    const products = await Product.find({ isEnabled: true })
-      .populate("productCategory")
-      .sort({ createdAt: -1 })
-      .lean();
-    if (!products) {
-      return res.status(400).json({ msg: "Invalid request" });
-    }
-    res.json({ success: true, products });
+    const category = await TableCategory.find().sort({ createdAt: -1 }).lean();
+    if (!category)
+      return res.status(400).json({ success: false, msg: "Invalid request" });
+    return res.json({ success: true, category });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -50,7 +25,7 @@ router.get("/guest", async (req, res) => {
 // @access  Private
 // router.get("/:id", async (req, res) => {
 //   try {
-//     const payment = await Product.find({
+//     const payment = await TableCategory.find({
 //       paymentId: req.params.id,
 //     }).lean();
 //     if (!payment)
@@ -71,20 +46,16 @@ router.get("/guest", async (req, res) => {
 // @access Private
 // @Params  id -- id of plan
 router.delete("/:id", auth, async (req, res) => {
-  if (!req.params.id || !validMongooseId(req.params.id)) {
+  if (!req.params.id || !validMongooseId(req.params.id))
     return res.status(400).json({ success: false, msg: "invalid Request" });
-  }
   try {
-    let payment = await Product.findOneAndRemove({
-      _id: req.params.id,
-      creator: req.user.id,
-    });
-    if (!payment) {
+    let category = await TableCategory.findByIdAndRemove(req.params.id);
+    if (!category) {
       return res
         .status(404)
         .json({ success: false, msg: "Record does not exist" });
     }
-    res.status(200).send({ success: true });
+    return res.status(200).send({ success: true });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -95,19 +66,15 @@ router.delete("/:id", auth, async (req, res) => {
 // @desc   Add Plans route
 // @access Public
 router.post("/", auth, async (req, res) => {
-  let { name, imageUrl, description, isEnabled } = req.body;
-  let { productCategory, tableCategory, price } = req.body;
-  if (!name || !imageUrl || !description || !productCategory) {
+  let { name, description, isEnabled } = req.body;
+  if (!name || !description) {
     return res.status(400).json({ success: false, msg: "Invalid request" });
   }
-  let productId = generateId("PROD");
-  let insertData = { productId, name, imageUrl, description, productCategory };
+  let insertData = { name, description };
   insertData.creator = req.user.id;
-  insertData.tableCategory = tableCategory;
   isEnabled && (insertData.isEnabled = isEnabled);
-  price && (insertData.price = price);
   try {
-    let product = await new Product(insertData).save();
+    let category = await new TableCategory(insertData).save();
     res.status(201).send({ success: true });
   } catch (err) {
     console.error(err.message);
@@ -121,22 +88,17 @@ router.post("/", auth, async (req, res) => {
 router.put("/:id", auth, async (req, res) => {
   if (!req.params.id || !validMongooseId(req.params.id))
     return res.status(400).json({ success: false, msg: "invalid Request" });
-  let { name, imageUrl, description, isEnabled } = req.body;
-  let { productCategory, tableCategory, price } = req.body;
-  let productData = await Product.findById(req.params.id);
-  if (!productData)
+  let { name, description, isEnabled } = req.body;
+  let categoryData = await TableCategory.findById(req.params.id);
+  if (!categoryData)
     res.status(404).send({ success: false, msg: "Record does not exist" });
   let updateFields = {};
   name && (updateFields.name = name);
-  imageUrl && (updateFields.imageUrl = imageUrl);
   description && (updateFields.description = description);
-  productCategory && (updateFields.productCategory = productCategory);
-  tableCategory && (updateFields.tableCategory = tableCategory);
   isEnabled !== undefined && (updateFields.isEnabled = isEnabled);
-  price && (updateFields.price = price);
   try {
-    let product = await Product.findOneAndUpdate(
-      { _id: req.params.id, creator: req.user.id },
+    let category = await TableCategory.findOneAndUpdate(
+      { _id: req.params.id },
       { $set: updateFields },
       { new: true }
     );

@@ -30,11 +30,11 @@ const Error404Component = (props) => {
                 you get back on track.
               </p>
               <a
-                href="/dashboard"
+                href="/user/dashboard"
                 onClick={(e) => {
                   e.preventDefault();
                   //props.history.push("/dashboard");
-                  window.location.href = "/dashboard";
+                  window.location.href = "/user/dashboard";
                 }}
                 className="btn btn-success waves-effect waves-light"
               >

@@ -2,21 +2,40 @@ const express = require("express");
 const router = express.Router();
 const User = require("../../../models/Users");
 const Product = require("../../../models/Products");
+const Table = require("../../../models/Tables");
 const { generateId, validMongooseId } = require("../../../utils/utils");
 //const { query } = require("express");
 
 // @route   GET api/payment/
 // @desc    Get current users profile
 // @access  Private
-router.get("/:user", async (req, res) => {
+router.get("/:user/:table?", async (req, res) => {
+  let productQuery, table;
   try {
     const userdata = await User.findOne({ slug: req.params.user })
       .select("name slug email phone bannerImg _id")
       .lean();
     if (!userdata)
       return res.status(404).json({ msg: "Record does not exist" });
-    const products = await Product.find({ creator: userdata._id })
+    if (req.params.table) {
+      table = await Table.findOne({
+        creator: userdata._id,
+        tableName: req.params.table,
+      })
+        .select("tableCategory _id")
+        .lean();
+    }
+    if (table && table.tableCategory) {
+      productQuery = {
+        creator: userdata._id,
+        tableCategory: { $in: table.tableCategory },
+      };
+    } else {
+      productQuery = { creator: userdata._id };
+    }
+    const products = await Product.find(productQuery)
       .populate("productCategory")
+      .populate("tableCategory", "name")
       .sort({ name: 1 })
       .lean();
     if (!products) {

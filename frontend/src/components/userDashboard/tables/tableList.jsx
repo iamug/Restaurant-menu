@@ -1,46 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Button, ButtonToolbar, ControlLabel } from "rsuite";
-import axios from "axios";
-import { Grid, Row, Col, TagPicker, Icon, Input, SelectPicker } from "rsuite";
+import { Grid, Row, Col, InputGroup, Icon, Input, SelectPicker } from "rsuite";
 import { Form, FormGroup, FormControl, HelpBlock, Loader } from "rsuite";
-import { Drawer, DrawerHeader, DrawerContent } from "@chakra-ui/react";
-import { DrawerBody, DrawerOverlay, DrawerCloseButton } from "@chakra-ui/react";
+import { DrawerOverlay, DrawerContent } from "@chakra-ui/react";
+import { DrawerCloseButton } from "@chakra-ui/react";
+import { Drawer, DrawerBody, DrawerHeader } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
-import { Image } from "@chakra-ui/react";
 import $ from "jquery";
+import DataContext, { DataConsumer } from "../../../context/datacontext";
 import AWN from "awesome-notifications";
 import API from "../../../controllers/api";
-import { formatAmount } from "../../../controllers/utils";
-import { FetchCategoryData } from "../../../controllers/fetchdata";
+//var QRCode = require('qrcode.react');
+import QRCode from "qrcode.react";
+import html2canvas from "html2canvas";
+import html2PDF from "jspdf-html2canvas";
 import { FetchTableCategoryData } from "../../../controllers/fetchdata";
 
 const ProductListComponent = (props) => {
   let initialFormState = {};
+  const { userdata } = useContext(DataContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   let [showDrawer, toggleShowDrawer] = useState(false);
   let [loading, setLoading] = useState(false);
   let [formValue, setFormValue] = useState(initialFormState);
-  let [productData, setProductData] = useState([]);
+  let [orderData, setOrderData] = useState([]);
   let [refreshData, setRefreshData] = useState(false);
   let [dataUpdate, setDataUpdate] = useState(false);
-  let [categoryData, setCategoryData] = useState(false);
   let [tableCategoryData, setTableCategoryData] = useState(false);
+  let notifier = new AWN();
   let token = localStorage.getItem("token");
   let headers = {
     "Content-Type": "application/json",
     "x-auth-token": token,
-  };
-  let notifier = new AWN();
-
-  const handleSelectCategory = async () => {
-    const cat = await FetchCategoryData();
-    let dataArray = [];
-    if (cat) {
-      cat.forEach((e) => {
-        e.isEnabled && (dataArray = [...dataArray, e]);
-      });
-    }
-    setCategoryData(dataArray);
   };
 
   const handleSelectTableCategory = async () => {
@@ -59,7 +50,7 @@ const ProductListComponent = (props) => {
     let onOk = async () => {
       try {
         const config = { headers };
-        const res = await API.delete("/api/user/products/" + id, config);
+        const res = await API.delete("/api/user/tables/" + id, config);
         if (!res) {
           notifier.alert("Error. Kindly check internet connection");
           return false;
@@ -70,7 +61,6 @@ const ProductListComponent = (props) => {
           return true;
         }
       } catch (err) {
-        console.log(err);
         notifier.alert("Error. Kindly check internet connection");
         return false;
       }
@@ -80,49 +70,48 @@ const ProductListComponent = (props) => {
   };
 
   const addrecord = async () => {
-    const { name, imageUrl, description, tableCategory } = formValue;
-    const { isEnabled, productCategory } = formValue;
-    if (!name || !imageUrl || !description || !productCategory) {
+    const { tableName, isEnabled, tableCategory } = formValue;
+    const { slug } = userdata;
+    if (!tableName) {
       notifier.alert("Kindly fill all fields");
       return false;
     }
-    let body = { name, imageUrl, description, productCategory };
-    tableCategory !== undefined && (body.tableCategory = tableCategory);
+    let body = { tableName, slug };
     isEnabled && (body.isEnabled = isEnabled);
+    tableCategory && (body.tableCategory = tableCategory);
     try {
       const config = { headers };
-      const res = await API.post("/api/user/products", body, config);
+      const res = await API.post("/api/user/tables", body, config);
       if (res.status == 201) {
-        notifier.success("Record added successfully.");
+        notifier.success("Record added successfully ");
         setRefreshData(!refreshData);
       } else {
         notifier.alert("Failed, Kindly try again");
       }
     } catch (err) {
+      console.log(err);
       notifier.alert("Failed, Kindly try again");
     }
   };
 
   const updaterecord = async (id) => {
-    const { name, imageUrl, description } = formValue;
-    const { isEnabled, productCategory, tableCategory } = formValue;
-    if (!name || !imageUrl || !description || !productCategory) {
+    const { tableName, isEnabled, tableCategory } = formValue;
+    if (!tableName) {
       notifier.alert("Kindly fill all fields");
       return false;
     }
-    let body = { name, imageUrl, description, productCategory };
-    tableCategory !== undefined && (body.tableCategory = tableCategory);
-    isEnabled !== undefined && (body.isEnabled = isEnabled);
+    let body = { tableName };
+    isEnabled && (body.isEnabled = isEnabled);
+    tableCategory && (body.tableCategory = tableCategory);
     try {
       const config = { headers };
-      const res = await API.put("/api/user/products/" + id, body, config);
+      const res = await API.put("/api/user/tables/" + id, body, config);
       if (res.status == 200) {
-        notifier.success("Record updated successfully.");
+        notifier.success("Record updated successfully");
         setRefreshData(!refreshData);
-      } else {
-        notifier.alert("Failed, Kindly try again");
       }
     } catch (err) {
+      console.log(err);
       notifier.alert("Failed, Kindly try again");
     }
   };
@@ -130,7 +119,7 @@ const ProductListComponent = (props) => {
   const fetchrecords = async () => {
     try {
       const config = { headers };
-      const res = await API.get("/api/user/products", config);
+      const res = await API.get("/api/user/tables", config);
       if (!res) return false;
       return res.data;
     } catch (err) {
@@ -139,61 +128,32 @@ const ProductListComponent = (props) => {
     }
   };
 
-  const onUploadImage = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    new AWN().info("Please wait while picture uploads", {
-      durations: { info: 0 },
-    });
-    try {
-      const res = await API.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "x-auth-token": token,
-        },
-      });
-      if (res.status !== 200) {
-        new AWN().alert("Picture Upload Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
-        return false;
-      }
-      if (res.status == 200) {
-        let pic = await axios.put(res.data.url, file, {
-          headers: {
-            "Content-Type": file.type,
+  const downloadQRCode = (type) => {
+    if (type === "jpeg") {
+      html2canvas(document.querySelector("#capture")).then((canvas) => {
+        document.body.appendChild(canvas);
+        canvas.toBlob(
+          (blob) => {
+            const anchor = document.createElement("a");
+            anchor.download = "Table-" + formValue.tableName + "" + ".jpg"; // optional, but you can give the file a name
+            anchor.href = URL.createObjectURL(blob);
+            anchor.click(); // ✨ magic!
+            URL.revokeObjectURL(anchor.href); // remove it from memory and save on memory! 😎
           },
-        });
-        if (pic.status !== 200) {
-          new AWN().alert("Picture Upload Failed, Kindly try again", {
-            durations: { alert: 3000 },
-          });
-          return false;
-        }
-        if (pic.status == 200) {
-          let filePath =
-            "https://commute-partner-s3-bucket.s3.eu-west-2.amazonaws.com/" +
-            res.data.key;
-          setFormValue({
-            ...formValue,
-            ["imageUrl"]: filePath,
-          });
-          new AWN().closeToasts();
-          new AWN().success("Picture upload successful", {
-            durations: { success: 4000 },
-          });
-        }
-      }
-    } catch (err) {
-      if (err) {
-        if (err.response.status === 500) {
-          console.log("There was a problem with the server");
-        } else {
-          console.log(err);
-        }
-      }
+          "image/jpeg",
+          0.9
+        );
+      });
+    }
+    if (type === "pdf") {
+      let page = document.getElementById("capture");
+      html2PDF(page, {
+        jsPDF: {
+          format: "a4",
+        },
+        imageType: "image/jpeg",
+        output: "Table-" + formValue.tableName + "" + ".pdf",
+      });
     }
   };
 
@@ -207,12 +167,15 @@ const ProductListComponent = (props) => {
         });
       });
     });
-    handleSelectCategory();
     handleSelectTableCategory();
-    const products = await fetchrecords();
-    if (!products)
-      notifier.alert("Network Error. Kindly check your internet connection");
-    setProductData(products.products);
+    const data = await fetchrecords();
+    if (!data) {
+      new AWN().alert("Network Error. Kindly check your internet connection", {
+        durations: { alert: 0 },
+      });
+    }
+    setOrderData(data.tables);
+    console.log({ data });
     setLoading(true);
   }, [refreshData]);
 
@@ -226,7 +189,7 @@ const ProductListComponent = (props) => {
             <div className="row">
               <div className="col-12">
                 <div className="page-title-box">
-                  <h4 className="page-title">Products</h4>
+                  <h4 className="page-title">Tables</h4>
                 </div>
               </div>
             </div>
@@ -288,38 +251,35 @@ const ProductListComponent = (props) => {
                       <table className="table table-centered table-nowrap table-hover mb-0">
                         <thead>
                           <tr>
-                            <th>Name</th>
+                            <th>Table Name</th>
                             <th>Category</th>
-                            <th>Price</th>
+                            <th>Id</th>
                             <th>Status</th>
                             <th style={{ width: 82 }}>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {loading && productData && productData.length >= 1 ? (
-                            productData.map((product, index) => (
+                          {loading && orderData && orderData.length >= 1 ? (
+                            orderData.map((product, index) => (
                               <>
                                 <tr key={index}>
                                   <td className="table-user">
-                                    <a
-                                      href="#"
-                                      className="text-primary font-weight-semibold"
-                                    >
-                                      {product.name}
+                                    <a className="text-primary font-weight-semibold">
+                                      {product.tableName}
                                     </a>
                                   </td>
                                   <td>
-                                    {product.productCategory &&
-                                      product.productCategory.name}
+                                    {product.tableCategory &&
+                                      product.tableCategory.name}
                                   </td>
-                                  <td>{formatAmount(product.price)}</td>
+                                  <td>{product.tableId}</td>
                                   <td>
                                     {product.isEnabled ? (
                                       <span className="badge badge-success">
                                         Enabled
                                       </span>
                                     ) : (
-                                      <span className="badge badge-dark">
+                                      <span className="badge badge-warning">
                                         Disabled
                                       </span>
                                     )}
@@ -352,13 +312,11 @@ const ProductListComponent = (props) => {
                                 </tr>
                               </>
                             ))
-                          ) : loading &&
-                            productData &&
-                            productData.length === 0 ? (
+                          ) : loading && orderData && orderData.length === 0 ? (
                             <tr>
                               <td colSpan={6} className="text-center py-5">
                                 {" "}
-                                <h3> There are no products yet.</h3>
+                                <h3> There are no tables yet.</h3>
                                 {/* <Loader size="lg" content="Loading" /> */}
                               </td>
                             </tr>
@@ -386,7 +344,7 @@ const ProductListComponent = (props) => {
         {/* content */};
       </div>
 
-      <Drawer onClose={onClose} isOpen={isOpen} size="md" placement="right">
+      <Drawer onClose={onClose} isOpen={isOpen} size="lg" placement="right">
         <DrawerOverlay>
           <DrawerContent>
             <DrawerCloseButton className="mt-1" />
@@ -394,13 +352,13 @@ const ProductListComponent = (props) => {
               {" "}
               {dataUpdate && (
                 <span>
-                  Update Product{" "}
+                  Update Table{" "}
                   <small className="font-weight-bolder text-primary ml-2">
-                    {formValue.adminId}
+                    {formValue.tableId}
                   </small>
                 </span>
               )}
-              {!dataUpdate && <span>Add Product</span>}
+              {!dataUpdate && <span>Add Table</span>}
             </DrawerHeader>
             <DrawerBody>
               <Form
@@ -411,7 +369,6 @@ const ProductListComponent = (props) => {
                   dataUpdate ? updaterecord(formValue._id) : addrecord();
                 }}
                 onChange={(data) => {
-                  console.log({ data });
                   setFormValue({ ...data });
                 }}
               >
@@ -420,19 +377,19 @@ const ProductListComponent = (props) => {
                     <Col xs={12}>
                       <FormGroup>
                         <ControlLabel>
-                          Name
+                          Table Name
                           <HelpBlock tooltip style={{ marginTop: "0px" }}>
                             Required
                           </HelpBlock>
                         </ControlLabel>
-                        <FormControl name="name" required />
+                        <FormControl name="tableName" required />
                       </FormGroup>
                     </Col>
                     <Col xs={12}>
                       <FormGroup>
                         <ControlLabel>Status</ControlLabel>
                         <FormControl
-                          name="isEnabled"
+                          name="isCompleted"
                           accepter={SelectPicker}
                           data={[
                             { label: "Enabled", value: true },
@@ -446,81 +403,15 @@ const ProductListComponent = (props) => {
                   </Row>
                   <div className="mb-3"></div>
                   <Row gutter={10}>
-                    <Col xs={24}>
-                      <FormGroup>
-                        <ControlLabel>
-                          Description
-                          <HelpBlock tooltip style={{ marginTop: "0px" }}>
-                            Required
-                          </HelpBlock>
-                        </ControlLabel>
-                        <FormControl
-                          rows={4}
-                          name="description"
-                          required
-                          componentClass="textarea"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <div className="mb-3"></div>
-                  <Row gutter={10}>
                     <Col xs={12}>
                       <FormGroup>
-                        <ControlLabel>Category</ControlLabel>
+                        <ControlLabel>Table Category</ControlLabel>
                         <FormControl
-                          name="productCategory"
-                          accepter={SelectPicker}
-                          data={categoryData}
-                          labelKey="name"
-                          valueKey="_id"
-                          defaultValue={
-                            formValue.productCategory &&
-                            formValue.productCategory._id
-                          }
-                          value={
-                            typeof formValue.productCategory == "object"
-                              ? formValue.productCategory &&
-                                formValue.productCategory._id
-                              : formValue.productCategory
-                          }
-                          onOpen={handleSelectCategory}
-                          onSearch={handleSelectCategory}
-                          renderMenu={(menu) => {
-                            if (!categoryData) {
-                              return (
-                                <p
-                                  style={{
-                                    padding: 4,
-                                    color: "#999",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  <Icon icon="spinner" spin />
-                                  Loading...
-                                </p>
-                              );
-                            }
-                            return menu;
-                          }}
-                          placeholder="Select Category"
-                          required
-                          block
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12}>
-                      <FormGroup>
-                        <ControlLabel> Table Category</ControlLabel>
-                        <FormControl
-                          data={tableCategoryData}
                           name="tableCategory"
-                          accepter={TagPicker}
-                          placeholder="Select Category"
+                          accepter={SelectPicker}
+                          data={tableCategoryData}
                           labelKey="name"
                           valueKey="_id"
-                          required
-                          block
                           onOpen={handleSelectTableCategory}
                           onSearch={handleSelectTableCategory}
                           renderMenu={(menu) => {
@@ -540,62 +431,83 @@ const ProductListComponent = (props) => {
                             }
                             return menu;
                           }}
+                          placeholder="Select Table Category"
+                          required
+                          block
                         />
                       </FormGroup>
                     </Col>
                   </Row>
-                  <div className="mb-3"></div>
-                  <Row gutter={10}>
-                    <Col xs={24}>
-                      <FormGroup>
-                        <ControlLabel></ControlLabel>
-                        {formValue.imageUrl ? (
-                          <span className="font-16">
-                            <a target="_blank" href={formValue.imageUrl}>
-                              <Image
-                                boxSize="200px"
-                                objectFit="cover"
-                                src={formValue.imageUrl}
-                                alt="Product Image"
-                                className="mb-1"
-                              />
-                              View Product Image
-                            </a>
-                            <i
-                              className="fas fa-times ml-3"
-                              onClick={() => {
-                                setFormValue({
-                                  ...formValue,
-                                  ["imageUrl"]: null,
-                                });
-                              }}
+                  <div className="mb-5"></div>
+                  {formValue.tableName && (
+                    <>
+                      <div className="mb-3"></div>
+                      <Row gutter={10} className="d-flex">
+                        <Col xs={12} id="capture">
+                          <QRCode
+                            value={
+                              window.location.origin +
+                              "/menu/" +
+                              userdata.slug +
+                              "/" +
+                              formValue.tableName
+                            }
+                            size={256}
+                          />
+                        </Col>
+                        <Col xs={12} className="d-flex align-items-center">
+                          <div>
+                            <button
+                              type="button"
+                              className="btn  btn-sm btn-success mb-4"
+                              onClick={() => downloadQRCode("jpeg")}
                             >
-                              {" "}
-                            </i>
-                          </span>
-                        ) : (
-                          <>
-                            <label htmlFor="imageUrl">
-                              <span class="btn btn-dark btn-sm mt-1 ">
-                                Upload Product Image
-                              </span>
-                            </label>
-                            <input
-                              type="file"
-                              name="imageUrl"
-                              id="imageUrl"
-                              accept="image/*"
-                              onChange={(e) => onUploadImage(e)}
-                              class="m-t-20 hidden"
-                            />
-                          </>
-                        )}
-                      </FormGroup>
-                    </Col>
-                  </Row>
+                              Download QRCode as Jpeg
+                            </button>
+                            <button
+                              type="button"
+                              className="btn  btn-sm btn-success"
+                              onClick={() => downloadQRCode("pdf")}
+                            >
+                              Download QRCode as PDF
+                            </button>
+                          </div>
+                        </Col>
+                      </Row>
+                      <div className="mb-3"></div>
+                      <Row>
+                        <Col>
+                          {formValue.tableName && userdata && userdata.slug && (
+                            <span className="form-text font-18 text-muted">
+                              <small className="">
+                                <a
+                                  href={
+                                    window.location.origin +
+                                    "/menu/" +
+                                    userdata.slug +
+                                    "/" +
+                                    formValue.tableName
+                                  }
+                                  rel="noopener noreferrer"
+                                  target="_blank"
+                                >
+                                  {" "}
+                                  {window.location.origin +
+                                    "/menu/" +
+                                    userdata.slug +
+                                    "/" +
+                                    formValue.tableName}
+                                </a>
+                              </small>
+                            </span>
+                          )}
+                        </Col>
+                      </Row>
+                    </>
+                  )}
                   <div className="mb-3"></div>
 
-                  <div className="mb-4"></div>
+                  <div className="mb-5"></div>
                   <Row gutter={10}>
                     <Col xs={24}>
                       <FormGroup>

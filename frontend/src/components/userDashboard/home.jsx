@@ -22,6 +22,8 @@ import ProfileComponent from "./profile/profile";
 import DashboardComponent from "./dashboard/dashboard";
 import ProductListComponent from "./products/productlist";
 import OrderListComponent from "./orders/orderlist";
+import TableListComponent from "./tables/tableList";
+import TableCategoryListComponent from "./TableCategory/tablecategorylist";
 import Error404Component from "../404";
 import LeftSideMenuComponent from "./LeftSideMenu";
 import TopbarMenuComponent from "./TopBarMenu";
@@ -31,10 +33,10 @@ import TopbarMenuComponent from "./TopBarMenu";
 function UserDashboard() {
   let [userdata, setUserData] = useState(false);
   let [loading, setLoading] = useState(false);
-  let providerValue = useMemo(() => ({ userdata, setUserData }), [
-    userdata,
-    setUserData,
-  ]);
+  let providerValue = useMemo(
+    () => ({ userdata, setUserData }),
+    [userdata, setUserData]
+  );
 
   useEffect(async () => {
     let data;
@@ -127,6 +129,16 @@ function UserDashboard() {
                     path="/user/orders"
                     exact
                     component={OrderListComponent}
+                  />
+                  <Route
+                    path="/user/tables"
+                    exact
+                    component={TableListComponent}
+                  />
+                  <Route
+                    path="/user/tablecategory"
+                    exact
+                    component={TableCategoryListComponent}
                   />
 
                   <Route path="/404" component={Error404Component} />

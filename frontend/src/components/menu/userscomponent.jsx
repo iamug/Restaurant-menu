@@ -87,13 +87,13 @@ const UsersComponent = (props) => {
       <div className="px-2">
         <div className="text-center">
           <Heading as="h3" size="xl">
-            Our Users
+            Our Amazing Users
           </Heading>
         </div>
 
         <div className="mt-5">
           <div className="row mb-4 justify-content-end">
-            <div className="col-sm-5 col-9">
+            <div className="col-sm-4 col-9">
               <form
                 className="form-inline"
                 onSubmit={(e) => e.preventDefault()}
@@ -111,7 +111,7 @@ const UsersComponent = (props) => {
                 </div>
               </form>
             </div>
-            <div className="col-sm-2 col-3">
+            <div className="col-sm-2 col-3 p-0">
               <div className="text-right">
                 <button
                   type="button"
@@ -119,11 +119,11 @@ const UsersComponent = (props) => {
                     setLoading(false);
                     setRefreshData(!refreshData);
                   }}
-                  className="btn w-100 btn-success waves-effect waves-light mb-2 mr-1"
+                  className="btn w-100 btn-success waves-effect waves-light mb-2"
                 >
                   <span className="d-none d-md-inline-block">Refresh</span>
 
-                  <i className="mdi mdi-refresh px-2" />
+                  <i className="mdi mdi-refresh px-1" />
                 </button>
               </div>
             </div>
@@ -132,7 +132,11 @@ const UsersComponent = (props) => {
 
           <Center>
             <Box w="100%">
-              <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={10} id="grid">
+              <SimpleGrid
+                columns={{ sm: 2, md: 2, lg: 3 }}
+                spacing={10}
+                id="grid"
+              >
                 {loading &&
                   productData &&
                   productData.length >= 1 &&
