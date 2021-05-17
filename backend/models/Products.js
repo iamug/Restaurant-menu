@@ -32,6 +32,12 @@ const ProductSchema = new mongoose.Schema(
       ref: "categorys",
       required: true,
     },
+    tableCategory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "tableCategorys",
+      },
+    ],
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",

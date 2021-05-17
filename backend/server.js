@@ -61,9 +61,8 @@ app.use(express.json({ extended: false }));
 
 //Upload Endpoint
 app.use("/upload", auth, async (req, res) => {
-  if (req.files === null) {
+  if (req.files === null)
     return res.status(400).json({ msg: "No file uploaded" });
-  }
   const file = req.files.file;
   const key = `Commute-Bucket-Oct-2020/${req.user.id}/${uuidv4()}-${file.name}`;
   s3.getSignedUrl(
@@ -86,6 +85,8 @@ app.use("/api/user/auth", require("./routes/api/user/auth"));
 app.use("/api/user/products", require("./routes/api/user/products"));
 app.use("/api/user/category", require("./routes/api/user/category"));
 app.use("/api/user/orders", require("./routes/api/user/orders"));
+app.use("/api/user/tables", require("./routes/api/user/tables"));
+app.use("/api/user/tablecategory", require("./routes/api/user/tableCategory"));
 
 //Define Admin Routes
 app.use("/api/admin/users", require("./routes/api/admin/users"));

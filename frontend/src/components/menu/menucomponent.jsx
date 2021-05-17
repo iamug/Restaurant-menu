@@ -38,12 +38,24 @@ const MenuComponent = (props) => {
     "Content-Type": "application/json",
   };
 
-  const { id } = props.match.params;
+  const { id, tablename } = props.match.params;
 
   const fetchrecords = async () => {
     try {
+      let res;
       const config = { headers };
-      const res = await API.get("/api/guest/products/" + id, config);
+      res = await API.get(
+        "/api/guest/products/" + id + "/" + tablename,
+        config
+      );
+      // if (tablename) {
+      //   res = await API.get(
+      //     "/api/guest/products/" + id + "/" + tablename,
+      //     config
+      //   );
+      // } else {
+      //   res = await API.get("/api/guest/products/" + id, config);
+      // }
       if (!res) return false;
       return res.data;
     } catch (err) {
@@ -147,10 +159,17 @@ const MenuComponent = (props) => {
         setCartItems([]);
       }
     } catch (err) {
-      toast({
-        title: "Order failed, Kindly try again",
-        status: "error",
-      });
+      if (err.response && err.response.data && err.response.data.msg) {
+        toast({
+          title: `Order failed. ${err.response.data.msg}`,
+          status: "error",
+        });
+      } else {
+        toast({
+          title: "Order failed, Kindly try again",
+          status: "error",
+        });
+      }
     }
   };
 
@@ -174,6 +193,7 @@ const MenuComponent = (props) => {
 
   useEffect(async () => {
     const data = await fetchrecords();
+    console.log({ data });
     const categories = await fetchcategories();
     if (categories) setCategories(categories.categories);
     if (!data) setValid(false);
@@ -205,171 +225,180 @@ const MenuComponent = (props) => {
       {loading ? (
         <>
           <div className="">
-            <div className="">
-              <header id="header" className="py-4 ">
-                <div className="container">
-                  {loading && valid && userData && (
-                    <div className="col-sm-12 col-12 col-md-8 col-lg-6 p-0">
-                      <div className="text-left card p-3">
+            <header id="header" className="py-4 ">
+              <div className="container">
+                {loading && valid && userData && (
+                  <div className="col-sm-12 col-12 col-md-8 col-lg-6 p-0">
+                    <div className="text-left bg-white mx-auto p-2 py-3 row">
+                      <div className="col-10">
                         <Heading as="h4" size="lg" className="mb-2">
                           {userData && userData.name}'s Menu
                         </Heading>
+
                         <Heading as="h6" size="sm" className="text-muted mb-1">
                           Email : {userData && userData.email}
                         </Heading>
                         <Heading as="h6" size="sm" className="text-muted mb-1">
                           Phone : {userData && userData.phone}
                         </Heading>
-                        <Helmet>
-                          <title>{userData && userData.name}</title>
-                          <meta name="description" content="Your description" />
-                          <meta
-                            name="keywords"
-                            content="Aguziendu Ugochukwu Portfolio events menu app "
-                          ></meta>
-                        </Helmet>
                       </div>
-                    </div>
-                  )}
-                </div>
-              </header>
-
-              <div className="text-center">
-                {/* <Heading as="h3" size="xl">
-            Our Menu
-          </Heading> */}
-              </div>
-
-              <div className="container mt-4">
-                <Affix top={0} style={{ zIndex: 1 }}>
-                  <div className="row  py-2 bg-white">
-                    <div className="col-sm-4 col-7 col-md-6">
-                      <form
-                        className="form-inline"
-                        onSubmit={(e) => e.preventDefault()}
-                      >
-                        <div className="form-group mb-2 col-sm-12 px-0">
-                          <label htmlFor="" className="sr-only">
-                            Search
-                          </label>
-                          <input
-                            type="search"
-                            className="form-control col-sm-12"
-                            id="myInput"
-                            placeholder="Search..."
-                          />
-                        </div>
-                      </form>
-                    </div>
-                    <div className="col-sm-4 col-5 col-md-3 order-12 offset-md-3">
-                      <div className="text-right">
+                      <div className="col-2 text-right">
                         <button
                           type="button"
                           onClick={() => {
                             setLoading(false);
                             setRefreshData(!refreshData);
                           }}
-                          className="btn btn-success waves-effect waves-light mb-2 mr-1"
+                          className="btn btn-outline-success waves-effect waves-light mb-2 mr-1"
                         >
                           <i className="mdi mdi-refresh" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            toggleShowDrawer(!showDrawer);
-                            onOpen();
-                          }}
-                          className="btn btn-primary waves-effect waves-light mb-2"
-                        >
-                          <i className="mdi mdi-cart" />
-                          <small className=" badge badge-dark rounded-pill">
-                            {cartItems.length}
-                          </small>
-                        </button>
                       </div>
+
+                      <Helmet>
+                        <title>{userData && userData.name}</title>
+                        <meta name="description" content="Your description" />
+                        <meta
+                          name="keywords"
+                          content="Aguziendu Ugochukwu Portfolio events menu app "
+                        ></meta>
+                      </Helmet>
                     </div>
-                    {/* end col*/}
                   </div>
-                </Affix>
-
-                <Center>
-                  <Box w="100%">
-                    <div className="my-3">
-                      <ul className="nav nav-pills" id="catNav">
-                        <li className="nav-item">
-                          <a
-                            className="nav-link active rounded-pill m-1 btn btn-sm border"
-                            onClick={(e) => {
-                              toggleCatNav(e);
-                              setProductData(products);
-                            }}
-                          >
-                            All
-                          </a>
-                        </li>
-                        {categories &&
-                          categories.length &&
-                          categories.map((item, index) => (
-                            <li className="nav-item" key={index}>
-                              <a
-                                key={index}
-                                onClick={(e) => {
-                                  toggleCatNav(e);
-                                  filterProductsByCategory(item.name);
-                                }}
-                                className="nav-link btn btn-sm border rounded-pill m-1"
-                              >
-                                {item.name}
-                              </a>
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
-
-                    {loading && productData && (
-                      <SimpleGrid
-                        columns={[1, 2, 3, 3, 4]}
-                        spacing={10}
-                        id="grid"
-                        className="pt-2"
-                        style={{ borderTop: "0px solid #cccccc" }}
-                      >
-                        {loading &&
-                          productData &&
-                          productData.length >= 1 &&
-                          productData.map((product, index) => (
-                            <MenuCard
-                              product={product}
-                              index={index}
-                              key={index}
-                              handleAddToCart={handleAddToCart}
-                            />
-                          ))}
-                      </SimpleGrid>
-                    )}
-
-                    {loading && !valid && <DoesNotExist />}
-
-                    {loading && productData && productData.length === 0 && (
-                      <div className="text-center py-3">
-                        <Heading as="h6" size="sm">
-                          There are no products yet.
-                        </Heading>
-                        <h3> Kindly check back later.</h3>
-                      </div>
-                    )}
-                    {!loading && (
-                      <div className="text-center py-5 my-5 h-100">
-                        <div
-                          class="spinner-border avatar-xxl text-primary m-2"
-                          role="status"
-                        ></div>
-                        <h4> Loading...</h4>
-                      </div>
-                    )}
-                  </Box>
-                </Center>
+                )}
               </div>
+            </header>
+
+            <div className="container mt-4">
+              <Affix top={0} style={{ zIndex: 1 }}>
+                <div className="row  py-2 bg-white">
+                  <div className="col-sm-4 col-7 col-md-6">
+                    <form
+                      className="form-inline"
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <div className="form-group mb-2 col-sm-12 px-0">
+                        <label htmlFor="" className="sr-only">
+                          Search
+                        </label>
+                        <input
+                          type="search"
+                          className="form-control col-sm-12"
+                          id="myInput"
+                          placeholder="Search..."
+                        />
+                      </div>
+                    </form>
+                  </div>
+                  <div className="col-sm-4 col-5 col-md-3 order-12 offset-md-3">
+                    <div className="text-right">
+                      {/* <button
+                        type="button"
+                        onClick={() => {
+                          setLoading(false);
+                          setRefreshData(!refreshData);
+                        }}
+                        className="btn btn-success waves-effect waves-light mb-2 mr-1"
+                      >
+                        <i className="mdi mdi-refresh" />
+                      </button> */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          toggleShowDrawer(!showDrawer);
+                          onOpen();
+                        }}
+                        className="btn btn-primary waves-effect waves-light mb-2"
+                      >
+                        <span className="mr-1">Continue</span>{" "}
+                        <i className="mdi mdi-cart" />
+                        <small className=" badge badge-dark rounded-pill">
+                          {cartItems.length}
+                        </small>
+                      </button>
+                    </div>
+                  </div>
+                  {/* end col*/}
+                </div>
+              </Affix>
+
+              <Center>
+                <Box w="100%">
+                  <div className="my-3">
+                    <ul className="nav nav-pills" id="catNav">
+                      <li className="nav-item">
+                        <a
+                          className="nav-link active rounded-pill m-1 btn btn-sm border"
+                          onClick={(e) => {
+                            toggleCatNav(e);
+                            setProductData(products);
+                          }}
+                        >
+                          All
+                        </a>
+                      </li>
+                      {categories &&
+                        categories.length &&
+                        categories.map((item, index) => (
+                          <li className="nav-item" key={index}>
+                            <a
+                              key={index}
+                              onClick={(e) => {
+                                toggleCatNav(e);
+                                filterProductsByCategory(item.name);
+                              }}
+                              className="nav-link btn btn-sm border rounded-pill m-1"
+                            >
+                              {item.name}
+                            </a>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+
+                  {loading && productData && (
+                    <SimpleGrid
+                      columns={[1, 2, 3, 3, 4]}
+                      spacing={10}
+                      id="grid"
+                      className="pt-2"
+                      style={{ borderTop: "0px solid #cccccc" }}
+                    >
+                      {loading &&
+                        productData &&
+                        productData.length >= 1 &&
+                        productData.map((product, index) => (
+                          <MenuCard
+                            product={product}
+                            index={index}
+                            key={index}
+                            handleAddToCart={handleAddToCart}
+                          />
+                        ))}
+                    </SimpleGrid>
+                  )}
+
+                  {loading && !valid && <DoesNotExist />}
+
+                  {loading && productData && productData.length === 0 && (
+                    <div className="text-center py-3">
+                      <Heading as="h6" size="sm">
+                        There are no products yet.
+                      </Heading>
+                      <h3> Kindly check back later.</h3>
+                    </div>
+                  )}
+                  {!loading && (
+                    <div className="text-center py-5 my-5 h-100">
+                      <div
+                        class="spinner-border avatar-xxl text-primary m-2"
+                        role="status"
+                      ></div>
+                      <h4> Loading...</h4>
+                    </div>
+                  )}
+                </Box>
+              </Center>
             </div>
           </div>
           <Drawer onClose={onClose} isOpen={isOpen} size="md" placement="right">

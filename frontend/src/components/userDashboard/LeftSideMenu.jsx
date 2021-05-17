@@ -155,6 +155,52 @@ const LeftSideMenuComponent = (props) => {
               </a>
             </li>
 
+            {/* <li>
+              <a
+                href="/user/tables"
+                onClick={(e) => {
+                  e.preventDefault();
+                  props.history.push("/user/tables");
+                }}
+              >
+                <i className="mdi mdi-table-furniture" />
+                <span> Tables </span>
+              </a>
+            </li> */}
+
+            <li>
+              <a href="#sidebarMultilevelTable" data-toggle="collapse">
+                <i className="mdi mdi-table-furniture" />
+                <span> Tables</span> <span className="menu-arrow" />
+              </a>
+              <div className="collapse" id="sidebarMultilevelTable">
+                <ul className="nav-second-level">
+                  <li>
+                    <a
+                      href="/user/tables"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        props.history.push("/user/tables");
+                      }}
+                    >
+                      Tables
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/user/tablecategory"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        props.history.push("/user/tablecategory");
+                      }}
+                    >
+                      Table Category
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
             <li>
               <a
                 href="/user/profile"

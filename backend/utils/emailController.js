@@ -17,15 +17,6 @@ const devTransporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
-  // host: "mail.softclo.com",
-  // port: 587,
-  // auth: {
-  //   user: "tester@softclo.com",
-  //   pass: "Tester@123",
-  // },
-  // tls: {
-  //   rejectUnauthorized: false,
-  // },
 });
 
 const devTransporter4 = nodemailer.createTransport({
@@ -33,8 +24,7 @@ const devTransporter4 = nodemailer.createTransport({
   port: 587,
   auth: {
     user: "apikey",
-    pass:
-      "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",
+    pass: "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",
   },
   tls: {
     rejectUnauthorized: false,
