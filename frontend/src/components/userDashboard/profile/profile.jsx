@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { InputGroup, Icon, Input } from "rsuite";
 import { Form, FormGroup, ControlLabel } from "rsuite";
 import $ from "jquery";
@@ -7,108 +6,75 @@ import AWN from "awesome-notifications";
 import API from "../../../controllers/api";
 import { Center, Square, Circle } from "@chakra-ui/react";
 import { GetUserData, Reload } from "../../../controllers/auth";
+import { uploadImage } from "../../../controllers/utils";
 import DataContext, { DataConsumer } from "../../../context/datacontext";
 
 const ProfileComponent = () => {
   let [formValue, setFormValue] = useState({});
   let [userData, setUserData] = useState({});
-  let [roles, setRoles] = useState(false);
   let [refreshData, setRefreshData] = useState(false);
-  let [dataUpdate, setDataUpdate] = useState(false);
   const [showpassword, setshowpassword] = useState(false);
   const [showpassword2, setshowpassword2] = useState(false);
   const user = useContext(DataContext);
   //const { user, setUser } = useContext(DataContext);
+  let token = localStorage.getItem("token");
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "x-auth-token": token,
+    },
+  };
 
-  const updateprofile = async () => {
+  const updateprofile = async (...args) => {
+    //console.log("args", ...args);
     const { name, phone, avatar } = formValue;
-    if (!name || !phone || !avatar) {
-      new AWN().alert("Kindly fill all fields", {
-        durations: { alert: 4000 },
-      });
-      return false;
-    }
+    if (!name || !phone || !avatar)
+      return new AWN().alert("Kindly fill all fields");
     if (formValue.password) {
       if (formValue.password !== formValue.password2) {
-        new AWN().alert("Passwords do not match", {
-          durations: { alert: 3000 },
-        });
-        return false;
+        return new AWN().alert("Passwords do not match");
       }
     }
     let body = { name, phone, avatar };
     formValue.bannerImg && (body.bannerImg = formValue.bannerImg);
     formValue.password && (body.password = formValue.password);
+    //body = { ...body, ...args[0] };
     console.log(body);
     try {
-      let token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-      };
       const res = await API.put("/api/user/auth/profile", body, config);
       if (res.status == 200) {
-        new AWN().success("Profile updated successfully ", {
-          durations: { success: 3000 },
-        });
+        new AWN().success("Profile updated successfully ");
         user.setUserData(res.data.admin);
         setRefreshData(!refreshData);
         Reload(user.setUserData, false);
       } else {
-        new AWN().alert("Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
+        new AWN().alert("Failed, Kindly try again");
       }
     } catch (err) {
       console.log(err);
-      new AWN().alert("Failed, Kindly try again", {
-        durations: { alert: 3000 },
-      });
+      new AWN().alert("Failed, Kindly try again");
     }
   };
 
   const updateslug = async () => {
     const { slug } = formValue;
-    if (!slug) {
-      new AWN().alert("Kindly enter slug", {
-        durations: { alert: 4000 },
-      });
-      return false;
-    }
+    if (!slug) return new AWN().alert("Kindly enter slug");
     let body = { slug };
     try {
-      let token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-      };
       const res = await API.put("/api/user/auth/profile/slug", body, config);
       if (res.status == 200) {
-        new AWN().success("Profile updated successfully ", {
-          durations: { success: 3000 },
-        });
+        new AWN().success("Profile updated successfully ");
         user.setUserData(res.data.admin);
         setRefreshData(!refreshData);
         Reload(user.setUserData, false);
       } else {
-        new AWN().alert("Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
+        new AWN().alert("Failed, Kindly try again");
       }
     } catch (err) {
-      //console.log({ err });
-      if (err.response && err.response.data && err.response.data.msg) {
-        new AWN().alert(err.response.data.msg, {
-          durations: { alert: 3000 },
-        });
+      if (err?.response?.data?.msg) {
+        new AWN().alert(err.response.data.msg);
       } else {
-        new AWN().alert("Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
+        new AWN().alert("Failed, Kindly try again");
       }
     }
   };
@@ -122,125 +88,29 @@ const ProfileComponent = () => {
 
   const onChangeProfile = async (e) => {
     e.preventDefault();
-    console.log(e.target.files[0]);
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    let token = localStorage.getItem("token");
-    new AWN().info("Please wait while picture uploads", {
-      durations: { info: 0 },
-    });
     try {
-      const res = await API.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "x-auth-token": token,
-        },
-      });
-      console.log(res);
-      if (res.status !== 200) {
-        new AWN().alert("Picture Upload Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
-        return false;
-      }
-      if (res.status == 200) {
-        let pic = await axios.put(res.data.url, file, {
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
-        if (pic.status !== 200) {
-          new AWN().alert("Picture Upload Failed, Kindly try again", {
-            durations: { alert: 3000 },
-          });
-          return false;
-        }
-        if (pic.status == 200) {
-          let filePath =
-            "https://commute-partner-s3-bucket.s3.eu-west-2.amazonaws.com/" +
-            res.data.key;
-          setFormValue({
-            ...formValue,
-            ["avatar"]: filePath,
-          });
-          new AWN().closeToasts();
-          new AWN().success("Picture upload successful", {
-            durations: { success: 4000 },
-          });
-          updateprofile();
-        }
-      }
+      const url = await uploadImage(file);
+      if (!url) return new Error("image upload error");
+      setFormValue({ ...formValue, ["avatar"]: url });
+      //updateprofile({ avatar: url });
     } catch (err) {
-      if (err) {
-        if (err.response.status === 500) {
-          console.log("There was a problem with the server");
-        } else {
-          console.log(err);
-        }
-      }
+      console.error(err);
+      return new AWN().alert("Picture Upload Failed, Kindly try again");
     }
   };
 
   const onChangeBannerImg = async (e) => {
     e.preventDefault();
-    console.log(e.target.files[0]);
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    let token = localStorage.getItem("token");
-    new AWN().info("Please wait while picture uploads", {
-      durations: { info: 0 },
-    });
     try {
-      const res = await API.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "x-auth-token": token,
-        },
-      });
-      console.log(res);
-      if (res.status !== 200) {
-        new AWN().alert("Picture Upload Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
-        return false;
-      }
-      if (res.status == 200) {
-        let pic = await axios.put(res.data.url, file, {
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
-        if (pic.status !== 200) {
-          new AWN().alert("Picture Upload Failed, Kindly try again", {
-            durations: { alert: 3000 },
-          });
-          return false;
-        }
-        if (pic.status == 200) {
-          let filePath =
-            "https://commute-partner-s3-bucket.s3.eu-west-2.amazonaws.com/" +
-            res.data.key;
-          setFormValue({
-            ...formValue,
-            ["bannerImg"]: filePath,
-          });
-          new AWN().closeToasts();
-          new AWN().success("Picture upload successful", {
-            durations: { success: 4000 },
-          });
-          // updateprofile();
-        }
-      }
+      const url = await uploadImage(file);
+      if (!url) return new Error("image upload error");
+      setFormValue({ ...formValue, ["bannerImg"]: url });
+      //updateprofile({ bannerImg: url });
     } catch (err) {
-      if (err) {
-        if (err.response.status === 500) {
-          console.log("There was a problem with the server");
-        } else {
-          console.log(err);
-        }
-      }
+      console.error(err);
+      return new AWN().alert("Picture Upload Failed, Kindly try again");
     }
   };
 
@@ -248,7 +118,6 @@ const ProfileComponent = () => {
     $(document).ready(function () {
       $("#myInput").on("keyup", function () {
         var value = $(this).val().toLowerCase();
-        console.log(value);
         $("tbody tr").filter(function () {
           $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
         });

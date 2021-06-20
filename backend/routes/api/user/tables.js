@@ -11,7 +11,6 @@ const { generateId, validMongooseId } = require("../../../utils/utils");
 router.get("/", auth, async (req, res) => {
   try {
     const tables = await Table.find({ creator: req.user.id })
-      .populate("tableCategory")
       .sort({ createdAt: -1 })
       .lean();
     if (!tables) return res.status(400).json({ msg: "Invalid request" });
