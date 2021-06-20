@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonToolbar, ControlLabel } from "rsuite";
-import axios from "axios";
 import { Grid, Row, Col, TagPicker, Icon, Input, SelectPicker } from "rsuite";
 import { Form, FormGroup, FormControl, HelpBlock, Loader } from "rsuite";
 import { Drawer, DrawerHeader, DrawerContent } from "@chakra-ui/react";
@@ -10,7 +9,7 @@ import { Image } from "@chakra-ui/react";
 import $ from "jquery";
 import AWN from "awesome-notifications";
 import API from "../../../controllers/api";
-import { formatAmount } from "../../../controllers/utils";
+import { formatAmount, uploadImage } from "../../../controllers/utils";
 import { FetchCategoryData } from "../../../controllers/fetchdata";
 import { FetchTableCategoryData } from "../../../controllers/fetchdata";
 
@@ -142,58 +141,13 @@ const ProductListComponent = (props) => {
   const onUploadImage = async (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    new AWN().info("Please wait while picture uploads", {
-      durations: { info: 0 },
-    });
     try {
-      const res = await API.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "x-auth-token": token,
-        },
-      });
-      if (res.status !== 200) {
-        new AWN().alert("Picture Upload Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
-        return false;
-      }
-      if (res.status == 200) {
-        let pic = await axios.put(res.data.url, file, {
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
-        if (pic.status !== 200) {
-          new AWN().alert("Picture Upload Failed, Kindly try again", {
-            durations: { alert: 3000 },
-          });
-          return false;
-        }
-        if (pic.status == 200) {
-          let filePath =
-            "https://commute-partner-s3-bucket.s3.eu-west-2.amazonaws.com/" +
-            res.data.key;
-          setFormValue({
-            ...formValue,
-            ["imageUrl"]: filePath,
-          });
-          new AWN().closeToasts();
-          new AWN().success("Picture upload successful", {
-            durations: { success: 4000 },
-          });
-        }
-      }
+      const url = await uploadImage(file);
+      if (!url) return new Error("image upload error");
+      setFormValue({ ...formValue, ["imageUrl"]: url });
     } catch (err) {
-      if (err) {
-        if (err.response.status === 500) {
-          console.log("There was a problem with the server");
-        } else {
-          console.log(err);
-        }
-      }
+      console.error(err);
+      return new AWN().alert("Picture Upload Failed, Kindly try again");
     }
   };
 

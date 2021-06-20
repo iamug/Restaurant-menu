@@ -389,7 +389,7 @@ const ProductListComponent = (props) => {
                       <FormGroup>
                         <ControlLabel>Status</ControlLabel>
                         <FormControl
-                          name="isCompleted"
+                          name="isEnabled"
                           accepter={SelectPicker}
                           data={[
                             { label: "Enabled", value: true },

@@ -10,6 +10,7 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const rfs = require("rotating-file-stream");
+const { cloudinary } = require("./utils/cloudinary");
 
 const LogStream = fs.createWriteStream(path.join(__dirname, `logs.log`), {
   flags: "a",
@@ -35,9 +36,7 @@ const app = express();
 //connect Database
 connectDB();
 app.use(cors());
-morgan.token("admin", function (req, res, param) {
-  return (req.user && req.user.name) || "";
-});
+morgan.token("admin", (req, res, param) => (req.user && req.user.name) || "");
 app.use(
   morgan("combined", {
     skip: (req, res) => {
@@ -57,25 +56,25 @@ app.use(
 app.use(fileUpload());
 
 // Init Middleware
-app.use(express.json({ extended: false }));
+app.use(express.json({ extended: false, limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb" }));
 
 //Upload Endpoint
 app.use("/upload", auth, async (req, res) => {
-  if (req.files === null)
+  if (req.body.data === null)
     return res.status(400).json({ msg: "No file uploaded" });
-  const file = req.files.file;
-  const key = `Commute-Bucket-Oct-2020/${req.user.id}/${uuidv4()}-${file.name}`;
-  s3.getSignedUrl(
-    "putObject",
-    {
-      Bucket: "commute-partner-s3-bucket",
-      ContentType: file.mimetype,
-      Key: key,
-    },
-    async (err, url) => {
-      res.status(200).json({ key, url });
-    }
-  );
+  const file = req.body.data;
+  try {
+    const uploadResponse = await cloudinary.uploader.upload(file, {
+      upload_preset: "baretag",
+      folder: `baretag/${req.user.id}`,
+    });
+    if (!uploadResponse) return res.status(417).json({ msg: "Upload error" });
+    res.status(200).json({ url: uploadResponse.secure_url });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
 });
 
 app.get("/", (req, res) => res.send("API Running"));
