@@ -56,8 +56,8 @@ app.use(
 app.use(fileUpload());
 
 // Init Middleware
-app.use(express.json({ extended: false, limit: "20mb" }));
-app.use(express.urlencoded({ limit: "20mb" }));
+app.use(express.json({ extended: true, limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 //Upload Endpoint
 app.use("/upload", auth, async (req, res) => {
