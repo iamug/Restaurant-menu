@@ -1,0 +1,6 @@
+{
+  "name" : "live-baretag-frontend",
+  "script" : "serve -s -p 5000",
+  "cwd" : "/root/Restaurant-menu/frontend",
+  "args" :  "--ssl-cert /etc/letsencrypt/live/app.baretag.co/cert.pem --ssl-key /etc/letsencrypt/live/app.baretag.co/privkey.pem"
+}

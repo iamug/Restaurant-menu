@@ -11,7 +11,8 @@ const fs = require("fs");
 const path = require("path");
 const rfs = require("rotating-file-stream");
 const { cloudinary } = require("./utils/cloudinary");
-
+const https = require("https");
+const http = require("http");
 const LogStream = fs.createWriteStream(path.join(__dirname, `logs.log`), {
   flags: "a",
 });
@@ -56,8 +57,8 @@ app.use(
 app.use(fileUpload());
 
 // Init Middleware
-app.use(express.json({ extended: false, limit: "20mb" }));
-app.use(express.urlencoded({ limit: "20mb" }));
+app.use(express.json({ extended: true, limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 //Upload Endpoint
 app.use("/upload", auth, async (req, res) => {
@@ -103,5 +104,27 @@ app.use("/api/guest/orders", require("./routes/api/guest/orders"));
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));
+//app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));
 //app.listen(4000, () => console.log(`Server stated on port ${4000}`));
+
+
+//const PORT = process.env.PORT || 5000;
+
+//app.listen(PORT, () => console.log(`Server stated on port ${PORT}`));
+
+
+// Listen both http & https ports
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer({
+  key: fs.readFileSync('/etc/letsencrypt/live/app.baretag.co/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/app.baretag.co/fullchain.pem'),
+}, app);
+
+/* httpServer.listen(80, () => {
+    console.log('HTTP Server running on port 80');
+}); */
+
+httpsServer.listen(PORT, () => {
+    console.log(`HTTPS Server running on port ${PORT} 443`);
+});
+
