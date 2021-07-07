@@ -20,7 +20,7 @@ const RecoverPasswordComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.post("/api/auth/forgotpassword", body, config),
+        API.post("/api/user/auth/forgotpassword", body, config),
         (resp) => {
           res = resp;
           if (res.data.msg_sent && res.status == 200) {
