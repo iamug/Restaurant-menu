@@ -55,7 +55,7 @@ router.post("/forgotpassword", async (req, res, next) => {
   });
   try {
     let info = await devTransporter.sendMail({
-      from: '"Commute" <noreply@commute.ng>', // sender address
+      from: `${config.get("FROM_NAME")} <${config.get("FROM_EMAIL")}> `, // sender address
       to: email, // list of receivers
       subject: "Reset Password", // Subject line
       text: "Reset Password", // plain text body
@@ -129,7 +129,7 @@ router.post("/resendverification/", async (req, res, next) => {
       }
     );
     let info = await devTransporter.sendMail({
-      from: '"Commute" <noreply@commute.ng>', // sender address
+      from: `${config.get("FROM_NAME")} <${config.get("FROM_EMAIL")}> `, // sender address
       to: email, // list of receivers
       subject: "Verify Email", // Subject line
       text: "Verify Email", // plain text body
@@ -307,7 +307,7 @@ router.post(
           if (err) throw err;
           // send mail with defined transport object
           devTransporter.sendMail({
-            from: '"Commute" <noreply@sample.ng>', // sender address
+            from: `${config.get("FROM_NAME")} <${config.get("FROM_EMAIL")}> `, // sender address
             to: email, // list of receivers
             subject: "Verify Email", // Subject line
             text: "Verify Email", // plain text body

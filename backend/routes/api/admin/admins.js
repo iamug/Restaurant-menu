@@ -108,7 +108,7 @@ router.post("/", auth, async (req, res) => {
     );
     let adminData = await admin.save();
     devTransporter.sendMail({
-      from: '"Commute" <noreply@commute.ng>', // sender address
+      from: `${config.get("FROM_NAME")} <${config.get("FROM_EMAIL")}> `, // sender address
       to: email, // list of receivers
       subject: "Verify Email", // Subject line
       text: "Verify Email", // plain text body
