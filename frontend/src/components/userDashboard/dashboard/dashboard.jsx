@@ -65,7 +65,7 @@ const DashboardComponent = (props) => {
                     <div className="row">
                       <div className="col-6">
                         <div className="avatar-lg rounded-circle bg-soft-info border-info border">
-                          <i className="mdi mdi-account-multiple font-22 avatar-title text-info" />
+                          <i className="mdi mdi-tag-multiple font-22 avatar-title text-info" />
                         </div>
                       </div>
                       <div className="col-6">
@@ -74,7 +74,7 @@ const DashboardComponent = (props) => {
                             <span data-plugin="counterup">0</span>
                           </h3>
                           <p className="text-muted mb-1 text-truncate">
-                            Total Users
+                            Total Products
                           </p>
                         </div>
                       </div>
@@ -89,32 +89,7 @@ const DashboardComponent = (props) => {
                     <div className="row">
                       <div className="col-6">
                         <div className="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                          <i className="mdi mdi-steering font-22 avatar-title text-primary" />
-                        </div>
-                      </div>
-                      <div className="col-6">
-                        <div className="text-right">
-                          <h3 className="text-dark mt-1">
-                            <span data-plugin="counterup">0</span>
-                          </h3>
-                          <p className="text-muted mb-1 text-truncate">
-                            Total Admins
-                          </p>
-                        </div>
-                      </div>
-                    </div>{" "}
-                    {/* end row*/}
-                  </div>{" "}
-                  {/* end widget-rounded-circle*/}
-                </div>
-
-                {/* end col*/}
-                <div className="col-md-3 col-xl-3">
-                  <div className="widget-rounded-circle card-box">
-                    <div className="row">
-                      <div className="col-6">
-                        <div className="avatar-lg rounded-circle bg-soft-info border-info border">
-                          <i className="mdi mdi-handshake font-22 avatar-title text-info" />
+                          <i className="mdi mdi-receipt font-22 avatar-title text-primary" />
                         </div>
                       </div>
                       <div className="col-6">
@@ -132,13 +107,38 @@ const DashboardComponent = (props) => {
                   </div>{" "}
                   {/* end widget-rounded-circle*/}
                 </div>
+
+                {/* end col*/}
+                <div className="col-md-3 col-xl-3">
+                  <div className="widget-rounded-circle card-box">
+                    <div className="row">
+                      <div className="col-6">
+                        <div className="avatar-lg rounded-circle bg-soft-info border-info border">
+                          <i className="mdi mdi-table-chair font-22 avatar-title text-info" />
+                        </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="text-right">
+                          <h3 className="text-dark mt-1">
+                            <span data-plugin="counterup">0</span>
+                          </h3>
+                          <p className="text-muted mb-1 text-truncate">
+                            Total Tables
+                          </p>
+                        </div>
+                      </div>
+                    </div>{" "}
+                    {/* end row*/}
+                  </div>{" "}
+                  {/* end widget-rounded-circle*/}
+                </div>
                 {/* end col*/}
                 <div className="col-md-3 col-xl-3">
                   <div className="widget-rounded-circle card-box">
                     <div className="row">
                       <div className="col-6">
                         <div className="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                          <i className="mdi mdi-car font-22 avatar-title text-primary" />
+                          <i className="mdi mdi-credit-card font-22 avatar-title text-primary" />
                         </div>
                       </div>
                       <div className="col-6">
