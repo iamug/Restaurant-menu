@@ -52,10 +52,13 @@ router.post("/forgotpassword", async (req, res, next) => {
   const resetURL = `${config.get(
     "Frontend_URL"
   )}/admin/resetpassword${resetToken}`;
-  var html = pug.renderFile(`${__dirname}/../../email/reset-password.pug`, {
-    userName: name,
-    url: resetURL,
-  });
+  var html = pug.renderFile(
+    `${__dirname}/../../../../email/reset-password.pug`,
+    {
+      userName: name,
+      url: resetURL,
+    }
+  );
   try {
     let info = await devTransporter.sendMail({
       from: `${config.get("FROM_NAME")} <${config.get("FROM_EMAIL")}>`, // sender address
@@ -127,7 +130,7 @@ router.post("/resendverification/", async (req, res, next) => {
     )}/admin/verify${signupToken}`;
     // renderFile
     var html = pug.renderFile(
-      `${__dirname}/../../email/email-verification.pug`,
+      `${__dirname}/../../../../email/email-verification.pug`,
       {
         userName: name,
         url: verifyURL,
@@ -291,10 +294,10 @@ router.post(
       //await user.save({ validateBeforeSave: false });
       const verifyURL = `${config.get(
         "Frontend_URL"
-      )}/admin/signupverify${signupToken}`;
+      )}/admin/verify${signupToken}`;
       // renderFile
       var html = pug.renderFile(
-        `${__dirname}/../../email/email-verification.pug`,
+        `${__dirname}/../../../../email/email-verification.pug`,
         {
           userName: name,
           url: verifyURL,
