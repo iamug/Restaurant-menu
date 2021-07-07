@@ -33,55 +33,34 @@ const ResetPasswordComponent = (props) => {
       let res = {};
       //start
       await notifier.async(
-        API.put("/api/auth/resetpassword/" + resetToken, body, config),
+        API.put("/api/user/auth/resetpassword/" + resetToken, body, config),
         (resp) => {
           res = resp;
-
           if (res.errors) {
-            //console.log("res errors");
-            //console.log(res.errors.errors);
           }
-
           if (res.data.status && res.status == 200) {
             notifier.success(
-              "Password reset Successful. Kindly login with email address and new password",
-              {
-                durations: { success: 4000 },
-              }
+              "Password reset Successful. Kindly login with email address and new password"
             );
 
             setTimeout(() => {
-              //window.location.href = "/login";
               props.history.push("/login");
             }, 6000);
-            //this.props.history.push("/dashboard");
           }
         },
         (error) => {
-          //console.log(error);
-          //console.log("error");
           let err = error;
-          //console.log(err.response);
-          ////console.log(err.response.data);
           if (err.response.data.errors) {
             new AWN().alert(
-              err.response.data.errors["0"].msg + " Please try again",
-              {
-                durations: { alert: 4000 },
-              }
+              err.response.data.errors["0"].msg + " Please try again"
             );
           } else {
-            new AWN().alert("Reset Password Error. Please try again", {
-              durations: { alert: 4000 },
-            });
+            new AWN().alert("Reset Password Error. Please try again");
           }
         }
       );
     } catch (err) {
-      //console.log(err);
-      new AWN().alert("Kindly check your internet connection", {
-        durations: { success: 3000 },
-      });
+      new AWN().alert("Kindly check your internet connection");
     }
   };
 

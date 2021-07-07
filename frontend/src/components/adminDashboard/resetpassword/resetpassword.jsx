@@ -36,12 +36,6 @@ const ResetPasswordComponent = (props) => {
         API.put("/api/admin/auth/resetpassword/" + resetToken, body, config),
         (resp) => {
           res = resp;
-
-          if (res.errors) {
-            //console.log("res errors");
-            //console.log(res.errors.errors);
-          }
-
           if (res.data.status && res.status == 200) {
             notifier.success(
               "Password reset Successful. Kindly login with email address and new password",
@@ -49,12 +43,9 @@ const ResetPasswordComponent = (props) => {
                 durations: { success: 4000 },
               }
             );
-
             setTimeout(() => {
-              //window.location.href = "/login";
               props.history.push("/admin/login");
             }, 6000);
-            //this.props.history.push("/dashboard");
           }
         },
         (error) => {
