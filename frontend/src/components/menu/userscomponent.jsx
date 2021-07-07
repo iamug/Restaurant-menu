@@ -147,9 +147,7 @@ const UsersComponent = (props) => {
 
               {loading && productData && productData.length === 0 && (
                 <div className="text-center py-3">
-                  <Heading as="h6" size="sm">
-                    There are no products yet.
-                  </Heading>
+                  <Heading as="h6" size="sm"></Heading>
                   <h3> Kindly check back later.</h3>
                 </div>
               )}
