@@ -283,7 +283,7 @@ router.post(
       //await user.save({ validateBeforeSave: false });
       const verifyURL = `${config.get(
         "Frontend_URL"
-      )}/user/signupverify${signupToken}`;
+      )}/user/verify${signupToken}`;
       // renderFile
       var html = pug.renderFile(
         `${__dirname}/../../../email/email-verification.pug`,
