@@ -70,14 +70,15 @@ const ProductListComponent = (props) => {
   };
 
   const addrecord = async () => {
-    const { tableName, isEnabled, tableCategory } = formValue;
+    const { tableName, isEnabled, tableCategory, limit } = formValue;
     const { slug } = userdata;
     if (!tableName) {
       notifier.alert("Kindly fill all fields");
       return false;
     }
     let body = { tableName, slug };
-    isEnabled && (body.isEnabled = isEnabled);
+    isEnabled !== undefined && (body.isEnabled = isEnabled);
+    limit !== undefined && (body.limit = limit);
     tableCategory && (body.tableCategory = tableCategory);
     try {
       const config = { headers };
@@ -95,13 +96,11 @@ const ProductListComponent = (props) => {
   };
 
   const updaterecord = async (id) => {
-    const { tableName, isEnabled, tableCategory } = formValue;
-    if (!tableName) {
-      notifier.alert("Kindly fill all fields");
-      return false;
-    }
+    const { tableName, isEnabled, tableCategory, limit } = formValue;
+    if (!tableName) return notifier.alert("Kindly fill all fields");
     let body = { tableName };
-    isEnabled && (body.isEnabled = isEnabled);
+    isEnabled !== undefined && (body.isEnabled = isEnabled);
+    limit !== undefined && (body.limit = limit);
     tableCategory && (body.tableCategory = tableCategory);
     try {
       const config = { headers };
@@ -253,7 +252,7 @@ const ProductListComponent = (props) => {
                           <tr>
                             <th>Table Name</th>
                             <th>Category</th>
-                            <th>Id</th>
+                            <th>Limit</th>
                             <th>Status</th>
                             <th style={{ width: 82 }}>Action</th>
                           </tr>
@@ -272,7 +271,7 @@ const ProductListComponent = (props) => {
                                     {product.tableCategory &&
                                       product.tableCategory.name}
                                   </td>
-                                  <td>{product.tableId}</td>
+                                  <td>{product.limit}</td>
                                   <td>
                                     {product.isEnabled ? (
                                       <span className="badge badge-success">
@@ -412,6 +411,10 @@ const ProductListComponent = (props) => {
                           data={tableCategoryData}
                           labelKey="name"
                           valueKey="_id"
+                          value={
+                            formValue.tableCategory?._id ||
+                            formValue.tableCategory
+                          }
                           onOpen={handleSelectTableCategory}
                           onSearch={handleSelectTableCategory}
                           renderMenu={(menu) => {
@@ -434,6 +437,17 @@ const ProductListComponent = (props) => {
                           placeholder="Select Table Category"
                           required
                           block
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12}>
+                      <FormGroup>
+                        <ControlLabel>Table Order Limit</ControlLabel>
+                        <FormControl
+                          name="limit"
+                          type="number"
+                          min="0"
+                          step="1"
                         />
                       </FormGroup>
                     </Col>

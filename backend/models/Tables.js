@@ -9,6 +9,7 @@ const TableSchema = new mongoose.Schema(
     },
     tableName: {
       type: String,
+      unique: true,
       required: true,
     },
     isEnabled: {
@@ -19,6 +20,7 @@ const TableSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "tableCategorys",
     },
+    limit: Number,
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",

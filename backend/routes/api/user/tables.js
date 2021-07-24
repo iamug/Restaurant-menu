@@ -11,6 +11,7 @@ const { generateId, validMongooseId } = require("../../../utils/utils");
 router.get("/", auth, async (req, res) => {
   try {
     const tables = await Table.find({ creator: req.user.id })
+      .populate("tableCategory", "name limit")
       .sort({ createdAt: -1 })
       .lean();
     if (!tables) return res.status(400).json({ msg: "Invalid request" });
@@ -50,7 +51,7 @@ router.delete("/:id", auth, async (req, res) => {
 // @desc   Add Plans route
 // @access Public
 router.post("/", auth, async (req, res) => {
-  let { tableName, slug, isEnabled, tableCategory } = req.body;
+  let { tableName, slug, isEnabled, tableCategory, limit } = req.body;
   if (!tableName || !slug) {
     return res.status(400).json({ success: false, msg: "Invalid request" });
   }
@@ -58,6 +59,7 @@ router.post("/", auth, async (req, res) => {
   let insertData = { tableId, tableName };
   insertData.creator = req.user.id;
   isEnabled && (insertData.isEnabled = isEnabled);
+  limit !== undefined && (insertData.limit = limit);
   tableCategory && (insertData.tableCategory = tableCategory);
   try {
     let table = await new Table(insertData).save();
@@ -75,13 +77,14 @@ router.put("/:id", auth, async (req, res) => {
   if (!req.params.id || !validMongooseId(req.params.id)) {
     return res.status(400).json({ success: false, msg: "invalid Request" });
   }
-  let { name, isEnabled, tableCategory } = req.body;
+  let { name, isEnabled, tableCategory, limit } = req.body;
   let tableData = await Table.findById(req.params.id);
   if (!tableData)
     res.status(404).send({ success: false, msg: "Record does not exist" });
   let updateFields = {};
   name && (updateFields.name = name);
   tableCategory && (updateFields.tableCategory = tableCategory);
+  limit !== undefined && (updateFields.limit = limit);
   isEnabled !== undefined && (updateFields.isEnabled = isEnabled);
   try {
     let table = await Table.findOneAndUpdate(

@@ -5,6 +5,8 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { ChakraProvider } from "@chakra-ui/react";
 
+if (process.env.NODE_ENV !== "development") console.log = () => {};
+
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider portalZIndex={2}>

@@ -112,7 +112,7 @@ const MenuComponent = (props) => {
       toast({
         title: "Already in cart.",
         status: "error",
-        duration: 5000,
+        duration: 6000,
         isClosable: true,
       });
       return;
@@ -121,7 +121,7 @@ const MenuComponent = (props) => {
       toast({
         title: `You can only select one from ${item.productCategory.name}`,
         status: "error",
-        duration: 5000,
+        duration: 6000,
         isClosable: true,
       });
       return;
@@ -130,28 +130,37 @@ const MenuComponent = (props) => {
     toast({
       title: "Cart added.",
       status: "success",
-      duration: 5000,
+      duration: 6000,
       isClosable: true,
     });
   };
 
   const handlePlaceOrder = async () => {
     if (param && param.tablename === undefined) {
-      toast({
+      return toast({
         title: "Order failed, Kindly try scan QR code again",
         status: "error",
       });
-      return;
     }
+    const id = "waiting-toast";
+    if (!toast.isActive(id)) {
+      toast({
+        id,
+        title: "Please wait....",
+        status: "info",
+        duration: null,
+      });
+    }
+
     let tableName = param && param.tablename;
     let { _id: user, slug } = userData;
     let products = cartItems.map((item) => item["_id"]);
     let body = { tableName, user, products, slug };
-    console.log({ body });
     try {
       const config = { headers };
       const res = await API.post("/api/guest/orders", body, config);
       if (res.status == 201) {
+        toast.closeAll();
         toast({
           title: "Order successful.",
           status: "success",
@@ -160,11 +169,15 @@ const MenuComponent = (props) => {
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.msg) {
+        toast.closeAll();
         toast({
           title: `Order failed. ${err.response.data.msg}`,
           status: "error",
+          duration: 6000,
+          isClosable: true,
         });
       } else {
+        toast.closeAll();
         toast({
           title: "Order failed, Kindly try again",
           status: "error",
