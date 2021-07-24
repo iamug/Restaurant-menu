@@ -216,7 +216,8 @@ const MenuComponent = (props) => {
     setLoading(true);
     let imageSrc =
       data?.user?.bannerImg ||
-      "https://www.bellanaija.com/wp-content/uploads/2015/11/dreamstime_l_39701598.jpg";
+      "https://images.unsplash.com/photo-1577308856961-8e9ec50d0c67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80";
+    //"https://source.unsplash.com/1600x900/?jollof";
 
     document.getElementById("header").style.background =
       "#ffffff url(' " + imageSrc + " ') no-repeat center";
@@ -241,11 +242,11 @@ const MenuComponent = (props) => {
       {loading ? (
         <>
           <div className="">
-            <header id="header" className="py-4 ">
+            <header id="header" className="py-4 py-lg-5 ">
               <div className="container">
                 {loading && valid && userData && (
                   <div className="col-sm-12 col-12 col-md-8 col-lg-6 p-0">
-                    <div className="text-left bg-white shadow mx-auto p-2 py-3 row">
+                    <div className="text-left bg-white shadow  rounded-lg mx-auto p-2 py-3 row">
                       <div className="col-10">
                         <Heading as="h4" size="lg" className="mb-2">
                           {userData && userData.name}'s Menu
