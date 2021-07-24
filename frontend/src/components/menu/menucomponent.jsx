@@ -214,11 +214,14 @@ const MenuComponent = (props) => {
     setProductData(data.products);
     setProducts(data.products);
     setLoading(true);
-    if (data.user && data.user.bannerImg) {
-      document.getElementById("header").style.background =
-        "#ffffff url(' " + data.user.bannerImg + " ') no-repeat fixed center";
-      document.getElementById("header").style.backgroundSize = "cover";
-    }
+    let imageSrc =
+      data?.user?.bannerImg ||
+      "https://www.bellanaija.com/wp-content/uploads/2015/11/dreamstime_l_39701598.jpg";
+
+    document.getElementById("header").style.background =
+      "#ffffff url(' " + imageSrc + " ') no-repeat center";
+    document.getElementById("header").style.backgroundSize = "cover";
+
     $(document).ready(function () {
       $("#myInput").on("input", function () {
         var value = $(this).val().toLowerCase();
@@ -242,7 +245,7 @@ const MenuComponent = (props) => {
               <div className="container">
                 {loading && valid && userData && (
                   <div className="col-sm-12 col-12 col-md-8 col-lg-6 p-0">
-                    <div className="text-left bg-white mx-auto p-2 py-3 row">
+                    <div className="text-left bg-white shadow mx-auto p-2 py-3 row">
                       <div className="col-10">
                         <Heading as="h4" size="lg" className="mb-2">
                           {userData && userData.name}'s Menu
@@ -251,9 +254,15 @@ const MenuComponent = (props) => {
                         <Heading as="h6" size="sm" className="text-muted mb-1">
                           Email : {userData && userData.email}
                         </Heading>
-                        <Heading as="h6" size="sm" className="text-muted mb-1">
-                          Phone : {userData && userData.phone}
-                        </Heading>
+                        {userData?.phone && (
+                          <Heading
+                            as="h6"
+                            size="sm"
+                            className="text-muted mb-1"
+                          >
+                            Phone : {userData?.phone}
+                          </Heading>
+                        )}
                       </div>
                       <div className="col-2 text-right">
                         <button
@@ -282,10 +291,10 @@ const MenuComponent = (props) => {
               </div>
             </header>
 
-            <div className="container mt-4">
+            <div className="container mt-3">
               <Affix top={0} style={{ zIndex: 1 }}>
-                <div className="row  py-2 bg-white">
-                  <div className="col-sm-4 col-7 col-md-6">
+                <div className="row py-1 py-md-2 border-bottom justify-content-between bg-white">
+                  <div className="col-sm-4 col-7 col-md-4">
                     <form
                       className="form-inline"
                       onSubmit={(e) => e.preventDefault()}
