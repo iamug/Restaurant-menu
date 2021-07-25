@@ -20,9 +20,7 @@ router.post("/", async (req, res) => {
     return res
       .status(424)
       .json({ msg: "Table is not valid. Please rescan QRCode" });
-  console.log({ tableLimit: table });
   if (typeof table.limit == "number") {
-    console.log("inn");
     if (table.limit <= 0)
       return res
         .status(424)
@@ -30,7 +28,6 @@ router.post("/", async (req, res) => {
     if (table.limit > 0) {
       let orderQuery = { user, tableName };
       let totalOrders = await Order.find(orderQuery).countDocuments();
-      console.log({ totalOrders, limit: table.limit });
       if (totalOrders >= table.limit)
         return res
           .status(424)

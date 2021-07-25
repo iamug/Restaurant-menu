@@ -59,23 +59,11 @@ const UserListComponent = (props) => {
   };
 
   const updateuser = async (id) => {
-    const {
-      verified,
-      firstName,
-      lastName,
-      email,
-      phone,
-      slug,
-      category,
-    } = formValue;
-    if (!firstName && !lastName && !email && !phone && !category) {
-      new AWN().alert("Kindly fill all fields", {
-        durations: { alert: 4000 },
-      });
-      return false;
-    }
-    let body = { firstName, lastName, email, phone, category, slug };
-    verified !== undefined && (body.verified = verified);
+    const { isVerified, name, email, phone, slug } = formValue;
+    if (!name || !email) return new AWN().alert("Kindly fill all fields");
+    let body = { name, email, phone, slug };
+    isVerified !== undefined && (body.isVerified = isVerified);
+    phone !== undefined && (body.phone = phone);
     try {
       let token = localStorage.getItem("token");
       const config = {
@@ -86,14 +74,10 @@ const UserListComponent = (props) => {
       };
       const res = await API.put("/api/admin/users/" + id, body, config);
       if (res.status == 200) {
-        new AWN().success("User updated successfully ", {
-          durations: { success: 3000 },
-        });
+        new AWN().success("User updated successfully ");
         setRefreshData(!refreshData);
       } else {
-        new AWN().alert("Failed, Kindly try again", {
-          durations: { alert: 3000 },
-        });
+        return new AWN().alert("Failed, Kindly try again");
       }
     } catch (err) {
       console.log(err);
@@ -399,7 +383,7 @@ const UserListComponent = (props) => {
                         Required
                       </HelpBlock>
                     </ControlLabel>
-                    <FormControl name="phone" required />
+                    <FormControl name="phone" />
                   </FormGroup>
                 </Col>
               </Row>

@@ -28,10 +28,11 @@ router.get("/:user/:table?", async (req, res) => {
     if (table && table.tableCategory) {
       productQuery = {
         creator: userdata._id,
+        isEnabled: true,
         tableCategory: { $in: table.tableCategory },
       };
     } else {
-      productQuery = { creator: userdata._id };
+      productQuery = { creator: userdata._id, isEnabled: true };
     }
     const products = await Product.find(productQuery)
       .populate("productCategory")
