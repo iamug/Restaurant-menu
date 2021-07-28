@@ -45,8 +45,9 @@ router.get("/recentorders", auth, async (req, res) => {
 router.get("/recentproducts", auth, async (req, res) => {
   try {
     let q = { creator: req.user.id };
-    const products = await Produt.find({ creator: req.user.id })
+    const products = await Product.find(q)
       .select(" name productCategory isEnabled ")
+      .populate("productCategory", "name")
       .sort({ createdAt: -1 })
       .limit(6)
       .lean();

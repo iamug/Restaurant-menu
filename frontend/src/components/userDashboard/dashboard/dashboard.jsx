@@ -10,9 +10,8 @@ import DataContext, { DataConsumer } from "../../../context/datacontext";
 
 const DashboardComponent = (props) => {
   let [totalSummary, setTotalSummary] = useState(false);
-  let [recentTickets, setRecentTickets] = useState(false);
-  let [recentBookings, setRecentBookings] = useState(false);
-  let [recentTrans, setRecentTrans] = useState(false);
+  let [recentOrders, setRecentOrders] = useState(false);
+  let [recentProducts, setRecentProducts] = useState(false);
   let [loading, setLoading] = useState(false);
   let [refreshData, setRefreshData] = useState(false);
   const { userdata } = useContext(DataContext);
@@ -22,11 +21,57 @@ const DashboardComponent = (props) => {
     "x-auth-token": token,
   };
 
+  const fetchrecentproducts = async () => {
+    try {
+      const config = { headers };
+      const res = await API.get("/api/user/dashboard/recentproducts", config);
+      if (!res) return false;
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
+  const fetchrecentorders = async () => {
+    try {
+      const config = { headers };
+      const res = await API.get("/api/user/dashboard/recentorders", config);
+      if (!res) return false;
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
+  const fetchtotalsummary = async () => {
+    try {
+      const config = { headers };
+      const res = await API.get("/api/user/dashboard/totalsummary", config);
+      if (!res) return false;
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
   useEffect(async () => {
     console.log({ userdata });
     //$("body").addClass("authentication-bg authentication-bg-pattern");
     //$("body").removeClass("authentication-bg authentication-bg-pattern");
     //console.log("enter");
+    const total = await fetchtotalsummary();
+    const orders = await fetchrecentorders();
+    const products = await fetchrecentproducts();
+    console.log({ total, orders, products });
+    if (!total || !orders || !products)
+      new AWN().alert("Network Error. Kindly check your internet connection");
+    setTotalSummary(total);
+    setRecentProducts(products);
+    setRecentOrders(orders);
+    setLoading(true);
     setLoading(true);
   }, [userdata, refreshData]);
 
@@ -71,7 +116,9 @@ const DashboardComponent = (props) => {
                       <div className="col-6">
                         <div className="text-right">
                           <h3 className="mt-1">
-                            <span data-plugin="counterup">0</span>
+                            <span data-plugin="counterup">
+                              {totalSummary && totalSummary.products}
+                            </span>
                           </h3>
                           <p className="text-muted mb-1 text-truncate">
                             Total Products
@@ -95,7 +142,9 @@ const DashboardComponent = (props) => {
                       <div className="col-6">
                         <div className="text-right">
                           <h3 className="text-dark mt-1">
-                            <span data-plugin="counterup">0</span>
+                            <span data-plugin="counterup">
+                              {totalSummary && totalSummary.orders}
+                            </span>
                           </h3>
                           <p className="text-muted mb-1 text-truncate">
                             Total Orders
@@ -120,7 +169,9 @@ const DashboardComponent = (props) => {
                       <div className="col-6">
                         <div className="text-right">
                           <h3 className="text-dark mt-1">
-                            <span data-plugin="counterup">0</span>
+                            <span data-plugin="counterup">
+                              {totalSummary && totalSummary.tables}
+                            </span>
                           </h3>
                           <p className="text-muted mb-1 text-truncate">
                             Total Tables
@@ -133,7 +184,7 @@ const DashboardComponent = (props) => {
                   {/* end widget-rounded-circle*/}
                 </div>
                 {/* end col*/}
-                <div className="col-md-3 col-xl-3">
+                <div className="col-md-3 col-xl-3 hidden">
                   <div className="widget-rounded-circle card-box">
                     <div className="row">
                       <div className="col-6">
@@ -160,98 +211,64 @@ const DashboardComponent = (props) => {
               </div>
               {/* end row*/}
               {/* end row */}
-              {/* <div className="row ">
-                <div className="col-xl-6">
+              <div className="row ">
+                <div className="col-xl-7">
                   <div className="card-box h-100">
                     <div className="float-left">
-                      <h4 className="header-title mb-3">Recent Bookings</h4>
+                      <h4 className="header-title mb-3">Recent Orders</h4>
                     </div>
                     <div className="float-right">
-                      {hasModulePermission.read(
-                        props.permissions,
-                        "Bookings"
-                      ) && (
-                        <a
-                          href=""
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/bookings");
-                          }}
-                          className="btn btn-primary btn-md"
-                        >
-                          View more
-                        </a>
-                      )}
+                      <a
+                        href=""
+                        onClick={(e) => {
+                          e.preventDefault();
+                          props.history.push("/user/orders");
+                        }}
+                        className="btn btn-primary btn-md"
+                      >
+                        View more
+                      </a>
                     </div>
                     <div className="table-responsive">
                       <table className="table table-borderless table-hover table-nowrap table-centered m-0">
                         <thead className="thead-light">
                           <tr>
                             <th>Date</th>
-                            <th>Amount</th>
-                            <th>Itineraries</th>
+                            <th>Table Name</th>
                             <th>Status</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {hasModulePermission.read(
-                            props.permissions,
-                            "Bookings"
-                          ) ? (
-                            recentBookings && recentBookings.length > 0 ? (
-                              recentBookings.map((booking, index) => (
-                                <tr key={index}>
-                                  <td>
-                                    {new Date(booking.createdAt).toDateString()}
-                                  </td>
-                                  <td>
-                                    <h5 className="m-0 font-weight-bold font-13">
-                                      {booking.quotation &&
-                                        booking.quotation.amount &&
-                                        "NGN " +
-                                          parseFloat(booking.quotation.amount)
-                                            .toFixed(2)
-                                            .replace(
-                                              /(\d)(?=(\d{3})+(?!\d))/g,
-                                              "$1,"
-                                            )}
-                                    </h5>
-                                  </td>
-                                  <td className="text-center">
-                                    {booking.itineraries &&
-                                      booking.itineraries.length}
-                                  </td>
-                                  <td>
-                                    {booking.quotation &&
-                                    booking.quotation.isPaid ? (
-                                      <span className="badge bg-soft-success text-success">
-                                        Paid
-                                      </span>
-                                    ) : (
-                                      <span className="badge bg-soft-dark text-dark">
-                                        Unpaid
-                                      </span>
-                                    )}
-                                  </td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td colSpan={7} className="text-center py-3">
-                                  <div className="text-center my-3 h-100">
-                                    <h4> No Bookings </h4>
-                                  </div>
+                          {recentOrders && recentOrders.length > 0 ? (
+                            recentOrders.map((order, index) => (
+                              <tr key={index}>
+                                <td>
+                                  {new Date(order.createdAt).toDateString()}
+                                </td>
+                                <td>
+                                  <h5 className="m-0 font-weight-bold font-13 pl-2 ">
+                                    {order.tableName}
+                                  </h5>
+                                </td>
+
+                                <td>
+                                  {order.isCompleted ? (
+                                    <span className="badge bg-soft-success text-success">
+                                      Completed
+                                    </span>
+                                  ) : (
+                                    <span className="badge bg-soft-dark text-dark">
+                                      Pending
+                                    </span>
+                                  )}
                                 </td>
                               </tr>
-                            )
+                            ))
                           ) : (
                             <tr>
                               <td colSpan={7} className="text-center py-3">
-                                <div className="text-center my-5 h-100">
-                                  <h4 className="text-muted">
-                                    {" "}
-                                    Not Permitted{" "}
-                                  </h4>
+                                <div className="text-center my-3 h-100">
+                                  <h4> No Orders yet. </h4>
                                 </div>
                               </td>
                             </tr>
@@ -261,198 +278,49 @@ const DashboardComponent = (props) => {
                     </div>
                   </div>
                 </div>{" "}
-                {/* end col 
-                <div className="col-xl-6">
+                {/* end col  */}
+                <div className="col-xl-5">
                   <div className="card-box h-100">
                     <div className="float-left">
-                      <h4 className="header-title mb-3">Recent Transactions</h4>
+                      <h4 className="header-title mb-3">Recent Products</h4>
                     </div>
                     <div className="float-right">
-                      {hasModulePermission.read(
-                        props.permissions,
-                        "Transactions"
-                      ) && (
-                        <a
-                          href=""
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/transactions");
-                          }}
-                          className="btn btn-primary btn-md"
-                        >
-                          View more
-                        </a>
-                      )}
+                      <a
+                        href=""
+                        onClick={(e) => {
+                          e.preventDefault();
+                          props.history.push("/user/products");
+                        }}
+                        className="btn btn-primary btn-md"
+                      >
+                        View more
+                      </a>
                     </div>
                     <div className="table-responsive">
                       <table className="table table-borderless table-nowrap table-hover table-centered m-0">
                         <thead className="thead-light">
                           <tr>
-                            <th>Mode</th>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {hasModulePermission.read(
-                            props.permissions,
-                            "Transactions"
-                          ) ? (
-                            recentTrans && recentTrans.length > 0 ? (
-                              recentTrans.map((trans, index) => (
-                                <tr key={index}>
-                                  <td>
-                                    <h5 className="m-0 font-weight-normal font-13">
-                                      {trans.mode}
-                                    </h5>
-                                  </td>
-                                  <td>
-                                    {new Date(trans.createdAt).toDateString()}
-                                  </td>
-                                  <td>
-                                    {trans.amount &&
-                                      "NGN " +
-                                        parseFloat(trans.amount)
-                                          .toFixed(2)
-                                          .replace(
-                                            /(\d)(?=(\d{3})+(?!\d))/g,
-                                            "$1,"
-                                          )}
-                                  </td>
-                                  <td>
-                                    {trans.status == "Approved" ? (
-                                      <span className="badge bg-soft-success text-success">
-                                        {trans.status}
-                                      </span>
-                                    ) : trans.status == "Pending" ? (
-                                      <span className="badge bg-soft-warning text-warning">
-                                        {trans.status}
-                                      </span>
-                                    ) : (
-                                      <span className="badge bg-soft-dark text-dark">
-                                        {trans.status}
-                                      </span>
-                                    )}
-                                  </td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td colSpan={7} className="text-center py-3">
-                                  <div className="text-center my-3 h-100">
-                                    <h4> No Transactions </h4>
-                                  </div>
-                                </td>
-                              </tr>
-                            )
-                          ) : (
-                            <tr>
-                              <td colSpan={7} className="text-center py-3">
-                                <div className="text-center my-5 h-100">
-                                  <h4 className="text-muted">
-                                    {" "}
-                                    Not Permitted{" "}
-                                  </h4>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>{" "}
-                    {/* end .table-responsive 
-                  </div>{" "}
-                  {/* end card-box 
-                </div>{" "}
-                {/* end col 
-              </div>
-              <div className="row mt-4">
-                <div className="col-xl-12">
-                  <div className="card-box h-100">
-                    <div className="float-left">
-                      <h4 className="header-title mb-3">Recent Tickets</h4>
-                    </div>
-                    <div className="float-right">
-                      {hasModulePermission.read(
-                        props.permissions,
-                        "Transactions"
-                      ) && (
-                        <a
-                          href=""
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/tickets");
-                          }}
-                          className="btn btn-primary btn-md"
-                        >
-                          View more
-                        </a>
-                      )}
-                    </div>
-                    <div className="table-responsive">
-                      <table className="table table-borderless table-nowrap table-hover table-centered m-0">
-                        <thead className="thead-light">
-                          <tr>
-                            <th>Subject</th>
-                            <th>Date</th>
+                            <th>Name</th>
                             <th>Category</th>
-                            <th>Issuer</th>
-                            <th>Status</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {hasModulePermission.read(
-                            props.permissions,
-                            "Transactions"
-                          ) ? (
-                            recentTickets && recentTickets.length > 0 ? (
-                              recentTickets.map((ticket, index) => (
-                                <tr key={index}>
-                                  <td>
-                                    <h5 className="m-0 font-weight-normal font-13">
-                                      {ticket.subject.substring(0, 15)}
-                                    </h5>
-                                  </td>
-                                  <td>
-                                    {new Date(ticket.createdAt).toDateString()}
-                                  </td>
-                                  <td> {ticket.ticketCategory}</td>
-                                  <td>{ticket.issuerEmail}</td>
-                                  <td>
-                                    {ticket.status === "Closed" ? (
-                                      <span className="badge bg-soft-success text-success">
-                                        {ticket.status}
-                                      </span>
-                                    ) : ticket.status === "Open" ? (
-                                      <span className="badge bg-soft-warning text-warning">
-                                        {ticket.status}
-                                      </span>
-                                    ) : (
-                                      <span className="badge bg-soft-dark text-dark">
-                                        {ticket.status}
-                                      </span>
-                                    )}
-                                  </td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td colSpan={7} className="text-center py-3">
-                                  <div className="text-center my-3 h-100">
-                                    <h4> No Tickets </h4>
-                                  </div>
+                          {recentProducts && recentProducts.length > 0 ? (
+                            recentProducts.map((product, index) => (
+                              <tr key={index}>
+                                <td>
+                                  <h5 className="m-0 font-weight-normal font-13">
+                                    {product.name}
+                                  </h5>
                                 </td>
+                                <td>{product.productCategory?.name}</td>
                               </tr>
-                            )
+                            ))
                           ) : (
                             <tr>
                               <td colSpan={7} className="text-center py-3">
-                                <div className="text-center my-5 h-100">
-                                  <h4 className="text-muted">
-                                    {" "}
-                                    Not Permitted{" "}
-                                  </h4>
+                                <div className="text-center my-3 h-100">
+                                  <h4> No Produts yet. </h4>
                                 </div>
                               </td>
                             </tr>
@@ -460,11 +328,12 @@ const DashboardComponent = (props) => {
                         </tbody>
                       </table>
                     </div>{" "}
-                    {/* end .table-responsive 
+                    {/* end .table-responsive  */}
                   </div>{" "}
+                  {/* end card-box  */}
                 </div>{" "}
-                {/* end card-box 
-              </div>{" "} */}
+                {/* end col  */}
+              </div>
             </div>
             {/* end row */}
           </div>
